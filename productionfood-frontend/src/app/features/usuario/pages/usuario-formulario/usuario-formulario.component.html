@@ -1,0 +1,496 @@
+<div class="registro-page">
+
+  <div class="registro-card">
+
+    <!-- =========================
+         PANEL DE MARCA
+         ========================= -->
+
+    <section class="registro-brand">
+
+      <div class="brand-decoration brand-decoration-top"></div>
+      <div class="brand-decoration brand-decoration-bottom"></div>
+
+      <div class="brand-content">
+
+        <img
+          class="brand-logo"
+          src="/logos/logo-horizontal.svg"
+          alt="ProductionFood"
+        />
+
+        <div class="brand-line"></div>
+
+        <div class="brand-message">
+
+          <h2>
+            Organizamos hoy,
+          </h2>
+
+          <p class="brand-slogan">
+            el alimento de mañana
+          </p>
+
+        </div>
+
+        <div class="brand-features">
+
+          <div class="brand-feature">
+
+            <div class="feature-icon">
+              <mat-icon>calendar_month</mat-icon>
+            </div>
+
+            <span>
+              Planificación<br />
+              de la producción
+            </span>
+
+          </div>
+
+          <div class="feature-divider"></div>
+
+          <div class="brand-feature">
+
+            <div class="feature-icon">
+              <mat-icon>eco</mat-icon>
+            </div>
+
+            <span>
+              Uso eficiente<br />
+              de recursos
+            </span>
+
+          </div>
+
+          <div class="feature-divider"></div>
+
+          <div class="brand-feature">
+
+            <div class="feature-icon">
+              <mat-icon>trending_up</mat-icon>
+            </div>
+
+            <span>
+              Mayor<br />
+              productividad
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         FORMULARIO
+         ========================= -->
+
+    <section class="registro-form">
+
+      <div class="form-container">
+
+        <div class="form-heading">
+
+          <div class="heading-line"></div>
+
+          <h1>
+            Registrar <span>usuario</span>
+          </h1>
+
+          <p>
+            Crea un nuevo usuario para acceder al sistema de ProductionFood.
+          </p>
+
+        </div>
+
+
+        <form
+          [formGroup]="form"
+          (ngSubmit)="registrar()"
+          class="form"
+        >
+
+          <!-- =========================
+               NOMBRE
+               ========================= -->
+
+          <mat-form-field
+            appearance="outline"
+            class="full-width"
+          >
+
+            <mat-label>
+              Nombre completo
+            </mat-label>
+
+            <mat-icon matPrefix>
+              person_outline
+            </mat-icon>
+
+            <input
+              matInput
+              type="text"
+              formControlName="nombre"
+              autocomplete="name"
+            />
+
+            @if (
+              form.controls.nombre.touched &&
+              form.controls.nombre.invalid
+            ) {
+
+              <mat-error>
+                {{ nombreError }}
+              </mat-error>
+
+            }
+
+          </mat-form-field>
+
+
+          <!-- =========================
+               CORREO
+               ========================= -->
+
+          <mat-form-field
+            appearance="outline"
+            class="full-width"
+          >
+
+            <mat-label>
+              Correo electrónico
+            </mat-label>
+
+            <mat-icon matPrefix>
+              mail_outline
+            </mat-icon>
+
+            <input
+              matInput
+              type="email"
+              formControlName="correo"
+              autocomplete="email"
+            />
+
+            @if (
+              form.controls.correo.touched &&
+              form.controls.correo.invalid
+            ) {
+
+              <mat-error>
+                {{ correoError }}
+              </mat-error>
+
+            }
+
+          </mat-form-field>
+
+
+          <!-- =========================
+               CONTRASEÑA
+               ========================= -->
+
+          <mat-form-field
+            appearance="outline"
+            class="full-width"
+          >
+
+            <mat-label>
+              Contraseña
+            </mat-label>
+
+            <mat-icon matPrefix>
+              lock_outline
+            </mat-icon>
+
+            <input
+              matInput
+              [type]="mostrarPassword() ? 'text' : 'password'"
+              formControlName="password"
+              autocomplete="new-password"
+            />
+
+            <button
+              mat-icon-button
+              matSuffix
+              type="button"
+              (click)="alternarPassword()"
+              [attr.aria-label]="
+                mostrarPassword()
+                  ? 'Ocultar contraseña'
+                  : 'Mostrar contraseña'
+              "
+            >
+
+              <mat-icon>
+                {{ mostrarPassword() ? 'visibility_off' : 'visibility' }}
+              </mat-icon>
+
+            </button>
+
+            @if (
+              form.controls.password.touched &&
+              form.controls.password.invalid
+            ) {
+
+              <mat-error>
+                {{ passwordError }}
+              </mat-error>
+
+            }
+
+          </mat-form-field>
+
+
+          <!-- =========================
+               INDICADOR DE CONTRASEÑA
+               ========================= -->
+
+          @if (form.controls.password.value) {
+
+            <div class="password-strength">
+
+              <div class="strength-header">
+
+                <span>
+                  Seguridad de contraseña
+                </span>
+
+                <span
+                  class="strength-text"
+                  [class.strength-weak]="fortalezaPassword() <= 2"
+                  [class.strength-medium]="
+                    fortalezaPassword() > 2 &&
+                    fortalezaPassword() <= 4
+                  "
+                  [class.strength-strong]="fortalezaPassword() > 4"
+                >
+                  {{ textoFortaleza() }}
+                </span>
+
+              </div>
+
+              <div class="strength-bars">
+
+                @for (bar of [1, 2, 3, 4, 5]; track bar) {
+
+                  <span
+                    class="strength-bar"
+                    [class.active]="bar <= fortalezaPassword()"
+                  ></span>
+
+                }
+
+              </div>
+
+            </div>
+
+          }
+
+
+          <!-- =========================
+               CONFIRMAR CONTRASEÑA
+               ========================= -->
+
+          <mat-form-field
+            appearance="outline"
+            class="full-width"
+          >
+
+            <mat-label>
+              Confirmar contraseña
+            </mat-label>
+
+            <mat-icon matPrefix>
+              lock_outline
+            </mat-icon>
+
+            <input
+              matInput
+              [type]="mostrarConfirmacion() ? 'text' : 'password'"
+              formControlName="confirmarPassword"
+              autocomplete="new-password"
+            />
+
+            <button
+              mat-icon-button
+              matSuffix
+              type="button"
+              (click)="alternarConfirmacion()"
+              [attr.aria-label]="
+                mostrarConfirmacion()
+                  ? 'Ocultar contraseña'
+                  : 'Mostrar contraseña'
+              "
+            >
+
+              <mat-icon>
+                {{
+                  mostrarConfirmacion()
+                    ? 'visibility_off'
+                    : 'visibility'
+                }}
+              </mat-icon>
+
+            </button>
+
+            @if (
+              form.controls.confirmarPassword.touched &&
+              (
+                form.controls.confirmarPassword.invalid ||
+                form.hasError('passwordNoCoincide')
+              )
+            ) {
+
+              <mat-error>
+                {{ confirmarPasswordError }}
+              </mat-error>
+
+            }
+
+          </mat-form-field>
+
+
+          <!-- =========================
+               ROL
+               ========================= -->
+
+          <mat-form-field
+            appearance="outline"
+            class="full-width"
+          >
+
+            <mat-label>
+              Rol
+            </mat-label>
+
+            <mat-icon matPrefix>
+              admin_panel_settings
+            </mat-icon>
+
+            <mat-select formControlName="idRol">
+
+              @if (cargandoRoles()) {
+
+                <mat-option disabled>
+                  Cargando roles...
+                </mat-option>
+
+              } @else {
+
+                @for (rol of roles(); track rol.idRol) {
+
+                  <mat-option [value]="rol.idRol">
+                    {{ rol.nombre }}
+                  </mat-option>
+
+                }
+
+              }
+
+            </mat-select>
+
+            @if (
+              form.controls.idRol.touched &&
+              form.controls.idRol.invalid
+            ) {
+
+              <mat-error>
+                {{ rolError }}
+              </mat-error>
+
+            }
+
+          </mat-form-field>
+
+
+          <!-- =========================
+               ERROR DE ROLES
+               ========================= -->
+
+          @if (errorRoles()) {
+
+            <div class="roles-error">
+
+              <mat-icon>
+                error_outline
+              </mat-icon>
+
+              <span>
+                {{ errorRoles() }}
+              </span>
+
+              <button
+                type="button"
+                class="retry-button"
+                (click)="cargarRoles()"
+              >
+                Reintentar
+              </button>
+
+            </div>
+
+          }
+
+
+          <!-- =========================
+               BOTONES
+               ========================= -->
+
+          <div class="form-actions">
+
+            <button
+              type="button"
+              class="btn-cancel"
+              (click)="cancelar()"
+              [disabled]="guardando()"
+            >
+              Cancelar
+            </button>
+
+
+            <button
+              type="submit"
+              class="btn-submit"
+              [disabled]="form.invalid || guardando()"
+            >
+
+              @if (guardando()) {
+
+                <mat-spinner
+                  diameter="20"
+                ></mat-spinner>
+
+                <span>
+                  Registrando...
+                </span>
+
+              } @else {
+
+                <span>
+                  Registrar usuario
+                </span>
+
+                <mat-icon>
+                  arrow_forward
+                </mat-icon>
+
+              }
+
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
+
+    </section>
+
+  </div>
+
+</div>
