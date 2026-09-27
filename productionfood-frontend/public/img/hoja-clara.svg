@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" fill="none" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="clara" x1="0" y1="1" x2="1" y2="0" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#D2EBC6"/>
+      <stop offset="1" stop-color="#EAF7E4"/>
+    </linearGradient>
+  </defs>
+  <path d="M12 228Q12 112 228 12Q128 228 12 228Z" fill="url(#clara)"/>
+  <path d="M12 228Q118 122 228 12" stroke="#C6E3B9" stroke-width="6" stroke-linecap="round"/>
+</svg>

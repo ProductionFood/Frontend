@@ -7,6 +7,8 @@
 
 html {
   height: 100%;
+  scroll-behavior: smooth;
+
   @include mat.theme(
     (
       color: (
@@ -36,4 +38,39 @@ body {
   margin: 0;
   height: 100%;
 }
-/* You can add global styles to this file, and also import other style files */
+
+/* =========================================================
+   ProductionFood — Global reset
+   Base mínima compartida por toda la app.
+   Los tokens del landing viven en landing.component.scss.
+   ========================================================= */
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+/* =========================================================
+   Focus visible global
+   ========================================================= */
+:focus-visible {
+  outline: 2px solid #1FAA70;
+  outline-offset: 2px;
+}
