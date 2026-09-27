@@ -3,20 +3,98 @@
   <head>
     <meta charset="utf-8" />
     <title>ProductionFood — Planificación y Gestión de la Producción</title>
-    <meta name="description" content="Sistema Web para la Planificación y Gestión de la Producción en Pymes de Alimentos. Inventario, recetas, pedidos, compras y reportes en un solo lugar." />
+    <meta
+      name="description"
+      content="Sistema Web para la Planificación y Gestión de la Producción en Pymes de Alimentos. Inventario, recetas, pedidos, compras y reportes en un solo lugar."
+    />
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+
+    <!-- Favicons adaptativos -->
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="logos/isotipo-claro.svg"
+      media="(prefers-color-scheme: light)"
+    />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="logos/isotipo-oscuro.svg"
+      media="(prefers-color-scheme: dark)"
+    />
+
+    <!-- Open Graph (para cuando compartan el link en WhatsApp, LinkedIn, etc.) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="ProductionFood — Planificación y Gestión de la Producción" />
+    <meta
+      property="og:description"
+      content="Organiza, controla y optimiza cada etapa de tu producción. Inventario, recetas, pedidos, compras y reportes en un solo lugar."
+    />
+    <meta property="og:image" content="https://productionfood.com/img/mockup-dispositivos.webp" />
+    <meta property="og:url" content="https://productionfood.com" />
+    <meta property="og:locale" content="es_CO" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="ProductionFood — Planificación y Gestión de la Producción" />
+    <meta
+      name="twitter:description"
+      content="Organiza, controla y optimiza cada etapa de tu producción en una sola plataforma."
+    />
+    <meta name="twitter:image" content="https://productionfood.com/img/mockup-dispositivos.webp" />
+
+    <!-- Fuentes: Roboto para Material, Inter + Zilla Slab para el landing -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Zilla+Slab:wght@500;600;700&family=Roboto:wght@300;400;500&display=swap"
       rel="stylesheet"
     />
     <link
       href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined"
       rel="stylesheet"
     />
+
+    <!-- Preload del mockup del hero (LCP del landing) -->
+    <link
+      rel="preload"
+      as="image"
+      href="img/mockup-dispositivos.webp"
+      type="image/webp"
+      fetchpriority="high"
+    />
+
+    <!-- JSON-LD Structured Data (SEO) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "ProductionFood",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Cloud",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "COP",
+          "availability": "https://schema.org/InStock"
+        },
+        "description": "Sistema Web para la Planificación y Gestión de la Producción en Pymes de Alimentos.",
+        "featureList": [
+          "Planificación de producción",
+          "Gestión de recursos e inventarios",
+          "Control y seguimiento en tiempo real",
+          "Reportes y análisis",
+          "Gestión de usuarios y roles",
+          "Notificaciones y alertas"
+        ],
+        "author": {
+          "@type": "Organization",
+          "name": "ProductionFood",
+          "url": "https://productionfood.com"
+        }
+      }
+    </script>
   </head>
   <body>
     <app-root></app-root>
