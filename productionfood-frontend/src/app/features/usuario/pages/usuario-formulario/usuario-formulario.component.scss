@@ -1,0 +1,875 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+/* =========================================================
+   CONTENEDOR PRINCIPAL
+   ========================================================= */
+
+.registro-page {
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 40px 24px;
+
+  background:
+    radial-gradient(
+      circle at 10% 10%,
+      rgba(31, 143, 83, 0.08),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 90% 90%,
+      rgba(12, 55, 62, 0.08),
+      transparent 35%
+    ),
+    #f4f8f6;
+
+  overflow: hidden;
+}
+
+/* =========================================================
+   TARJETA
+   ========================================================= */
+
+.registro-card {
+  width: min(1180px, 100%);
+  min-height: 690px;
+
+  display: grid;
+  grid-template-columns: 44% 56%;
+
+  overflow: hidden;
+
+  border-radius: 24px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 24px 60px rgba(8, 45, 43, 0.14),
+    0 8px 25px rgba(8, 45, 43, 0.07);
+
+  animation: cardEnter 0.7s ease-out both;
+}
+
+/* =========================================================
+   PANEL IZQUIERDO
+   ========================================================= */
+
+.registro-brand {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      145deg,
+      #083f39 0%,
+      #075447 48%,
+      #0b3935 100%
+    );
+
+  color: #ffffff;
+}
+
+/* =========================================================
+   DECORACIONES
+   ========================================================= */
+
+.brand-decoration {
+  position: absolute;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+}
+
+.brand-decoration-top {
+  width: 430px;
+  height: 430px;
+
+  top: -220px;
+  left: -180px;
+
+  background: rgba(38, 177, 93, 0.09);
+
+  animation: floatDecoration 8s ease-in-out infinite;
+}
+
+.brand-decoration-bottom {
+  width: 390px;
+  height: 390px;
+
+  right: -230px;
+  bottom: -220px;
+
+  background: rgba(41, 184, 100, 0.07);
+
+  animation: floatDecoration 10s ease-in-out infinite reverse;
+}
+
+/* =========================================================
+   CONTENIDO MARCA
+   ========================================================= */
+
+.brand-content {
+  position: relative;
+  z-index: 2;
+
+  width: 100%;
+
+  padding: 60px 55px;
+
+  text-align: center;
+
+  animation: brandEnter 0.8s 0.15s ease-out both;
+}
+
+/* =========================================================
+   LOGO
+   ========================================================= */
+
+.brand-logo {
+  display: block;
+
+  width: min(360px, 100%);
+  max-height: 110px;
+
+  object-fit: contain;
+
+  margin: 0 auto 42px;
+
+  /*
+   * El logo-horizontal.svg debe tener sus colores originales.
+   * No aplicamos invert para no dañarlo.
+   */
+
+  animation: logoEnter 0.8s 0.2s ease-out both;
+}
+
+/* =========================================================
+   LINEA VERDE
+   ========================================================= */
+
+.brand-line {
+  width: 260px;
+  height: 2px;
+
+  margin: 0 auto 34px;
+
+  border-radius: 10px;
+
+  background: #28b463;
+
+  animation: lineGrow 0.7s 0.45s ease-out both;
+}
+
+/* =========================================================
+   MENSAJE
+   ========================================================= */
+
+.brand-message {
+  animation: fadeUp 0.7s 0.45s ease-out both;
+}
+
+.brand-content h2 {
+  margin: 0;
+
+  font-family:
+    Georgia,
+    'Times New Roman',
+    serif;
+
+  font-size: 28px;
+  line-height: 1.2;
+
+  font-weight: 700;
+
+  color: #ffffff;
+}
+
+.brand-slogan {
+  margin: 4px 0 50px;
+
+  font-family:
+    Georgia,
+    'Times New Roman',
+    serif;
+
+  font-size: 23px;
+  line-height: 1.2;
+
+  font-style: italic;
+  font-weight: 600;
+
+  color: #39c76b;
+}
+
+/* =========================================================
+   CARACTERÍSTICAS
+   ========================================================= */
+
+.brand-features {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 22px;
+
+  width: 100%;
+
+  animation: fadeUp 0.7s 0.65s ease-out both;
+}
+
+.brand-feature {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 12px;
+
+  min-width: 0;
+}
+
+.feature-icon {
+  width: 54px;
+  height: 54px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid rgba(57, 199, 107, 0.65);
+
+  border-radius: 50%;
+
+  color: #39c76b;
+
+  background: rgba(57, 199, 107, 0.06);
+
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.brand-feature:hover .feature-icon {
+  transform: translateY(-5px) scale(1.05);
+
+  background: rgba(57, 199, 107, 0.14);
+
+  box-shadow:
+    0 8px 20px rgba(57, 199, 107, 0.15);
+}
+
+.feature-icon mat-icon {
+  width: 25px;
+  height: 25px;
+
+  font-size: 25px;
+}
+
+.brand-feature span {
+  font-size: 13px;
+  line-height: 1.45;
+
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.feature-divider {
+  width: 1px;
+  height: 72px;
+
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* =========================================================
+   FORMULARIO
+   ========================================================= */
+
+.registro-form {
+  display: flex;
+  align-items: center;
+
+  background: #ffffff;
+}
+
+.form-container {
+  width: 100%;
+  max-width: 620px;
+
+  margin: 0 auto;
+
+  padding: 55px 68px;
+
+  animation: formEnter 0.75s 0.2s ease-out both;
+}
+
+/* =========================================================
+   CABECERA
+   ========================================================= */
+
+.form-heading {
+  margin-bottom: 32px;
+}
+
+.heading-line {
+  width: 55px;
+  height: 3px;
+
+  margin-bottom: 18px;
+
+  border-radius: 10px;
+
+  background: #20a45a;
+
+  animation: lineGrow 0.6s 0.4s ease-out both;
+}
+
+.form-heading h1 {
+  margin: 0 0 10px;
+
+  font-family:
+    Georgia,
+    'Times New Roman',
+    serif;
+
+  font-size: 38px;
+  line-height: 1.15;
+
+  font-weight: 700;
+
+  color: #203b3c;
+}
+
+.form-heading h1 span {
+  color: #1c9b51;
+}
+
+.form-heading p {
+  margin: 0;
+
+  font-size: 15px;
+  line-height: 1.5;
+
+  color: #738083;
+}
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+.form {
+  display: flex;
+  flex-direction: column;
+
+  gap: 13px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+/* =========================================================
+   MATERIAL
+   ========================================================= */
+
+::ng-deep .mat-mdc-form-field {
+  --mdc-outlined-text-field-container-shape: 8px;
+}
+
+::ng-deep .mat-mdc-text-field-wrapper {
+  background: #ffffff;
+}
+
+::ng-deep
+.mat-mdc-form-field:not(.mat-form-field-invalid)
+.mdc-notched-outline__leading,
+::ng-deep
+.mat-mdc-form-field:not(.mat-form-field-invalid)
+.mdc-notched-outline__notch,
+::ng-deep
+.mat-mdc-form-field:not(.mat-form-field-invalid)
+.mdc-notched-outline__trailing {
+  border-color: #d6e0dd !important;
+}
+
+::ng-deep
+.mat-mdc-form-field:hover
+.mdc-notched-outline__leading,
+::ng-deep
+.mat-mdc-form-field:hover
+.mdc-notched-outline__notch,
+::ng-deep
+.mat-mdc-form-field:hover
+.mdc-notched-outline__trailing {
+  border-color: #229b56 !important;
+}
+
+::ng-deep
+.mat-mdc-form-field.mat-focused
+.mdc-notched-outline__leading,
+::ng-deep
+.mat-mdc-form-field.mat-focused
+.mdc-notched-outline__notch,
+::ng-deep
+.mat-mdc-form-field.mat-focused
+.mdc-notched-outline__trailing {
+  border-color: #168c4b !important;
+  border-width: 2px !important;
+}
+
+::ng-deep
+.mat-mdc-form-field.mat-focused
+.mat-mdc-floating-label {
+  color: #168c4b !important;
+}
+
+::ng-deep
+.mat-mdc-form-field
+.mat-icon {
+  color: #54706d;
+}
+
+::ng-deep
+.mat-mdc-form-field.mat-focused
+.mat-icon {
+  color: #168c4b;
+}
+
+/* =========================================================
+   PASSWORD STRENGTH
+   ========================================================= */
+
+.password-strength {
+  margin-top: -5px;
+  margin-bottom: 2px;
+
+  padding: 0 4px;
+
+  animation: fadeUp 0.25s ease-out;
+}
+
+.strength-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 6px;
+
+  font-size: 11px;
+
+  color: #7a8987;
+}
+
+.strength-text {
+  font-weight: 700;
+}
+
+.strength-weak {
+  color: #d9534f;
+}
+
+.strength-medium {
+  color: #d19a28;
+}
+
+.strength-strong {
+  color: #168c4b;
+}
+
+.strength-bars {
+  display: flex;
+
+  gap: 5px;
+}
+
+.strength-bar {
+  flex: 1;
+
+  height: 4px;
+
+  border-radius: 10px;
+
+  background: #e3eae7;
+
+  transition:
+    background 0.25s ease,
+    transform 0.25s ease;
+}
+
+.strength-bar.active {
+  background: #20a45a;
+
+  animation: strengthPop 0.25s ease-out;
+}
+
+/* =========================================================
+   ERROR ROLES
+   ========================================================= */
+
+.roles-error {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 10px 12px;
+
+  border-radius: 8px;
+
+  background: #fff5f5;
+
+  color: #b42318;
+
+  font-size: 13px;
+
+  animation: fadeUp 0.25s ease-out;
+}
+
+.roles-error mat-icon {
+  width: 20px;
+  height: 20px;
+
+  font-size: 20px;
+}
+
+.retry-button {
+  margin-left: auto;
+
+  border: 0;
+
+  background: transparent;
+
+  color: #168c4b;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.retry-button:hover {
+  text-decoration: underline;
+}
+
+/* =========================================================
+   BOTONES
+   ========================================================= */
+
+.form-actions {
+  display: grid;
+
+  grid-template-columns: 1fr 1.35fr;
+
+  gap: 14px;
+
+  margin-top: 12px;
+}
+
+.btn-cancel,
+.btn-submit {
+  height: 52px;
+
+  border-radius: 9px;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.btn-cancel {
+  border: 1px solid #d5dfdc;
+
+  background: #ffffff;
+
+  color: #50605f;
+}
+
+.btn-cancel:hover:not(:disabled) {
+  background: #f4f8f6;
+
+  border-color: #b9cbc5;
+
+  transform: translateY(-1px);
+}
+
+.btn-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 12px;
+
+  border: none;
+
+  background:
+    linear-gradient(
+      135deg,
+      #0d8050,
+      #159b55
+    );
+
+  color: #ffffff;
+
+  box-shadow:
+    0 7px 18px rgba(21, 155, 85, 0.22);
+}
+
+.btn-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 10px 24px rgba(21, 155, 85, 0.28);
+}
+
+.btn-submit:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-submit:disabled,
+.btn-cancel:disabled {
+  cursor: not-allowed;
+
+  opacity: 0.55;
+
+  box-shadow: none;
+}
+
+.btn-submit mat-icon {
+  font-size: 21px;
+
+  transition: transform 0.2s ease;
+}
+
+.btn-submit:hover:not(:disabled) mat-icon {
+  transform: translateX(4px);
+}
+
+/* =========================================================
+   ANIMACIONES
+   ========================================================= */
+
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(25px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes brandEnter {
+  from {
+    opacity: 0;
+    transform: translateX(-25px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes formEnter {
+  from {
+    opacity: 0;
+    transform: translateX(25px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes logoEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-15px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes lineGrow {
+  from {
+    opacity: 0;
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes floatDecoration {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+
+  50% {
+    transform: translate(15px, 12px);
+  }
+}
+
+@keyframes strengthPop {
+  from {
+    transform: scaleX(0.7);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 950px) {
+
+  .registro-card {
+    grid-template-columns: 1fr;
+
+    max-width: 680px;
+  }
+
+  .registro-brand {
+    min-height: 360px;
+  }
+
+  .brand-content {
+    padding: 42px 35px;
+  }
+
+  .brand-logo {
+    width: 300px;
+
+    margin-bottom: 25px;
+  }
+
+  .brand-line {
+    margin-bottom: 20px;
+  }
+
+  .brand-content h2 {
+    font-size: 24px;
+  }
+
+  .brand-slogan {
+    margin-bottom: 30px;
+  }
+
+  .form-container {
+    padding: 45px;
+  }
+}
+
+@media (max-width: 600px) {
+
+  .registro-page {
+    padding: 0;
+  }
+
+  .registro-card {
+    min-height: 100vh;
+
+    border-radius: 0;
+
+    box-shadow: none;
+  }
+
+  .registro-brand {
+    min-height: 330px;
+  }
+
+  .brand-content {
+    padding: 35px 25px;
+  }
+
+  .brand-logo {
+    width: 270px;
+  }
+
+  .brand-features {
+    gap: 8px;
+  }
+
+  .brand-feature span {
+    font-size: 11px;
+  }
+
+  .feature-divider {
+    height: 55px;
+  }
+
+  .feature-icon {
+    width: 45px;
+    height: 45px;
+  }
+
+  .form-container {
+    padding: 35px 24px;
+  }
+
+  .form-heading h1 {
+    font-size: 32px;
+  }
+
+  .form-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   REDUCE MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
