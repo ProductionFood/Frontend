@@ -1,0 +1,49 @@
+.dashboard {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.eyebrow {
+  color: #2d874a;
+  font-size: .8rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 8px 0 10px;
+  color: #21372a;
+}
+
+.intro p {
+  max-width: 720px;
+  color: #69756e;
+  line-height: 1.6;
+}
+
+.welcome-card {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+}
+
+.welcome-card mat-icon {
+  color: #2d874a;
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+}
+
+.welcome-card h2,
+.welcome-card p {
+  margin: 0;
+}
+
+.welcome-card p {
+  margin-top: 6px;
+  color: #69756e;
+}
