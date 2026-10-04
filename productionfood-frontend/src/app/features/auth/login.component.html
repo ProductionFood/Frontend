@@ -159,6 +159,7 @@
       <div class="card-visual" aria-hidden="true">
         <div class="visual-green"></div>
         <div class="visual-photo">
+          <!-- Imagen intercambiada: antes fondo2, ahora fondo1 -->
           <img src="/img/fondo2.jpeg" alt="">
         </div>
       </div>
@@ -317,13 +318,15 @@
           <button
             mat-raised-button
             class="submit-button stagger"
+            [class.is-loading]="cargando()"
+            [attr.aria-busy]="cargando()"
             style="--i: 4"
             type="submit"
             [disabled]="cargando()"
           >
             @if (cargando()) {
-              <mat-spinner diameter="21" aria-label="Iniciando sesión" />
-              <span>Iniciando sesión...</span>
+              <span class="btn-loader" aria-hidden="true"></span>
+              <span>Iniciando sesión</span>
             } @else {
               <span>Iniciar sesión</span>
               <mat-icon class="arrow" aria-hidden="true">arrow_forward</mat-icon>
