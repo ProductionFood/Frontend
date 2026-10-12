@@ -1,49 +1,73 @@
+:host {
+  display: block;
+  font-family: var(--fuente-texto);
+}
+
 .dashboard {
   max-width: 1100px;
   margin: 0 auto;
 }
 
 .eyebrow {
-  color: #2d874a;
-  font-size: .8rem;
+  font-size: 12px;
   font-weight: 800;
-  letter-spacing: .12em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
+  color: var(--verde-700);
 }
 
 h1 {
   margin: 8px 0 10px;
-  color: #21372a;
+  font-family: var(--fuente-display);
+  font-weight: 600;
+  font-size: clamp(24px, 3vw, 30px);
+  letter-spacing: -0.4px;
+  color: var(--verde-900);
 }
 
 .intro p {
   max-width: 720px;
-  color: #69756e;
+  font-size: 13px;
+  color: var(--tinta-600);
   line-height: 1.6;
 }
 
+/* Banner de bienvenida (mockup guía §MAIN) */
 .welcome-card {
   margin-top: 28px;
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 16px;
-  padding: 24px;
+  padding: 26px 32px;
+  border: none;
+  border-radius: var(--radio-l);
+  background: linear-gradient(90deg, #EAF2EE 0%, var(--verde-100) 55%, #F5E9D8 100%);
+  box-shadow: var(--sombra);
 }
 
 .welcome-card mat-icon {
-  color: #2d874a;
+  color: var(--verde-700);
   font-size: 40px;
   width: 40px;
   height: 40px;
 }
 
-.welcome-card h2,
-.welcome-card p {
+.welcome-card h2 {
   margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--tinta-600);
 }
 
 .welcome-card p {
-  margin-top: 6px;
-  color: #69756e;
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--tinta-600);
+}
+
+.welcome-card strong {
+  font-family: var(--fuente-display);
+  font-weight: 600;
+  color: var(--verde-900);
 }

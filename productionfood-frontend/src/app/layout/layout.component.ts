@@ -1,4 +1,4 @@
-import { Component, inject, signal, ViewChild } from '@angular/core';
+import { Component, computed, inject, signal, ViewChild } from '@angular/core';
 import {
   NavigationEnd,
   Router,
@@ -19,7 +19,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '../core/auth/auth.service';
 import {
   NavGrupo,
-  NavItem,
   NAV_GRUPOS
 } from './nav-items';
 
@@ -49,6 +48,28 @@ export class LayoutComponent {
   readonly modoCompacto = signal(false);
   readonly tituloActual = signal('Dashboard');
 
+  readonly iniciales = computed(() => {
+    const nombre = this.authService.usuario()?.nombre ?? 'Usuario';
+    return nombre
+      .split(' ')
+      .slice(0, 2)
+      .map(parte => parte.charAt(0))
+      .join('')
+      .toUpperCase();
+  });
+
+  readonly nombreRol = computed(() => {
+    const rol = this.authService.usuario()?.rol.nombre ?? '';
+    const nombres: Record<string, string> = {
+      ADMIN: 'Administrador',
+      PRODUCCION: 'Producción',
+      COMPRAS: 'Compras',
+      VENTAS: 'Ventas',
+      CONSULTA: 'Consulta'
+    };
+    return nombres[rol] ?? rol;
+  });
+
   @ViewChild('sidenav') private sidenav?: MatSidenav;
 
   constructor() {
@@ -72,16 +93,23 @@ export class LayoutComponent {
   }
 
   /**
-   * Módulos del grupo visibles para el rol actual.
+   * Grupos del sidebar visibles para el rol actual, precalculados con
+   * `computed`: la referencia no cambia entre navigaciones, así el `@for`
+   * del sidebar no vuelve a diferenciar el DOM al cambiar de módulo.
    * Ocultar el menú es cosmético (03-MATRIZ-ROLES.md §5); la autorización
    * real está en el backend.
    */
-  itemsVisibles(grupo: NavGrupo): NavItem[] {
+  readonly gruposVisibles = computed(() => {
     const rol = this.authService.rol();
-    return grupo.items.filter(
-      item => !item.roles || !rol || item.roles.includes(rol)
-    );
-  }
+    return this.grupos
+      .map(grupo => ({
+        ...grupo,
+        items: grupo.items.filter(
+          item => !item.roles || !rol || item.roles.includes(rol)
+        )
+      }))
+      .filter(grupo => grupo.items.length > 0);
+  });
 
   cerrarEnMovil(): void {
     if (this.modoCompacto()) {

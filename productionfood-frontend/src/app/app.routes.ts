@@ -1,30 +1,34 @@
-import { Routes } from '@angular/router';
+import { ActivatedRouteSnapshot, ResolveFn, Routes } from '@angular/router';
 
 import { authGuard } from './core/auth/auth.guard';
-import { rolGuard } from './core/auth/rol.guard';
 import { NAV_GRUPOS } from './layout/nav-items';
 
-/** Módulos con implementación real (no generan placeholder). */
-const MODULOS_REALES = ['dashboard', 'usuarios'];
+/** Módulos con implementación real (no redirigen a construcción). */
+const MODULOS_REALES = ['dashboard'];
 
 /**
- * Módulos pendientes: todos apuntan a la página "Módulo en construcción",
- * que recibe título, HU, descripción e icono desde `data` (input binding).
+ * Título del topbar para `/app/en-construccion/:ruta`, resuelto desde
+ * NAV_GRUPOS (fallback: "Módulo en construcción").
  */
-const rutasPendientes: Routes = NAV_GRUPOS
+const resolverTituloConstruccion: ResolveFn<string> = route => {
+  const item = NAV_GRUPOS.flatMap(grupo => grupo.items).find(
+    i => i.ruta === route.paramMap.get('ruta')
+  );
+  return item?.titulo ?? 'Módulo en construcción';
+};
+
+/**
+ * Módulos pendientes: solo redirigen a la ruta genérica
+ * `/app/en-construccion/:ruta`, que resuelve nombre, HU, descripción e icono
+ * desde NAV_GRUPOS. Un único componente compartido, sin duplicar rutas.
+ */
+const redirectsPendientes: Routes = NAV_GRUPOS
   .flatMap(grupo => grupo.items)
   .filter(item => !MODULOS_REALES.includes(item.ruta))
   .map(item => ({
     path: item.ruta,
-    loadComponent: () =>
-      import('./shared/components/modulo-en-construccion/modulo-en-construccion.component')
-        .then(m => m.ModuloEnConstruccionComponent),
-    data: {
-      titulo: item.titulo,
-      hu: item.hu,
-      descripcion: item.descripcion,
-      icono: item.icono
-    }
+    redirectTo: `en-construccion/${item.ruta}`,
+    pathMatch: 'full' as const
   }));
 
 export const routes: Routes = [
@@ -58,26 +62,19 @@ export const routes: Routes = [
           import('./features/dashboard/dashboard.component')
             .then(m => m.DashboardComponent)
       },
-      ...rutasPendientes,
       {
-        path: 'usuarios',
-        canActivate: [rolGuard(['ADMIN'])],
-        loadChildren: () =>
-          import('./features/usuario/usuario.routes')
-            .then(m => m.USUARIO_ROUTES)
-      },
-      {
-        // Ruta desconocida dentro de /app: módulo en construcción, no landing.
-        path: '**',
+        // Ruta única genérica para todos los módulos pendientes.
+        path: 'en-construccion/:ruta',
         loadComponent: () =>
-          import('./shared/components/modulo-en-construccion/modulo-en-construccion.component')
-            .then(m => m.ModuloEnConstruccionComponent),
-        data: {
-          titulo: 'Módulo',
-          descripcion:
-            'La ruta solicitada no existe o aún no está habilitada.',
-          icono: 'help'
-        }
+          import('./features/en-construccion/en-construccion.component')
+            .then(m => m.EnConstruccionComponent),
+        resolve: { titulo: resolverTituloConstruccion }
+      },
+      ...redirectsPendientes,
+      {
+        // Ruta desconocida dentro de /app: página genérica de construcción.
+        path: '**',
+        redirectTo: 'en-construccion/desconocido'
       }
     ]
   },
