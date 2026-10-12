@@ -1,9 +1,13 @@
-<mat-sidenav-container class="shell">
+<mat-sidenav-container
+  class="shell"
+  [class.colapsado]="colapsado() && !modoCompacto()"
+>
   <mat-sidenav
     #sidenav
     [mode]="modoCompacto() ? 'over' : 'side'"
     [opened]="!modoCompacto()"
     class="sidenav"
+    [class.colapsado]="colapsado() && !modoCompacto()"
   >
     <div class="brand">
       <div class="brand-icon">
@@ -21,9 +25,10 @@
         routerLink="/app/dashboard"
         routerLinkActive="activo"
         (click)="cerrarEnMovil()"
+        [attr.title]="colapsado() ? 'Dashboard' : null"
       >
         <mat-icon matListItemIcon>dashboard</mat-icon>
-        <span matListItemTitle>Dashboard</span>
+        <span class="item-titulo" matListItemTitle>Dashboard</span>
       </a>
 
       @for (grupo of gruposVisibles(); track grupo.titulo) {
@@ -32,12 +37,13 @@
         @for (item of grupo.items; track item.ruta) {
           <a
             mat-list-item
-            [routerLink]="['/app', item.ruta]"
+            [routerLink]="enlaceItem(item)"
             routerLinkActive="activo"
             (click)="cerrarEnMovil()"
+            [attr.title]="colapsado() ? item.titulo : null"
           >
             <mat-icon matListItemIcon>{{ item.icono }}</mat-icon>
-            <span matListItemTitle>{{ item.titulo }}</span>
+            <span class="item-titulo" matListItemTitle>{{ item.titulo }}</span>
           </a>
         }
       }
@@ -59,7 +65,7 @@
       <button
         mat-icon-button
         type="button"
-        (click)="sidenav.toggle()"
+        (click)="alternarMenu()"
         aria-label="Mostrar u ocultar menú"
       >
         <mat-icon>menu</mat-icon>

@@ -18,7 +18,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { AuthService } from '../core/auth/auth.service';
 import {
+  MODULOS_REALES,
   NavGrupo,
+  NavItem,
   NAV_GRUPOS
 } from './nav-items';
 
@@ -46,6 +48,7 @@ export class LayoutComponent {
 
   readonly grupos: NavGrupo[] = NAV_GRUPOS;
   readonly modoCompacto = signal(false);
+  readonly colapsado = signal(false);
   readonly tituloActual = signal('Dashboard');
 
   readonly iniciales = computed(() => {
@@ -115,6 +118,33 @@ export class LayoutComponent {
     if (this.modoCompacto()) {
       this.sidenav?.close();
     }
+  }
+
+  /**
+   * Ruta del sidebar para un módulo. Los implementados van a su ruta real; los
+   * pendientes, directo a `/app/en-construccion/:ruta` para que `routerLinkActive`
+   * coincida con la URL final y el ítem quede marcado (si solo redirigiera, el
+   * link `/app/<ruta>` no coincidiría y no se resaltaría).
+   */
+  enlaceItem(item: NavItem): string[] {
+    return MODULOS_REALES.includes(item.ruta)
+      ? ['/app', item.ruta]
+      : ['/app', 'en-construccion', item.ruta];
+  }
+
+  /**
+   * En móvil abre/cierra el sidenav (modo over). En escritorio alterna el modo
+   * colapsado (solo íconos). El ancho del sidebar y el margen del contenido se
+   * animan por CSS (layout.component.scss), por eso no hay que forzar el
+   * recálculo de márgenes de Material aquí.
+   */
+  alternarMenu(): void {
+    if (this.modoCompacto()) {
+      this.sidenav?.toggle();
+      return;
+    }
+
+    this.colapsado.update(valor => !valor);
   }
 
   cerrarSesion(): void {

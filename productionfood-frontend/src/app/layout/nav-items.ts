@@ -22,6 +22,13 @@ export interface NavGrupo {
   items: NavItem[];
 }
 
+/**
+ * Módulos con implementación real (tienen componente propio en vez de la
+ * página "en construcción"). El sidebar enlaza directo a estas rutas; a los
+ * pendientes, a `/app/en-construccion/:ruta` para que el ítem quede activo.
+ */
+export const MODULOS_REALES = ['dashboard', 'usuarios', 'bitacora'];
+
 export const NAV_GRUPOS: NavGrupo[] = [
   {
     titulo: 'Operación',
