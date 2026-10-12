@@ -12,7 +12,7 @@ html {
   @include mat.theme(
     (
       color: (
-        primary: mat.$rose-palette,
+        primary: mat.$green-palette,
         tertiary: mat.$red-palette,
       ),
       typography: Roboto,
@@ -23,7 +23,7 @@ html {
 
 body {
   // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
+  // `dark` to enable the dark color theme, or `light dark` to defer to the
   // user's system settings.
   color-scheme: light;
 
@@ -37,6 +37,36 @@ body {
   // Reset the user agent margin.
   margin: 0;
   height: 100%;
+}
+
+/* =========================================================
+   ProductionFood — Guía de diseño (tokens globales)
+   ========================================================= */
+:root {
+  /* Marca */
+  --verde-900:#0E3B2A; --verde-700:#14653F; --verde-500:#1FAA70;
+  --verde-300:#8FD6B4; --verde-100:#E4F5ED;
+  --navy-900:#101B27; --navy-700:#1B2A3B;
+
+  /* Estados */
+  --azul-500:#3B82F6; --azul-100:#DCE9FE;
+  --naranja-500:#F5A524; --naranja-100:#FCEBCB;
+  --morado-500:#8B5CF6; --morado-100:#EAE1FC;
+  --rojo-500:#E5484D; --rojo-100:#FBE1E1;
+
+  /* Neutros */
+  --tinta-900:#1F2A24; --tinta-600:#5B6B63; --tinta-400:#8B978F;
+  --linea:#E2E8E3; --fondo:#F5F7F5; --blanco:#FFFFFF;
+
+  /* Tipografía */
+  --fuente-display:'Zilla Slab','Georgia',serif;
+  --fuente-texto:'Inter','Segoe UI',sans-serif;
+
+  /* Radios */
+  --radio-s:6px; --radio-m:10px; --radio-l:16px;
+
+  /* Sombra única (tarjetas con datos) */
+  --sombra:0 1px 2px rgba(16,27,39,.06), 0 4px 10px rgba(16,27,39,.05);
 }
 
 /* =========================================================
@@ -73,4 +103,14 @@ ul {
 :focus-visible {
   outline: 2px solid #1FAA70;
   outline-offset: 2px;
+}
+
+/* =========================================================
+   Material Symbols — los mat-icon usan ligaduras de texto;
+   sin esta regla se dibujan con la fuente del sistema.
+   ========================================================= */
+mat-icon {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
 }

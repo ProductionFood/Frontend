@@ -1,0 +1,83 @@
+:host {
+  font-family: var(--fuente-texto);
+}
+
+.en-construccion {
+  min-height: 60vh;
+  display: grid;
+  place-items: center;
+}
+
+.tarjeta {
+  max-width: 560px;
+  padding: clamp(24px, 3vw, 40px);
+  text-align: center;
+  background: var(--blanco);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio-l);
+  box-shadow: var(--sombra);
+  transition: transform var(--motion-fast, 150ms ease),
+              border-color var(--motion-fast, 150ms ease),
+              box-shadow var(--motion-fast, 150ms ease);
+}
+
+.tarjeta:hover {
+  transform: translateY(-2px);
+  border-color: var(--verde-300);
+  box-shadow: 0 4px 12px rgba(16, 27, 39, 0.08), 0 12px 24px rgba(16, 27, 39, 0.06);
+}
+
+.encabezado {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.chip {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--verde-100);
+  color: var(--verde-700);
+}
+
+.chip-estado {
+  background: var(--naranja-100);
+  color: #92610B;
+}
+
+.card-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  background: var(--verde-100);
+  color: var(--verde-700);
+}
+
+.card-icon mat-icon {
+  font-size: 26px;
+  width: 26px;
+  height: 26px;
+}
+
+h1 {
+  margin: 0 0 10px;
+  font-family: var(--fuente-display);
+  font-weight: 600;
+  font-size: 24px;
+  color: var(--verde-900);
+}
+
+.descripcion {
+  margin: 0 0 28px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--tinta-600);
+}

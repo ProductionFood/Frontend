@@ -150,7 +150,7 @@ export class LoginComponent {
       return;
     }
 
-    if (error.status === 401) {
+    if (error.status === 401 || error.status === 409) {
       this.errorServidor.set('Credenciales incorrectas.');
       return;
     }

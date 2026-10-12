@@ -1,7 +1,35 @@
-import { Routes } from '@angular/router';
+import { ActivatedRouteSnapshot, ResolveFn, Routes } from '@angular/router';
 
 import { authGuard } from './core/auth/auth.guard';
-import { rolGuard } from './core/auth/rol.guard';
+import { NAV_GRUPOS } from './layout/nav-items';
+
+/** Módulos con implementación real (no redirigen a construcción). */
+const MODULOS_REALES = ['dashboard'];
+
+/**
+ * Título del topbar para `/app/en-construccion/:ruta`, resuelto desde
+ * NAV_GRUPOS (fallback: "Módulo en construcción").
+ */
+const resolverTituloConstruccion: ResolveFn<string> = route => {
+  const item = NAV_GRUPOS.flatMap(grupo => grupo.items).find(
+    i => i.ruta === route.paramMap.get('ruta')
+  );
+  return item?.titulo ?? 'Módulo en construcción';
+};
+
+/**
+ * Módulos pendientes: solo redirigen a la ruta genérica
+ * `/app/en-construccion/:ruta`, que resuelve nombre, HU, descripción e icono
+ * desde NAV_GRUPOS. Un único componente compartido, sin duplicar rutas.
+ */
+const redirectsPendientes: Routes = NAV_GRUPOS
+  .flatMap(grupo => grupo.items)
+  .filter(item => !MODULOS_REALES.includes(item.ruta))
+  .map(item => ({
+    path: item.ruta,
+    redirectTo: `en-construccion/${item.ruta}`,
+    pathMatch: 'full' as const
+  }));
 
 export const routes: Routes = [
   {
@@ -35,29 +63,18 @@ export const routes: Routes = [
             .then(m => m.DashboardComponent)
       },
       {
-        path: 'pedidos',
+        // Ruta única genérica para todos los módulos pendientes.
+        path: 'en-construccion/:ruta',
         loadComponent: () =>
-          import('./features/dashboard/dashboard.component')
-            .then(m => m.DashboardComponent)
+          import('./features/en-construccion/en-construccion.component')
+            .then(m => m.EnConstruccionComponent),
+        resolve: { titulo: resolverTituloConstruccion }
       },
+      ...redirectsPendientes,
       {
-        path: 'produccion',
-        loadComponent: () =>
-          import('./features/dashboard/dashboard.component')
-            .then(m => m.DashboardComponent)
-      },
-      {
-        path: 'compras',
-        loadComponent: () =>
-          import('./features/dashboard/dashboard.component')
-            .then(m => m.DashboardComponent)
-      },
-      {
-        path: 'usuarios',
-        canActivate: [rolGuard(['ADMIN'])],
-        loadChildren: () =>
-          import('./features/usuario/usuario.routes')
-            .then(m => m.USUARIO_ROUTES)
+        // Ruta desconocida dentro de /app: página genérica de construcción.
+        path: '**',
+        redirectTo: 'en-construccion/desconocido'
       }
     ]
   },
