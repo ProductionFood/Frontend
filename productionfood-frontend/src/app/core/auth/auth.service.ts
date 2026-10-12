@@ -34,7 +34,11 @@ interface LoginDto {
 
 interface LoginResponse {
   token: string;
-  usuario: Usuario;
+  tipo: string;
+  expiresIn: number;
+  correo: string;
+  nombre: string;
+  rol: string;
 }
 
 interface JwtPayload {
@@ -153,14 +157,30 @@ export class AuthService {
       response.token
     );
 
+    const payload =
+      this.decodificarToken(
+        response.token
+      );
+
+    const usuario: Usuario = {
+      idUsuario: Number(
+        payload?.sub ?? 0
+      ),
+      nombre: response.nombre,
+      correo: response.correo,
+      activo: true,
+      rol: {
+        idRol: 0,
+        nombre: response.rol
+      }
+    };
+
     localStorage.setItem(
       this.usuarioKey,
-      JSON.stringify(response.usuario)
+      JSON.stringify(usuario)
     );
 
-    this.usuario.set(
-      response.usuario
-    );
+    this.usuario.set(usuario);
   }
 
   private restaurarSesion(): void {
