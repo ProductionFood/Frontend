@@ -18,6 +18,12 @@ export interface CrearUsuarioDto {
   idRol: number;
 }
 
+export interface ActualizarUsuarioDto {
+  nombre: string;
+  correo: string;
+  idRol: number;
+}
+
 export interface Usuario {
   idUsuario: number;
   nombre: string;
@@ -25,6 +31,15 @@ export interface Usuario {
   activo: boolean;
   rol: {
     idRol: number;
-    nombre: string;
+    nombre: RolNombre | string;
   };
+}
+
+export interface UsuarioFiltro {
+  busqueda?: string;
+  idRol?: number;
+  activo?: boolean;
+  page: number;
+  size: number;
+  sort?: string;
 }

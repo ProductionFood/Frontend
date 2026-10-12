@@ -1,0 +1,89 @@
+<header class="page-header">
+  <div>
+    <h1>Bitácora de auditoría</h1>
+    <p>Registro de solo lectura de las acciones realizadas en el sistema.</p>
+  </div>
+</header>
+
+<section class="filtros">
+  <mat-form-field appearance="outline" class="filtro-fechas">
+    <mat-label>Rango de fechas</mat-label>
+    <mat-date-range-input [formGroup]="filtros" [rangePicker]="picker">
+      <input matStartDate formControlName="desde" placeholder="Desde" />
+      <input matEndDate formControlName="hasta" placeholder="Hasta" />
+    </mat-date-range-input>
+    <mat-datepicker-toggle matIconSuffix [for]="picker" />
+    <mat-date-range-picker #picker />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Acción</mat-label>
+    <mat-select [formControl]="filtros.controls.accion">
+      <mat-option [value]="null">Todas</mat-option>
+      @for (accion of acciones(); track accion) {
+        <mat-option [value]="accion">{{ accion }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Tabla afectada</mat-label>
+    <mat-select [formControl]="filtros.controls.tabla">
+      <mat-option [value]="null">Todas</mat-option>
+      @for (tabla of tablas; track tabla) {
+        <mat-option [value]="tabla">{{ tabla }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</section>
+
+@if (errorRango()) {
+  <p class="error-rango">
+    <mat-icon>error_outline</mat-icon>
+    La fecha inicial no puede ser posterior a la final.
+  </p>
+}
+
+<app-tabla-paginada
+  [columnas]="columnas"
+  [datos]="registros()"
+  [total]="total()"
+  [page]="pagina()"
+  [size]="tamano()"
+  [cargando]="cargando()"
+  [error]="error()"
+  mensajeVacio="No hay registros en el período seleccionado. Amplía el rango de fechas."
+  (cambiarPagina)="onPagina($event)"
+  (reintentar)="recargar()"
+>
+  <ng-template appTablaColumna="fecha" let-registro>
+    {{ registro.fecha | date: 'dd/MM/yy HH:mm:ss' }}
+  </ng-template>
+
+  <ng-template appTablaColumna="usuario" let-registro>
+    @if (registro.usuario) {
+      {{ registro.usuario.nombre }}
+    } @else {
+      <span class="sistema">
+        <mat-icon>settings</mat-icon>
+        Sistema
+      </span>
+    }
+  </ng-template>
+
+  <ng-template appTablaColumna="accion" let-registro>
+    <span class="chip-accion" [class]="claseAccion(registro.accion)">
+      {{ registro.accion }}
+    </span>
+  </ng-template>
+
+  <ng-template appTablaColumna="tabla" let-registro>
+    {{ registro.tablaAfectada }}
+  </ng-template>
+
+  <ng-template appTablaColumna="detalle" let-registro>
+    <span class="detalle" [matTooltip]="registro.detalle ?? ''">
+      {{ registro.detalle }}
+    </span>
+  </ng-template>
+</app-tabla-paginada>

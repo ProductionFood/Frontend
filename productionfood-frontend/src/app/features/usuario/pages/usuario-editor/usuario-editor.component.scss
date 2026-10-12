@@ -1,0 +1,28 @@
+.contenido {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 8px;
+  min-width: 380px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.error-general {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: var(--radio-s);
+  background: var(--rojo-100);
+  color: #b02a2e;
+  font-size: 12.5px;
+}
+
+.error-general mat-icon {
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+}

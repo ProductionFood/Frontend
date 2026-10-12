@@ -151,7 +151,9 @@ export class LoginComponent {
     }
 
     if (error.status === 401 || error.status === 409) {
-      this.errorServidor.set('Credenciales incorrectas.');
+      this.errorServidor.set(
+        this.mensajeServidor(error) ?? 'Correo o contraseña incorrectos.'
+      );
       return;
     }
 
@@ -237,6 +239,20 @@ export class LoginComponent {
           : null
       );
     }
+  }
+
+  private mensajeServidor(
+    error: HttpErrorResponse
+  ): string | null {
+    const body: unknown = error.error;
+
+    if (body === null || typeof body !== 'object') {
+      return null;
+    }
+
+    const mensaje = (body as { message?: unknown }).message;
+
+    return typeof mensaje === 'string' ? mensaje : null;
   }
 
   private redireccionar(): void {

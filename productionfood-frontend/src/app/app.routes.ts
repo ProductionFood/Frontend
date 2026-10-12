@@ -1,10 +1,11 @@
 import { ActivatedRouteSnapshot, ResolveFn, Routes } from '@angular/router';
 
 import { authGuard } from './core/auth/auth.guard';
+import { rolGuard } from './core/auth/rol.guard';
 import { NAV_GRUPOS } from './layout/nav-items';
 
 /** Módulos con implementación real (no redirigen a construcción). */
-const MODULOS_REALES = ['dashboard'];
+const MODULOS_REALES = ['dashboard', 'usuarios', 'bitacora'];
 
 /**
  * Título del topbar para `/app/en-construccion/:ruta`, resuelto desde
@@ -61,6 +62,22 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/dashboard/dashboard.component')
             .then(m => m.DashboardComponent)
+      },
+      {
+        path: 'usuarios',
+        canActivate: [rolGuard(['ADMIN'])],
+        loadChildren: () =>
+          import('./features/usuario/usuario.routes')
+            .then(m => m.USUARIO_ROUTES),
+        data: { titulo: 'Usuarios' }
+      },
+      {
+        path: 'bitacora',
+        canActivate: [rolGuard(['ADMIN'])],
+        loadChildren: () =>
+          import('./features/bitacora/bitacora.routes')
+            .then(m => m.BITACORA_ROUTES),
+        data: { titulo: 'Bitácora' }
       },
       {
         // Ruta única genérica para todos los módulos pendientes.

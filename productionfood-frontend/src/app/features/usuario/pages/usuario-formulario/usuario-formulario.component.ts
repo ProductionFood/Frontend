@@ -17,6 +17,8 @@ import { CommonModule } from '@angular/common';
 
 import { HttpErrorResponse } from '@angular/common/http';
 
+import { Router } from '@angular/router';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -82,6 +84,7 @@ export class UsuarioFormularioComponent {
   private readonly rolService = inject(RolService);
   private readonly notificacion = inject(NotificacionService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly router = inject(Router);
 
 
   // =========================================================
@@ -517,6 +520,8 @@ export class UsuarioFormularioComponent {
     this.textoFortaleza.set(
       'Ingresa una contraseña'
     );
+
+    void this.router.navigate(['/app/usuarios']);
 
   }
 

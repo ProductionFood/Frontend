@@ -1,0 +1,75 @@
+<h2 mat-dialog-title>Editar usuario</h2>
+
+<form [formGroup]="form" (ngSubmit)="guardar()">
+  <mat-dialog-content class="contenido">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nombre completo</mat-label>
+      <mat-icon matPrefix>person_outline</mat-icon>
+      <input matInput formControlName="nombre" autocomplete="name" />
+      @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
+        <mat-error>{{ nombreError }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Correo electrónico</mat-label>
+      <mat-icon matPrefix>mail_outline</mat-icon>
+      <input
+        matInput
+        type="email"
+        formControlName="correo"
+        autocomplete="email"
+      />
+      @if (form.controls.correo.touched && form.controls.correo.invalid) {
+        <mat-error>{{ correoError }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Rol</mat-label>
+      <mat-icon matPrefix>admin_panel_settings</mat-icon>
+      <mat-select formControlName="idRol">
+        @if (cargandoRoles()) {
+          <mat-option disabled>Cargando roles...</mat-option>
+        } @else {
+          @for (rol of roles(); track rol.idRol) {
+            <mat-option [value]="rol.idRol">{{ rol.nombre }}</mat-option>
+          }
+        }
+      </mat-select>
+      @if (form.controls.idRol.touched && form.controls.idRol.invalid) {
+        <mat-error>{{ rolError }}</mat-error>
+      }
+    </mat-form-field>
+
+    @if (errorGeneral()) {
+      <div class="error-general">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ errorGeneral() }}</span>
+      </div>
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button
+      mat-stroked-button
+      type="button"
+      (click)="cancelar()"
+      [disabled]="guardando()"
+    >
+      Cancelar
+    </button>
+    <button
+      mat-flat-button
+      color="primary"
+      type="submit"
+      [disabled]="form.invalid || guardando()"
+    >
+      @if (guardando()) {
+        <mat-spinner diameter="18" />
+      } @else {
+        Guardar cambios
+      }
+    </button>
+  </mat-dialog-actions>
+</form>

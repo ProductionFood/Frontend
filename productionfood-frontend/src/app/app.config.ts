@@ -15,7 +15,8 @@ import {
 } from '@angular/common/http';
 
 import {
-  MAT_DATE_LOCALE
+  MAT_DATE_LOCALE,
+  provideNativeDateAdapter
 } from '@angular/material/core';
 
 import {
@@ -41,6 +42,8 @@ export const appConfig: ApplicationConfig = {
   providers: [
 
     provideBrowserGlobalErrorListeners(),
+
+    provideNativeDateAdapter(),
 
     provideRouter(
       routes,

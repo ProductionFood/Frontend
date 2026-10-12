@@ -43,8 +43,8 @@ __screenshots__/
 .env
 .env.*
 !.env.example
-environments/environment.prod.ts
-environments/environment.ts
+src/environments/environment.prod.ts
+src/environments/environment.ts
 
 # Logs
 *.log
