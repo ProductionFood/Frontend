@@ -51,14 +51,16 @@
   (cambiarOrden)="onOrden($event)"
   (reintentar)="recargar()"
 >
+  <ng-template appTablaColumna="id" let-usuario>
+    {{ usuario.idUsuario }}
+  </ng-template>
+
   <ng-template appTablaColumna="nombre" let-usuario>
-    <div class="celda-usuario">
-      <span class="avatar">{{ iniciales(usuario.nombre) }}</span>
-      <div class="celda-usuario-texto">
-        <span class="nombre">{{ usuario.nombre }}</span>
-        <span class="correo">{{ usuario.correo }}</span>
-      </div>
-    </div>
+    {{ usuario.nombre }}
+  </ng-template>
+
+  <ng-template appTablaColumna="correo" let-usuario>
+    {{ usuario.correo }}
   </ng-template>
 
   <ng-template appTablaColumna="rol" let-usuario>
