@@ -1,0 +1,27 @@
+<main class="en-construccion">
+  <mat-card class="tarjeta">
+    <div class="encabezado">
+      @if (hu()) {
+        <span class="chip">{{ hu() }}</span>
+      }
+      <span class="chip chip-estado">Módulo en construcción</span>
+    </div>
+
+    <mat-icon class="icono">{{ icono() }}</mat-icon>
+
+    <h1>{{ titulo() }}</h1>
+
+    <p class="descripcion">
+      @if (descripcion()) {
+        {{ descripcion() }}
+      } @else {
+        Este módulo aún no está disponible. Está planificado y se construirá pronto.
+      }
+    </p>
+
+    <a mat-raised-button color="primary" routerLink="/app/dashboard">
+      <mat-icon>arrow_back</mat-icon>
+      Volver al dashboard
+    </a>
+  </mat-card>
+</main>
