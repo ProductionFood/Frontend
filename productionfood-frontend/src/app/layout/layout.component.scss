@@ -8,9 +8,11 @@
 }
 
 .sidenav {
-  width: 250px;
+  width: 264px;
   background: #123f29;
   color: #fff;
+  display: flex;
+  flex-direction: column;
 }
 
 .brand {
@@ -21,6 +23,7 @@
   padding: 0 20px;
   font-weight: 700;
   color: #fff;
+  flex-shrink: 0;
 }
 
 .brand img {
@@ -28,8 +31,43 @@
   height: 36px;
 }
 
+.nav {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 8px;
+}
+
+.grupo-titulo {
+  padding: 16px 20px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
 .sidenav a {
-  color: rgba(255, 255, 255, .9);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.sidenav a .item-hu {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.sidenav a.activo {
+  background: rgba(31, 170, 112, 0.28);
+  color: #fff;
+
+  mat-icon {
+    color: #7ee2b8;
+  }
+}
+
+.sidenav-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 6px 0;
+  flex-shrink: 0;
 }
 
 .toolbar {
@@ -38,7 +76,7 @@
   z-index: 10;
   background: #fff;
   color: #234333;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, .08);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
 .toolbar-title {

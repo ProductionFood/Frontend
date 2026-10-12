@@ -1,25 +1,58 @@
 <mat-sidenav-container class="shell">
-  <mat-sidenav #sidenav mode="side" opened class="sidenav">
+  <mat-sidenav
+    #sidenav
+    [mode]="modoCompacto() ? 'over' : 'side'"
+    [opened]="!modoCompacto()"
+    class="sidenav"
+  >
     <div class="brand">
       <img src="/logos/isotipo-claro.svg" alt="ProductionFood">
       <span>ProductionFood</span>
     </div>
 
-    <mat-nav-list>
-      <a mat-list-item routerLink="/app/dashboard">
+    <mat-nav-list class="nav">
+      <a
+        mat-list-item
+        routerLink="/app/dashboard"
+        routerLinkActive="activo"
+        (click)="cerrarEnMovil()"
+      >
         <mat-icon matListItemIcon>dashboard</mat-icon>
         <span matListItemTitle>Dashboard</span>
       </a>
 
+      @for (grupo of grupos; track grupo.titulo) {
+        @if (itemsVisibles(grupo).length > 0) {
+          <div class="grupo-titulo">{{ grupo.titulo }}</div>
+
+          @for (item of itemsVisibles(grupo); track item.ruta) {
+            <a
+              mat-list-item
+              [routerLink]="['/app', item.ruta]"
+              routerLinkActive="activo"
+              (click)="cerrarEnMovil()"
+            >
+              <mat-icon matListItemIcon>{{ item.icono }}</mat-icon>
+              <span matListItemTitle>{{ item.titulo }}</span>
+              @if (item.hu) {
+                <span class="item-hu" matListItemMeta>{{ item.hu }}</span>
+              }
+            </a>
+          }
+        }
+      }
+    </mat-nav-list>
+
+    <div class="sidenav-footer">
       <a
         mat-list-item
-        routerLink="/app/usuarios"
-        *siRol="['ADMIN']"
+        href="/"
+        (click)="cerrarEnMovil()"
       >
-        <mat-icon matListItemIcon>group</mat-icon>
-        <span matListItemTitle>Usuarios</span>
+        <mat-icon matListItemIcon>public</mat-icon>
+        <span matListItemTitle>Ver sitio público</span>
       </a>
-    </mat-nav-list>
+    </div>
   </mat-sidenav>
 
   <mat-sidenav-content>
@@ -33,7 +66,7 @@
         <mat-icon>menu</mat-icon>
       </button>
 
-      <span class="toolbar-title">Gestión de producción</span>
+      <span class="toolbar-title">{{ tituloActual() }}</span>
 
       <span class="spacer"></span>
 

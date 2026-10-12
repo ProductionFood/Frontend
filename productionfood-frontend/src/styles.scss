@@ -12,7 +12,7 @@ html {
   @include mat.theme(
     (
       color: (
-        primary: mat.$rose-palette,
+        primary: mat.$green-palette,
         tertiary: mat.$red-palette,
       ),
       typography: Roboto,
@@ -73,4 +73,14 @@ ul {
 :focus-visible {
   outline: 2px solid #1FAA70;
   outline-offset: 2px;
+}
+
+/* =========================================================
+   Material Symbols — los mat-icon usan ligaduras de texto;
+   sin esta regla se dibujan con la fuente del sistema.
+   ========================================================= */
+mat-icon {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
 }
