@@ -150,7 +150,7 @@ export class LoginComponent {
       return;
     }
 
-    if (error.status === 401 || error.status === 409) {
+    if (error.status === 401) {
       this.errorServidor.set(
         this.mensajeServidor(error) ?? 'Correo o contraseña incorrectos.'
       );

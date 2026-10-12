@@ -32,13 +32,18 @@ interface LoginDto {
   password: string;
 }
 
+interface PerfilResponse {
+  idUsuario: number;
+  nombre: string;
+  correo: string;
+  rol: string;
+}
+
 interface LoginResponse {
   token: string;
   tipo: string;
-  expiresIn: number;
-  correo: string;
-  nombre: string;
-  rol: string;
+  expiraEn: number;
+  usuario: PerfilResponse;
 }
 
 interface JwtPayload {
@@ -157,21 +162,16 @@ export class AuthService {
       response.token
     );
 
-    const payload =
-      this.decodificarToken(
-        response.token
-      );
+    const info = response.usuario;
 
     const usuario: Usuario = {
-      idUsuario: Number(
-        payload?.sub ?? 0
-      ),
-      nombre: response.nombre,
-      correo: response.correo,
+      idUsuario: info.idUsuario,
+      nombre: info.nombre,
+      correo: info.correo,
       activo: true,
       rol: {
         idRol: 0,
-        nombre: response.rol
+        nombre: info.rol
       }
     };
 

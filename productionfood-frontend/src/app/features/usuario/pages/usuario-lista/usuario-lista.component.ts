@@ -69,7 +69,9 @@ export class UsuarioListaComponent {
   private readonly destroyRef = inject(DestroyRef);
 
   readonly columnas: ColumnaTabla[] = [
-    { id: 'nombre', titulo: 'Usuario', ordenable: true },
+    { id: 'id', titulo: 'Id', ordenable: true },
+    { id: 'nombre', titulo: 'Nombre', ordenable: true },
+    { id: 'correo', titulo: 'Correo', ordenable: true },
     { id: 'rol', titulo: 'Rol', ordenable: false },
     { id: 'estado', titulo: 'Estado', ordenable: false },
     { id: 'acciones', titulo: 'Acciones', ordenable: false }
@@ -158,15 +160,6 @@ export class UsuarioListaComponent {
     this.ordenDireccion.set(orden.direction);
     this.pagina.set(0);
     this.recargar();
-  }
-
-  iniciales(nombre: string): string {
-    return nombre
-      .split(' ')
-      .slice(0, 2)
-      .map(parte => parte.charAt(0))
-      .join('')
-      .toUpperCase();
   }
 
   editar(usuario: Usuario): void {
