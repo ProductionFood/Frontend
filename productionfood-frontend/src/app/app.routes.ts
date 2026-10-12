@@ -2,10 +2,7 @@ import { ActivatedRouteSnapshot, ResolveFn, Routes } from '@angular/router';
 
 import { authGuard } from './core/auth/auth.guard';
 import { rolGuard } from './core/auth/rol.guard';
-import { NAV_GRUPOS } from './layout/nav-items';
-
-/** Módulos con implementación real (no redirigen a construcción). */
-const MODULOS_REALES = ['dashboard', 'usuarios', 'bitacora'];
+import { MODULOS_REALES, NAV_GRUPOS } from './layout/nav-items';
 
 /**
  * Título del topbar para `/app/en-construccion/:ruta`, resuelto desde
