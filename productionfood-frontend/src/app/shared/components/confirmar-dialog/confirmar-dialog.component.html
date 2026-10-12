@@ -1,0 +1,26 @@
+<div class="dialogo">
+  <div class="dialogo-icono" [class.peligro]="datos.peligro">
+    <mat-icon>{{ datos.peligro ? 'warning_amber' : 'help_outline' }}</mat-icon>
+  </div>
+
+  <h2 mat-dialog-title>{{ datos.titulo }}</h2>
+
+  <mat-dialog-content>
+    <p>{{ datos.mensaje }}</p>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-stroked-button type="button" (click)="cancelar()">
+      {{ datos.textoCancelar ?? 'Cancelar' }}
+    </button>
+    <button
+      mat-flat-button
+      type="button"
+      class="confirmar"
+      [class.peligro]="datos.peligro"
+      (click)="confirmar()"
+    >
+      {{ datos.textoConfirmar ?? 'Confirmar' }}
+    </button>
+  </mat-dialog-actions>
+</div>

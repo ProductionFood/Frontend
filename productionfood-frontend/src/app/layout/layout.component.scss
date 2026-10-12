@@ -32,16 +32,29 @@
   flex-direction: column;
   box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
 
-  /* Material pinta los labels con --mat-list-*; sin esto salen tinta sobre navy */
+  /*
+   * Material pinta labels e íconos con tokens por estado (base, hover y
+   * focus). Si solo se define el base, al hacer foco (clic) el texto cae al
+   * fallback --mat-sys-on-surface y se ve negro sobre navy.
+   */
   --mat-list-list-item-label-text-color: #b7c6c8;
   --mat-list-list-item-leading-icon-color: #b7c6c8;
+  --mat-list-list-item-hover-label-text-color: #fff;
+  --mat-list-list-item-hover-leading-icon-color: #fff;
+  --mat-list-list-item-focus-label-text-color: #fff;
+  --mat-list-list-item-focus-leading-icon-color: #fff;
+
+  /* Sin el state-layer oscuro de Material el hover/focus no ensucia el verde */
+  --mat-list-list-item-hover-state-layer-color: transparent;
+  --mat-list-list-item-focus-state-layer-color: transparent;
 }
 
 .brand {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 22px 15px 20px;
+  padding: 25px 25px 0;
+  margin-bottom: 30px;
   flex-shrink: 0;
 }
 
@@ -86,7 +99,8 @@
 }
 
 .grupo-titulo {
-  padding: 16px 12px 8px;
+  padding: 0 12px;
+  margin: 16px 0 10px;
   color: #718b8e;
   font-size: 10px;
   font-weight: 700;
@@ -126,7 +140,6 @@
 .sidenav a.activo {
   background: var(--verde-500);
   color: #fff;
-  font-weight: 600;
   box-shadow: 0 6px 15px rgba(31, 170, 112, 0.25);
 
   --mat-list-list-item-label-text-color: #fff;
@@ -138,11 +151,16 @@
   outline-offset: 2px;
 }
 
+.separator {
+  flex-shrink: 0;
+  height: 1px;
+  margin: 16px 8px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
 .sidebar-bottom {
-  margin-top: auto;
-  padding: 16px 10px 20px;
+  padding: 15px 10px 5px;
   text-align: center;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
   flex-shrink: 0;
 }
 

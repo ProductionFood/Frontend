@@ -1,0 +1,59 @@
+:host {
+  display: block;
+}
+
+.tabla-contenedor {
+  background: var(--blanco);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio-m);
+  overflow: hidden;
+  box-shadow: var(--sombra);
+}
+
+.tabla-scroll {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+}
+
+th.mat-mdc-header-cell {
+  background: #fafbfb;
+  color: var(--tinta-600);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+td.mat-mdc-cell {
+  color: var(--tinta-600);
+  font-size: 11.5px;
+}
+
+.mat-mdc-row:hover {
+  background: #fafdfb;
+}
+
+.estado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--tinta-600);
+}
+
+.estado mat-icon {
+  width: 34px;
+  height: 34px;
+  font-size: 34px;
+  color: var(--tinta-400);
+}
+
+.estado p {
+  margin: 0;
+  font-size: 13px;
+}
