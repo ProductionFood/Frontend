@@ -1,0 +1,9 @@
+.dialogo-cliente { min-width: 0; }
+.dialogo-header { display: flex; align-items: center; justify-content: space-between; padding-right: 8px; }
+.dialogo-header h2 { margin: 0; }
+.campo { display: block; width: 100%; margin-top: 10px; }
+.aviso-duplicado { display: flex; align-items: center; gap: 8px; margin: -2px 0 8px; color: var(--mat-sys-on-surface-variant); font-size: 12px; }
+.aviso-duplicado mat-icon { font-size: 18px; width: 18px; height: 18px; }
+.error-general { color: var(--mat-sys-error); }
+mat-dialog-actions button { min-width: 100px; }
+mat-spinner { display: inline-block; margin-right: 8px; }

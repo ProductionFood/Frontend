@@ -77,6 +77,14 @@ export const routes: Routes = [
         data: { titulo: 'Bitácora' }
       },
       {
+        path: 'clientes',
+        canActivate: [rolGuard(['ADMIN', 'VENTAS', 'PRODUCCION', 'CONSULTA'])],
+        loadChildren: () =>
+          import('./features/cliente/cliente.routes')
+            .then(m => m.CLIENTE_ROUTES),
+        data: { titulo: 'Clientes' }
+      },
+      {
         // Ruta única genérica para todos los módulos pendientes.
         path: 'en-construccion/:ruta',
         loadComponent: () =>
