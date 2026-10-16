@@ -114,3 +114,7 @@ mat-icon {
   font-weight: normal;
   font-style: normal;
 }
+/* HU-06: el correo es secundario y se oculta en pantallas estrechas. */
+@media (max-width: 900px) {
+  .columna-correo { display: none !important; }
+}

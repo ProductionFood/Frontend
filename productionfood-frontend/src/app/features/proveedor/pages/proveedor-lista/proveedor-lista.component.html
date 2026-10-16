@@ -1,0 +1,68 @@
+<header class="page-header">
+  <div><h1>Proveedores</h1><p>Administra los proveedores y sus datos de contacto.</p></div>
+  <button mat-flat-button type="button" *siRol="['ADMIN', 'COMPRAS']" (click)="abrirFormulario()">
+    <mat-icon>add</mat-icon> Nuevo proveedor
+  </button>
+</header>
+
+<section class="filtros" aria-label="Filtros de proveedores">
+  <mat-form-field appearance="outline" class="filtro-busqueda">
+    <mat-icon matPrefix>search</mat-icon>
+    <mat-label>Buscar por nombre</mat-label>
+    <input matInput [formControl]="filtros.controls.busqueda" autocomplete="off" />
+    @if (filtros.controls.busqueda.value) {
+      <button mat-icon-button matSuffix type="button" aria-label="Limpiar búsqueda" (click)="filtros.controls.busqueda.setValue('')"><mat-icon>close</mat-icon></button>
+    }
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Estado</mat-label>
+    <mat-select [formControl]="filtros.controls.activo">
+      <mat-option [value]="null">Todos</mat-option>
+      <mat-option [value]="true">Activos</mat-option>
+      <mat-option [value]="false">Inactivos</mat-option>
+    </mat-select>
+  </mat-form-field>
+</section>
+
+@if (!cargando() && !error() && proveedores().length === 0) {
+  <section class="vacio-filtro">
+    @if (filtroAplicado()) {
+      <p>Ningún proveedor coincide con «{{ filtros.controls.busqueda.value }}» o los filtros seleccionados.</p>
+      <button mat-stroked-button type="button" (click)="limpiarFiltros()">Limpiar filtros</button>
+    } @else {
+      <mat-icon>local_shipping</mat-icon>
+      <p>No hay proveedores registrados.</p>
+      <button mat-flat-button type="button" *siRol="['ADMIN', 'COMPRAS']" (click)="abrirFormulario()">Registrar el primero</button>
+    }
+  </section>
+}
+
+@if (proveedores().length > 0 || cargando() || error()) {
+<app-tabla-paginada
+  [columnas]="columnas" [datos]="proveedores()" [total]="total()"
+  [page]="pagina()" [size]="tamano()" [cargando]="cargando()" [error]="error()"
+  mensajeVacio="No hay proveedores registrados."
+  (cambiarPagina)="onPagina($event)" (cambiarOrden)="onOrden($event)" (reintentar)="recargar()"
+>
+  <ng-template appTablaColumna="nombre" let-proveedor>{{ proveedor.nombre }}</ng-template>
+  <ng-template appTablaColumna="contacto" let-proveedor>{{ proveedor.contacto || '—' }}</ng-template>
+  <ng-template appTablaColumna="telefono" let-proveedor>{{ proveedor.telefono || '—' }}</ng-template>
+  <ng-template appTablaColumna="correo" let-proveedor>
+    @if (proveedor.correo) {
+      <a class="correo-proveedor" [href]="'mailto:' + proveedor.correo"><mat-icon aria-hidden="true">mail</mat-icon><span>{{ proveedor.correo }}</span></a>
+    } @else { <span>—</span> }
+  </ng-template>
+  <ng-template appTablaColumna="estado" let-proveedor>
+    <span class="chip-estado" [class.activo]="proveedor.activo" [class.inactivo]="!proveedor.activo">
+      <span class="punto"></span>{{ proveedor.activo ? 'Activo' : 'Inactivo' }}
+    </span>
+  </ng-template>
+  <ng-template appTablaColumna="acciones" let-proveedor>
+    <button mat-icon-button type="button" [matMenuTriggerFor]="menuProveedor" [attr.aria-label]="'Acciones para ' + proveedor.nombre"><mat-icon>more_vert</mat-icon></button>
+    <mat-menu #menuProveedor="matMenu">
+      <button mat-menu-item type="button" *siRol="['ADMIN', 'COMPRAS']" (click)="abrirFormulario(proveedor)"><mat-icon>edit</mat-icon><span>Editar</span></button>
+      <button mat-menu-item type="button" *siRol="['ADMIN', 'COMPRAS']" (click)="cambiarEstado(proveedor)"><mat-icon>{{ proveedor.activo ? 'person_off' : 'person_check' }}</mat-icon><span>{{ proveedor.activo ? 'Desactivar' : 'Activar' }}</span></button>
+    </mat-menu>
+  </ng-template>
+</app-tabla-paginada>
+}

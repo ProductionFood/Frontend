@@ -1,0 +1,9 @@
+.dialogo-proveedor { min-width: 0; }
+.dialogo-header { display: flex; align-items: center; justify-content: space-between; padding-right: 8px; }
+.dialogo-header h2 { margin: 0; }
+.campo { display: block; width: 100%; margin-top: 10px; }
+.campos-dobles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.error-general { color: var(--mat-sys-error); }
+mat-dialog-actions button { min-width: 100px; }
+mat-spinner { display: inline-block; margin-right: 8px; }
+@media (max-width: 520px) { .campos-dobles { grid-template-columns: 1fr; gap: 0; } }
