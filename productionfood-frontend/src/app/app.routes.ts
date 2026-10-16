@@ -85,6 +85,14 @@ export const routes: Routes = [
         data: { titulo: 'Clientes' }
       },
       {
+        path: 'proveedores',
+        canActivate: [rolGuard(['ADMIN', 'COMPRAS', 'CONSULTA'])],
+        loadChildren: () =>
+          import('./features/proveedor/proveedor.routes')
+            .then(m => m.PROVEEDOR_ROUTES),
+        data: { titulo: 'Proveedores' }
+      },
+      {
         // Ruta única genérica para todos los módulos pendientes.
         path: 'en-construccion/:ruta',
         loadComponent: () =>

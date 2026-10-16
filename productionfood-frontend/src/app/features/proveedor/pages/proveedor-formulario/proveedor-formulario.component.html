@@ -1,0 +1,41 @@
+<div class="dialogo-proveedor">
+  <header class="dialogo-header">
+    <h2 mat-dialog-title>{{ esEdicion ? 'Editar proveedor' : 'Nuevo proveedor' }}</h2>
+    <button mat-icon-button type="button" aria-label="Cerrar formulario" [disabled]="guardando()" (click)="cancelar()"><mat-icon>close</mat-icon></button>
+  </header>
+  <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+    <mat-dialog-content>
+      @if (errorGeneral()) { <p class="error-general" role="alert">{{ errorGeneral() }}</p> }
+      <mat-form-field appearance="outline" class="campo">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="nombre" maxlength="100" autocomplete="organization" required />
+        <mat-hint align="end">{{ form.controls.nombre.value.length }} / 100</mat-hint>
+        @if (form.controls.nombre.touched && form.controls.nombre.invalid) { <mat-error>{{ nombreError }}</mat-error> }
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="campo">
+        <mat-label>Persona de contacto</mat-label>
+        <input matInput formControlName="contacto" maxlength="100" autocomplete="name" />
+        @if (form.controls.contacto.touched && form.controls.contacto.invalid) { <mat-error>{{ contactoError }}</mat-error> }
+      </mat-form-field>
+      <div class="campos-dobles">
+        <mat-form-field appearance="outline" class="campo">
+          <mat-label>Teléfono</mat-label>
+          <input matInput formControlName="telefono" maxlength="20" autocomplete="tel" />
+          @if (form.controls.telefono.touched && form.controls.telefono.invalid) { <mat-error>{{ telefonoError }}</mat-error> }
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="campo">
+          <mat-label>Correo electrónico</mat-label>
+          <input matInput type="email" formControlName="correo" maxlength="100" autocomplete="email" />
+          @if (form.controls.correo.touched && form.controls.correo.invalid) { <mat-error>{{ correoError }}</mat-error> }
+        </mat-form-field>
+      </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-stroked-button type="button" [disabled]="guardando()" (click)="cancelar()">Cancelar</button>
+      <button mat-flat-button type="submit" [disabled]="guardando() || form.invalid">
+        @if (guardando()) { <mat-spinner diameter="18" aria-label="Guardando"></mat-spinner> }
+        {{ guardando() ? 'Guardando…' : 'Guardar' }}
+      </button>
+    </mat-dialog-actions>
+  </form>
+</div>
