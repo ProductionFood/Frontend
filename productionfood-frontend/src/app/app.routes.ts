@@ -93,6 +93,13 @@ export const routes: Routes = [
         data: { titulo: 'Proveedores' }
       },
       {
+        path: 'unidades-medida',
+        loadChildren: () =>
+          import('./features/unidad-medida/unidad-medida.routes')
+            .then(m => m.UNIDAD_MEDIDA_ROUTES),
+        data: { titulo: 'Unidades de medida' }
+      },
+      {
         // Ruta única genérica para todos los módulos pendientes.
         path: 'en-construccion/:ruta',
         loadComponent: () =>

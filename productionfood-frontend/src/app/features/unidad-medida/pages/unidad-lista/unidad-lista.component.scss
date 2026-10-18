@@ -1,0 +1,19 @@
+:host {
+  display: block;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.page-header p {
+  margin: 5px 0 0;
+  max-width: 520px;
+  font-size: 13px;
+  color: var(--tinta-600);
+}

@@ -61,6 +61,8 @@ export class TablaPaginadaComponent<T> {
   readonly cargando = input(false);
   readonly error = input<string | null>(null);
   readonly mensajeVacio = input('No hay registros para mostrar.');
+  /** Si es `false`, no se muestra el paginador (catálogos cortos). */
+  readonly paginado = input(true);
 
   readonly cambiarPagina = output<PageEvent>();
   readonly cambiarOrden = output<Sort>();
