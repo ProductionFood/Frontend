@@ -52,12 +52,14 @@
       </table>
     </div>
 
-    <mat-paginator
-      [length]="total()"
-      [pageIndex]="page()"
-      [pageSize]="size()"
-      [pageSizeOptions]="opcionesTamano()"
-      (page)="cambiarPagina.emit($event)"
-    />
+    @if (paginado()) {
+      <mat-paginator
+        [length]="total()"
+        [pageIndex]="page()"
+        [pageSize]="size()"
+        [pageSizeOptions]="opcionesTamano()"
+        (page)="cambiarPagina.emit($event)"
+      />
+    }
   }
 </div>

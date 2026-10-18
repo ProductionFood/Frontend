@@ -1,0 +1,45 @@
+<header class="page-header">
+  <p>Catálogo de unidades de medida del sistema.</p>
+
+  <button
+    *siRol="['ADMIN']"
+    mat-flat-button
+    color="primary"
+    type="button"
+    (click)="abrirFormulario()"
+  >
+    <mat-icon>add</mat-icon>
+    Nueva unidad
+  </button>
+</header>
+
+<app-tabla-paginada
+  [columnas]="columnas"
+  [datos]="unidades()"
+  [paginado]="false"
+  [cargando]="cargando()"
+  [error]="error()"
+  mensajeVacio="No hay unidades registradas. Crea la primera."
+  (cambiarOrden)="onOrden($event)"
+  (reintentar)="recargar()"
+>
+  <ng-template appTablaColumna="uso" let-unidad>
+    @if (unidad.enUso !== undefined && unidad.enUso !== null) {
+      {{ unidad.enUso > 0 ? unidad.enUso + ' registros' : 'Sin uso' }}
+    } @else {
+      —
+    }
+  </ng-template>
+
+  <ng-template appTablaColumna="acciones" let-unidad>
+    <button
+      *siRol="['ADMIN']"
+      mat-icon-button
+      type="button"
+      aria-label="Editar unidad"
+      (click)="abrirFormulario(unidad)"
+    >
+      <mat-icon>edit</mat-icon>
+    </button>
+  </ng-template>
+</app-tabla-paginada>
