@@ -1,0 +1,123 @@
+<header class="page-header">
+  <p>Administra los insumos que usas en tus recetas y controla su disponibilidad.</p>
+
+  <button
+    *siRol="['ADMIN']"
+    mat-flat-button
+    color="primary"
+    type="button"
+    (click)="abrirFormulario()"
+  >
+    <mat-icon>add</mat-icon>
+    Nueva materia prima
+  </button>
+</header>
+
+<section class="filtros">
+  <mat-form-field appearance="outline" class="filtro-busqueda">
+    <mat-icon matPrefix>search</mat-icon>
+    <mat-label>Buscar por nombre</mat-label>
+    <input
+      matInput
+      [formControl]="filtros.controls.nombre"
+      autocomplete="off"
+    />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Estado</mat-label>
+    <mat-select [formControl]="filtros.controls.activo">
+      <mat-option [value]="null">Todos</mat-option>
+      <mat-option [value]="true">Activas</mat-option>
+      <mat-option [value]="false">Inactivas</mat-option>
+    </mat-select>
+  </mat-form-field>
+</section>
+
+<app-tabla-paginada
+  [columnas]="columnas"
+  [datos]="materias()"
+  [total]="total()"
+  [page]="pagina()"
+  [size]="tamano()"
+  [cargando]="cargando()"
+  [error]="error()"
+  mensajeVacio="No hay materias primas para los filtros seleccionados."
+  (cambiarPagina)="onPagina($event)"
+  (cambiarOrden)="onOrden($event)"
+  (reintentar)="recargar()"
+>
+  <ng-template appTablaColumna="nombre" let-materia>
+    {{ materia.nombre }}
+  </ng-template>
+
+  <ng-template appTablaColumna="unidad" let-materia>
+    {{ materia.unidad.abreviatura }}
+  </ng-template>
+
+  <ng-template appTablaColumna="stockMinimo" let-materia>
+    {{ materia.stockMinimo | number: '1.2-2' }}
+  </ng-template>
+
+  <ng-template appTablaColumna="disponible" let-materia>
+    <span
+      class="disponible"
+      [class.agotada]="
+        materia.stockMinimo > 0 && materia.cantidadDisponible === 0
+      "
+      [class.baja]="
+        materia.stockMinimo > 0 &&
+        materia.cantidadDisponible > 0 &&
+        materia.cantidadDisponible < materia.stockMinimo
+      "
+    >
+      @if (materia.stockMinimo > 0 && materia.cantidadDisponible === 0) {
+        <mat-icon>error</mat-icon>
+      } @else if (
+        materia.stockMinimo > 0 &&
+        materia.cantidadDisponible < materia.stockMinimo
+      ) {
+        <mat-icon>warning</mat-icon>
+      }
+      {{ materia.cantidadDisponible | number: '1.2-2' }}
+    </span>
+  </ng-template>
+
+  <ng-template appTablaColumna="costoUnitario" let-materia>
+    {{ materia.costoUnitario | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
+  </ng-template>
+
+  <ng-template appTablaColumna="estado" let-materia>
+    <span
+      class="chip-estado"
+      [class.activo]="materia.activo"
+      [class.inactivo]="!materia.activo"
+    >
+      <span class="punto"></span>
+      {{ materia.activo ? 'Activa' : 'Inactiva' }}
+    </span>
+  </ng-template>
+
+  <ng-template appTablaColumna="acciones" let-materia>
+    <button
+      *siRol="['ADMIN']"
+      mat-icon-button
+      type="button"
+      aria-label="Acciones de la materia prima"
+      [matMenuTriggerFor]="menuMateria"
+    >
+      <mat-icon>more_vert</mat-icon>
+    </button>
+
+    <mat-menu #menuMateria="matMenu">
+      <button mat-menu-item type="button" (click)="abrirFormulario(materia)">
+        <mat-icon>edit</mat-icon>
+        <span>Editar</span>
+      </button>
+      <button mat-menu-item type="button" (click)="cambiarEstado(materia)">
+        <mat-icon>{{ materia.activo ? 'toggle_off' : 'toggle_on' }}</mat-icon>
+        <span>{{ materia.activo ? 'Desactivar' : 'Activar' }}</span>
+      </button>
+    </mat-menu>
+  </ng-template>
+</app-tabla-paginada>
