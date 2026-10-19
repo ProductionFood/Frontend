@@ -5,6 +5,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { Sort } from '@angular/material/sort';
 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -31,6 +32,7 @@ import { UnidadFormularioComponent } from '../unidad-formulario/unidad-formulari
   imports: [
     MatButtonModule,
     MatIconModule,
+    MatMenuModule,
     TablaPaginadaComponent,
     TablaColumnaDirective,
     SiRolDirective
