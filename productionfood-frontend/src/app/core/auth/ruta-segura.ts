@@ -12,14 +12,24 @@ export function esRutaInternaSegura(
     return false;
   }
 
-  if (url !== '/app' && !url.startsWith('/app/')) {
+  // Se valida la ruta ya decodificada para no dejar pasar
+  // %2e%2e (..), %2F%2F (//) ni %5C (\).
+  let ruta: string;
+
+  try {
+    ruta = decodeURIComponent(url);
+  } catch {
     return false;
   }
 
-  if (url.startsWith('//') || url.includes('\\') || url.includes('..')) {
+  if (ruta !== '/app' && !ruta.startsWith('/app/')) {
+    return false;
+  }
+
+  if (ruta.startsWith('//') || ruta.includes('\\') || ruta.includes('..')) {
     return false;
   }
 
   // Caracteres de control (incluye saltos de línea y NUL).
-  return !/[\u0000-\u001F]/.test(url);
+  return !/[\u0000-\u001F]/.test(ruta);
 }
