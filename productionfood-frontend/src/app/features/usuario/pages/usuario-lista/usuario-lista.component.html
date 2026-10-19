@@ -79,23 +79,24 @@
   </ng-template>
 
   <ng-template appTablaColumna="acciones" let-usuario>
-    <div class="acciones-fila">
-      <button
-        mat-icon-button
-        type="button"
-        aria-label="Editar usuario"
-        (click)="editar(usuario)"
-      >
+    <button
+      mat-icon-button
+      type="button"
+      [matMenuTriggerFor]="menuUsuario"
+      [attr.aria-label]="'Acciones para ' + usuario.nombre"
+    >
+      <mat-icon>more_vert</mat-icon>
+    </button>
+
+    <mat-menu #menuUsuario="matMenu">
+      <button mat-menu-item type="button" (click)="editar(usuario)">
         <mat-icon>edit</mat-icon>
+        <span>Editar</span>
       </button>
-      <button
-        mat-icon-button
-        type="button"
-        [attr.aria-label]="usuario.activo ? 'Desactivar usuario' : 'Activar usuario'"
-        (click)="cambiarEstado(usuario)"
-      >
-        <mat-icon>{{ usuario.activo ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+      <button mat-menu-item type="button" (click)="cambiarEstado(usuario)">
+        <mat-icon>{{ usuario.activo ? 'toggle_off' : 'toggle_on' }}</mat-icon>
+        <span>{{ usuario.activo ? 'Desactivar' : 'Activar' }}</span>
       </button>
-    </div>
+    </mat-menu>
   </ng-template>
 </app-tabla-paginada>

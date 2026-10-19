@@ -1,5 +1,5 @@
 <header class="page-header">
-  <div><h1>Proveedores</h1><p>Administra los proveedores y sus datos de contacto.</p></div>
+  <p>Administra los proveedores y sus datos de contacto.</p>
   <button mat-flat-button type="button" *siRol="['ADMIN', 'COMPRAS']" (click)="abrirFormulario()">
     <mat-icon>add</mat-icon> Nuevo proveedor
   </button>
@@ -24,20 +24,6 @@
   </mat-form-field>
 </section>
 
-@if (!cargando() && !error() && proveedores().length === 0) {
-  <section class="vacio-filtro">
-    @if (filtroAplicado()) {
-      <p>Ningún proveedor coincide con «{{ filtros.controls.busqueda.value }}» o los filtros seleccionados.</p>
-      <button mat-stroked-button type="button" (click)="limpiarFiltros()">Limpiar filtros</button>
-    } @else {
-      <mat-icon>local_shipping</mat-icon>
-      <p>No hay proveedores registrados.</p>
-      <button mat-flat-button type="button" *siRol="['ADMIN', 'COMPRAS']" (click)="abrirFormulario()">Registrar el primero</button>
-    }
-  </section>
-}
-
-@if (proveedores().length > 0 || cargando() || error()) {
 <app-tabla-paginada
   [columnas]="columnas" [datos]="proveedores()" [total]="total()"
   [page]="pagina()" [size]="tamano()" [cargando]="cargando()" [error]="error()"
@@ -65,4 +51,3 @@
     </mat-menu>
   </ng-template>
 </app-tabla-paginada>
-}
