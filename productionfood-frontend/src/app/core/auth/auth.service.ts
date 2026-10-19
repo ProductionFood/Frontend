@@ -91,7 +91,31 @@ export class AuthService {
   });
 
   constructor() {
+    this.migrarSesionLegada();
     this.restaurarSesion();
+  }
+
+  /**
+   * El token vivía en `localStorage` (persistente). Ahora la sesión se guarda
+   * en `sessionStorage`: sobrevive a recargas de la misma pestaña pero no a
+   * cerrarla, lo que reduce el impacto de un XSS persistente. Se migra una vez
+   * la sesión existente para no forzar un nuevo inicio de sesión tras
+   * actualizar la aplicación.
+   */
+  private migrarSesionLegada(): void {
+    const tokenLegado = window.localStorage.getItem(this.tokenKey);
+    const usuarioLegado = window.localStorage.getItem(this.usuarioKey);
+
+    if (tokenLegado && !sessionStorage.getItem(this.tokenKey)) {
+      sessionStorage.setItem(this.tokenKey, tokenLegado);
+    }
+
+    if (usuarioLegado && !sessionStorage.getItem(this.usuarioKey)) {
+      sessionStorage.setItem(this.usuarioKey, usuarioLegado);
+    }
+
+    window.localStorage.removeItem(this.tokenKey);
+    window.localStorage.removeItem(this.usuarioKey);
   }
 
   login(
@@ -115,11 +139,11 @@ export class AuthService {
 
   logout(redirigir = true): void {
 
-  localStorage.removeItem(
+  sessionStorage.removeItem(
     this.tokenKey
   );
 
-  localStorage.removeItem(
+  sessionStorage.removeItem(
     this.usuarioKey
   );
 
@@ -135,9 +159,22 @@ export class AuthService {
 }
 
   obtenerToken(): string | null {
-    return localStorage.getItem(
+    return sessionStorage.getItem(
       this.tokenKey
     );
+  }
+
+  /** Marca de tiempo (ms) en la que expira el JWT, o `null` si no hay token. */
+  expiracionTokenMs(): number | null {
+    const token = this.obtenerToken();
+
+    if (!token) {
+      return null;
+    }
+
+    const payload = this.decodificarToken(token);
+
+    return payload?.exp ? payload.exp * 1000 : null;
   }
 
   tieneAlgunRol(
@@ -157,7 +194,7 @@ export class AuthService {
     response: LoginResponse
   ): void {
 
-    localStorage.setItem(
+    sessionStorage.setItem(
       this.tokenKey,
       response.token
     );
@@ -175,7 +212,7 @@ export class AuthService {
       }
     };
 
-    localStorage.setItem(
+    sessionStorage.setItem(
       this.usuarioKey,
       JSON.stringify(usuario)
     );
@@ -202,7 +239,7 @@ export class AuthService {
     }
 
     const usuarioGuardado =
-      localStorage.getItem(
+      sessionStorage.getItem(
         this.usuarioKey
       );
 
@@ -228,11 +265,11 @@ export class AuthService {
 
   private limpiarSesion(): void {
 
-    localStorage.removeItem(
+    sessionStorage.removeItem(
       this.tokenKey
     );
 
-    localStorage.removeItem(
+    sessionStorage.removeItem(
       this.usuarioKey
     );
 

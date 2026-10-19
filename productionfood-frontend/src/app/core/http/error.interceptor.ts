@@ -65,7 +65,9 @@ export const errorInterceptor: HttpInterceptorFn =
               {
                 queryParams: {
                   sesionExpirada:
-                    'true'
+                    'true',
+                  returnUrl:
+                    router.url
                 }
               }
             );
