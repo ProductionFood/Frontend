@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 
 import { PageEvent } from '@angular/material/paginator';
@@ -54,6 +55,7 @@ import { UsuarioEditorComponent } from '../usuario-editor/usuario-editor.compone
     MatSelectModule,
     MatButtonModule,
     MatIconModule,
+    MatMenuModule,
     TablaPaginadaComponent,
     TablaColumnaDirective
   ],
