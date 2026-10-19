@@ -1,0 +1,82 @@
+:host {
+  display: block;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.page-header p {
+  margin: 5px 0 0;
+  max-width: 520px;
+  font-size: 13px;
+  color: var(--tinta-600);
+}
+
+.filtros {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.filtro-busqueda {
+  flex: 1;
+  min-width: 240px;
+}
+
+.disponible {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  color: var(--tinta-900);
+}
+
+.disponible mat-icon {
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+}
+
+.disponible.baja {
+  color: #92610b;
+}
+
+.disponible.agotada {
+  color: #b02a2e;
+}
+
+.chip-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.chip-estado .punto {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.chip-estado.activo {
+  background: var(--verde-100);
+  color: var(--verde-700);
+}
+
+.chip-estado.inactivo {
+  background: var(--linea);
+  color: var(--tinta-600);
+}

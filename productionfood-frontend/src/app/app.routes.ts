@@ -100,6 +100,16 @@ export const routes: Routes = [
         data: { titulo: 'Unidades de medida' }
       },
       {
+        path: 'materias-primas',
+        canActivate: [
+          rolGuard(['ADMIN', 'PRODUCCION', 'COMPRAS', 'CONSULTA'])
+        ],
+        loadChildren: () =>
+          import('./features/materia-prima/materia-prima.routes')
+            .then(m => m.MATERIA_PRIMA_ROUTES),
+        data: { titulo: 'Materias primas' }
+      },
+      {
         // Ruta única genérica para todos los módulos pendientes.
         path: 'en-construccion/:ruta',
         loadComponent: () =>

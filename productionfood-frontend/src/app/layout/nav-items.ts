@@ -33,7 +33,8 @@ export const MODULOS_REALES = [
   'bitacora',
   'clientes',
   'proveedores',
-  'unidades-medida'
+  'unidades-medida',
+  'materias-primas'
 ];
 
 export const NAV_GRUPOS: NavGrupo[] = [
