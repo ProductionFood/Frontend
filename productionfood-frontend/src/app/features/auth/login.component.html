@@ -193,7 +193,13 @@
         @if (sesionExpirada()) {
           <div class="form-alert" role="alert">
             <mat-icon>schedule</mat-icon>
-            <span>Su sesión expiró. Inicie sesión nuevamente.</span>
+            <span>
+              {{
+                motivoSesion() === 'inactividad'
+                  ? 'Su sesión se cerró por inactividad. Inicie sesión nuevamente.'
+                  : 'Su sesión expiró. Inicie sesión nuevamente.'
+              }}
+            </span>
           </div>
         }
 

@@ -34,4 +34,24 @@ export class NotificacionService {
       panelClass: ['notificacion-advertencia']
     });
   }
+
+  /**
+   * Aviso con una acción (por ejemplo, "Cerrar sesión" antes de que expire).
+   */
+  advertenciaAccion(
+    mensaje: string,
+    textoAccion: string,
+    duracionMs: number,
+    alAccion: () => void
+  ): void {
+    this.snackBar
+      .open(mensaje, textoAccion, {
+        duration: duracionMs,
+        horizontalPosition: 'right',
+        verticalPosition: 'top',
+        panelClass: ['notificacion-advertencia']
+      })
+      .onAction()
+      .subscribe(() => alAccion());
+  }
 }

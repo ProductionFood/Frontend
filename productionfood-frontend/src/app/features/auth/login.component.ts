@@ -64,6 +64,10 @@ import {
   ApiError
 } from '../../shared/models/api-error.model';
 
+import {
+  esRutaInternaSegura
+} from '../../core/auth/ruta-segura';
+
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -91,6 +95,8 @@ export class LoginComponent {
   readonly mostrarPassword = signal(false);
   readonly errorServidor = signal<string | null>(null);
   readonly sesionExpirada = signal(false);
+  readonly motivoSesion = signal<string | null>(null);
+  readonly returnUrl = signal<string | null>(null);
 
   readonly form = this.fb.nonNullable.group({
     correo: [
@@ -104,12 +110,11 @@ export class LoginComponent {
   });
 
   constructor() {
-    const expirada = this.activatedRoute
-      .snapshot
-      .queryParamMap
-      .get('sesionExpirada');
+    const params = this.activatedRoute.snapshot.queryParamMap;
 
-    this.sesionExpirada.set(expirada === 'true');
+    this.sesionExpirada.set(params.get('sesionExpirada') === 'true');
+    this.motivoSesion.set(params.get('motivo'));
+    this.returnUrl.set(params.get('returnUrl'));
   }
 
   alternarPassword(): void {
@@ -256,6 +261,15 @@ export class LoginComponent {
   }
 
   private redireccionar(): void {
+    const destino = this.returnUrl();
+
+    // Solo se acepta volver a una ruta interna (/app...); nunca a un dominio
+    // externo ni a un esquema peligroso (open redirect).
+    if (esRutaInternaSegura(destino)) {
+      void this.router.navigateByUrl(destino);
+      return;
+    }
+
     const rol = this.authService.rol();
 
     switch (rol) {

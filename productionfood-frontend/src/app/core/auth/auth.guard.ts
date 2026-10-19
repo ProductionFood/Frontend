@@ -12,7 +12,7 @@ import {
 } from './auth.service';
 
 export const authGuard:
-  CanActivateFn = () => {
+  CanActivateFn = (_route, state) => {
 
     const authService =
       inject(AuthService);
@@ -28,8 +28,13 @@ export const authGuard:
 
     }
 
-    return router.createUrlTree([
-      '/login'
-    ]);
+    return router.createUrlTree(
+      ['/login'],
+      {
+        queryParams: {
+          returnUrl: state.url
+        }
+      }
+    );
 
   };
