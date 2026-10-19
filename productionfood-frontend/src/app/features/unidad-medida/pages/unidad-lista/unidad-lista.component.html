@@ -36,10 +36,17 @@
       *siRol="['ADMIN']"
       mat-icon-button
       type="button"
-      aria-label="Editar unidad"
-      (click)="abrirFormulario(unidad)"
+      aria-label="Acciones de la unidad"
+      [matMenuTriggerFor]="menuUnidad"
     >
-      <mat-icon>edit</mat-icon>
+      <mat-icon>more_vert</mat-icon>
     </button>
+
+    <mat-menu #menuUnidad="matMenu">
+      <button mat-menu-item type="button" (click)="abrirFormulario(unidad)">
+        <mat-icon>edit</mat-icon>
+        <span>Editar</span>
+      </button>
+    </mat-menu>
   </ng-template>
 </app-tabla-paginada>
