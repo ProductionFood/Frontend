@@ -106,6 +106,15 @@ ul {
 }
 
 /* =========================================================
+   Reduced motion global
+   ========================================================= */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* =========================================================
    Material Symbols — los mat-icon usan ligaduras de texto;
    sin esta regla se dibujan con la fuente del sistema.
    ========================================================= */

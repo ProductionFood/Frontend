@@ -1,24 +1,29 @@
-import { AfterViewInit, Directive, ElementRef, inject } from '@angular/core';
+import { AfterViewInit, Directive, ElementRef, inject, OnDestroy } from '@angular/core';
 
 @Directive({
   selector: '[appReveal]',
   host: { class: 'reveal' }
 })
-export class RevealDirective implements AfterViewInit {
+export class RevealDirective implements AfterViewInit, OnDestroy {
   private readonly el = inject<ElementRef<HTMLElement>>(ElementRef);
+  private observer?: IntersectionObserver;
 
   ngAfterViewInit(): void {
-    const observer = new IntersectionObserver(
+    this.observer = new IntersectionObserver(
       entradas => {
         for (const entrada of entradas) {
           if (entrada.isIntersecting) {
             entrada.target.classList.add('visible');
-            observer.unobserve(entrada.target);
+            this.observer?.unobserve(entrada.target);
           }
         }
       },
       { threshold: 0.12 }
     );
-    observer.observe(this.el.nativeElement);
+    this.observer.observe(this.el.nativeElement);
+  }
+
+  ngOnDestroy(): void {
+    this.observer?.disconnect();
   }
 }

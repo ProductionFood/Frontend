@@ -15,6 +15,8 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
   readonly anual = signal(false);
   readonly menuAbierto = signal(false);
   readonly seccionActiva = signal('inicio');
+  readonly suscrito = signal<string | null>(null);
+  readonly anioActual = new Date().getFullYear();
 
   private readonly spy = new IntersectionObserver(
     entradas => {
@@ -27,8 +29,11 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
 
   constructor(private readonly el: ElementRef<HTMLElement>) {}
 
-  cambiarFacturacion(_evento: Event): void {
-    this.anual.update(v => !v);
+  suscribir(evento: Event, email: string): void {
+    evento.preventDefault();
+    const limpio = email.trim();
+    if (!limpio) return;
+    this.suscrito.set(limpio);
   }
 
   alternarMenu(): void {
