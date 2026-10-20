@@ -77,7 +77,8 @@
 /* Reset scoped al componente */
 :host * { margin:0; padding:0; box-sizing:border-box; }
 :host img { max-width:100%; display:block; }
-:host a { text-decoration:none; color:inherit; }
+:host a { text-decoration:none; }
+:host a:not([class]) { color:inherit; }
 :host ul { list-style:none; }
 
 :host svg.ic {
@@ -104,15 +105,15 @@
    ========================================================= */
 
 /* --- Cards (Unified System) --- */
-.card {
+.card.card {
   background:var(--color-surface); border:1px solid var(--color-outline);
   border-radius:var(--radio-m); box-shadow:var(--elevation-1);
-  transition:transform var(--motion-fast),border-color var(--motion-fast),
-             box-shadow var(--motion-fast);
 }
-.card:hover {
+.card.card:hover {
   transform:translateY(-2px); border-color:var(--verde-300);
   box-shadow:var(--elevation-3);
+  transition:transform var(--motion-fast),border-color var(--motion-fast),
+             box-shadow var(--motion-fast);
 }
 
 /* Card with icon */
@@ -298,7 +299,7 @@ section[id], footer[id] { scroll-margin-top:96px; }
 .hero-backdrop {
   position:absolute; top:50%; right:0; z-index:0;
   width:700px; max-height:calc(100% - clamp(24px,2.5vw,44px));
-  height:auto; aspect-ratio:6000/3210; object-fit:cover; object-position:center;
+  height:auto; aspect-ratio:auto; object-fit:cover; object-position:center;
   transform:translate(-42px,calc(-50% - 30px));
   border-radius:16px;
 }
@@ -650,22 +651,22 @@ section[id], footer[id] { scroll-margin-top:96px; }
 
 /* Pricing cards using unified card system */
 .pricing .cards-grid--3 { gap:24px; }
-.pricing-card {
+.pricing-card.pricing-card {
   position:relative; display:flex; flex-direction:column;
   padding:clamp(24px,3vw,32px);
   border:1px solid var(--color-outline);
-  transition:border-color var(--motion-base),box-shadow var(--motion-base),
-             transform var(--motion-base);
 }
-.pricing-card:hover {
+.pricing-card.pricing-card:hover {
   border-color:var(--verde-300); box-shadow:var(--elevation-3);
   transform:translateY(-4px);
+  transition:border-color var(--motion-base),box-shadow var(--motion-base),
+             transform var(--motion-base);
 }
 .pricing-card--featured {
   border-color:var(--color-primary); box-shadow:var(--elevation-3);
   background:linear-gradient(180deg,rgba(31,170,112,.02),var(--color-surface));
 }
-.pricing-card--featured:hover {
+.pricing-card.pricing-card--featured:hover {
   transform:translateY(-6px);
   box-shadow:0 12px 32px rgba(31,170,112,.15);
 }
@@ -741,11 +742,11 @@ section[id], footer[id] { scroll-margin-top:96px; }
    SCROLL ANIMATIONS
    ========================================================= */
 .reveal {
-  opacity:0; transform:translateY(30px);
+  opacity:0; translate:0 30px;
   transition:opacity 0.7s var(--motion-easing-emphasized),
-             transform 0.7s var(--motion-easing-emphasized);
+             translate 0.7s var(--motion-easing-emphasized);
 }
-.reveal.visible { opacity:1; transform:none; }
+.reveal.visible { opacity:1; translate:none; }
 .reveal-delay-1 { transition-delay:100ms; }
 .reveal-delay-2 { transition-delay:200ms; }
 .reveal-delay-3 { transition-delay:300ms; }
@@ -796,6 +797,7 @@ section[id], footer[id] { scroll-margin-top:96px; }
   box-shadow:0 0 0 3px var(--color-primary-container);
 }
 .guia-ayuda { font-size:var(--text-caption); color:var(--tinta-400); margin-top:4px; }
+.newsletter-ok { color:var(--verde-700); font-weight:600; }
 
 /* Visually hidden */
 .visually-hidden {
