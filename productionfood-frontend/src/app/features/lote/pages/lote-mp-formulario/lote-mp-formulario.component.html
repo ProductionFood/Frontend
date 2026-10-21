@@ -1,0 +1,25 @@
+<h2 mat-dialog-title>Nuevo lote de materia prima</h2>
+@if (guardando()) { <mat-progress-bar mode="indeterminate" aria-label="Registrando lote" /> }
+<mat-dialog-content>
+  @if (errorGeneral()) { <p class="error-general" role="alert">{{ errorGeneral() }}</p> }
+  <form [formGroup]="form" (ngSubmit)="guardar()" id="lote-form">
+    <mat-form-field appearance="outline" class="full"><mat-label>Código de lote</mat-label><input matInput formControlName="codigoLote" maxlength="30" autocomplete="off" required />
+      @if (form.controls.codigoLote.hasError('required')) { <mat-error>El código es obligatorio</mat-error> }
+      @if (form.controls.codigoLote.hasError('maxlength')) { <mat-error>Máximo 30 caracteres</mat-error> }
+      @if (errorCampo('codigoLote')) { <mat-error>{{ errorCampo('codigoLote') }}</mat-error> }
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full"><mat-label>Materia prima</mat-label><mat-select formControlName="idMateriaPrima" required><mat-option [value]="null">Seleccione una materia prima</mat-option>@for (m of materias(); track m.idMateriaPrima) { <mat-option [value]="m.idMateriaPrima">{{ m.nombre }} ({{ m.unidad.abreviatura }})</mat-option> }</mat-select>
+      @if (form.controls.idMateriaPrima.hasError('required')) { <mat-error>Seleccione una materia prima</mat-error> } @if (errorCampo('idMateriaPrima')) { <mat-error>{{ errorCampo('idMateriaPrima') }}</mat-error> }
+    </mat-form-field>
+    <div class="fechas">
+      <mat-form-field appearance="outline"><mat-label>Fecha de producción</mat-label><input matInput [matDatepicker]="produccionPicker" formControlName="fechaProduccion" required /><mat-datepicker-toggle matIconSuffix [for]="produccionPicker"/><mat-datepicker #produccionPicker/>@if (form.controls.fechaProduccion.hasError('required')) { <mat-error>Indique la fecha de producción</mat-error> }</mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>Fecha de vencimiento</mat-label><input matInput [matDatepicker]="vencimientoPicker" [min]="fechaMinimaVencimiento" formControlName="fechaVencimiento" required /><mat-datepicker-toggle matIconSuffix [for]="vencimientoPicker"/><mat-datepicker #vencimientoPicker/>@if (form.controls.fechaVencimiento.hasError('required')) { <mat-error>Indique la fecha de vencimiento</mat-error> } @if (errorCampo('fechaVencimiento')) { <mat-error>{{ errorCampo('fechaVencimiento') }}</mat-error> }</mat-form-field>
+    </div>
+    @if (vencido) { <p class="advertencia" role="status"><mat-icon>warning</mat-icon> La fecha de vencimiento ya pasó. El lote se registrará igualmente, pero quedará marcado como vencido.</p> }
+    <mat-form-field appearance="outline" class="full"><mat-label>Cantidad</mat-label><input matInput type="number" min="0.000001" step="any" formControlName="cantidad" required /><span matTextSuffix>{{ materiaSeleccionada?.unidad?.abreviatura ?? 'unidad' }}</span>
+      @if (form.controls.cantidad.hasError('required')) { <mat-error>La cantidad es obligatoria</mat-error> } @if (form.controls.cantidad.hasError('min')) { <mat-error>Debe ser mayor que cero</mat-error> } @if (errorCampo('cantidad')) { <mat-error>{{ errorCampo('cantidad') }}</mat-error> }
+    </mat-form-field>
+    <mat-card class="impacto"><mat-card-header><mat-icon mat-card-avatar>inventory_2</mat-icon><mat-card-title>Impacto en el inventario</mat-card-title></mat-card-header><mat-card-content><p>{{ impacto }}</p><small>Verifique que esta entrada no haya sido sumada previamente desde una compra.</small></mat-card-content></mat-card>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end"><button mat-button type="button" (click)="cancelar()" [disabled]="guardando()">Cancelar</button><button mat-flat-button color="primary" type="submit" form="lote-form" [disabled]="guardando()"><mat-icon>save</mat-icon> Registrar lote</button></mat-dialog-actions>
