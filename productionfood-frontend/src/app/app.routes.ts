@@ -118,6 +118,14 @@ export const routes: Routes = [
         data: { titulo: 'Productos' }
       },
       {
+        path: 'recetas',
+        canActivate: [rolGuard(['ADMIN', 'PRODUCCION', 'CONSULTA'])],
+        loadChildren: () =>
+          import('./features/receta/receta.routes')
+            .then(m => m.RECETA_ROUTES),
+        data: { titulo: 'Recetas' }
+      },
+      {
         path: 'inventario',
         canActivate: [rolGuard(['ADMIN', 'PRODUCCION', 'COMPRAS', 'CONSULTA'])],
         loadChildren: () =>

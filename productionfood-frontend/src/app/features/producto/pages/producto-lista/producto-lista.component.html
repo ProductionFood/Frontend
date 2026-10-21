@@ -77,7 +77,7 @@
         <mat-icon aria-hidden="true">check_circle</mat-icon><span>Completa</span>
       </span>
     } @else {
-      <a class="indicador-receta sin-receta" [routerLink]="['/app/recetas']" [queryParams]="{ producto: producto.idProducto }" matTooltip="No se puede planificar hasta crear la receta" [attr.aria-label]="'Crear receta para ' + producto.nombre">
+      <a class="indicador-receta sin-receta" [routerLink]="['/app/recetas/nueva']" [queryParams]="{ producto: producto.idProducto }" matTooltip="No se puede planificar hasta crear la receta" [attr.aria-label]="'Crear receta para ' + producto.nombre">
         <mat-icon aria-hidden="true">warning</mat-icon><span>Sin receta</span>
       </a>
     }

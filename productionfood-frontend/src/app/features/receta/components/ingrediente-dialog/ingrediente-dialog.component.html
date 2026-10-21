@@ -1,0 +1,14 @@
+<header class="dialog-header"><div><h2 mat-dialog-title>{{ datos.ingrediente ? 'Editar ingrediente' : 'Agregar ingrediente' }}</h2><p>Solo se muestran materias primas activas que aún no estén en la receta.</p></div><button mat-icon-button mat-dialog-close type="button" aria-label="Cerrar"><mat-icon>close</mat-icon></button></header>
+<form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+  <mat-dialog-content class="contenido">
+    @if (error()) { <div class="error" role="alert">{{ error() }} <button mat-button type="button" (click)="cargar()">Reintentar</button></div> }
+    @if (cargando()) { <div class="cargando"><mat-spinner diameter="22"></mat-spinner> Cargando materias primas…</div> }
+    @else if (materias().length === 0) { <p>No hay materias primas disponibles para agregar.</p> }
+    <mat-form-field appearance="outline" class="full"><mat-label>Materia prima</mat-label><mat-select formControlName="idMateriaPrima" required>
+      @for (m of materias(); track m.idMateriaPrima) { <mat-option [value]="m.idMateriaPrima">{{ m.nombre }} ({{ m.unidad.abreviatura }})</mat-option> }
+    </mat-select>@if (form.controls.idMateriaPrima.touched && form.controls.idMateriaPrima.invalid) { <mat-error>Seleccione una materia prima</mat-error> }</mat-form-field>
+    <mat-form-field appearance="outline" class="full"><mat-label>Cantidad requerida</mat-label><input matInput type="number" formControlName="cantidad" min="0.001" step="0.001" required /><mat-hint>Admite hasta 3 decimales · unidad de la materia prima</mat-hint>@if (form.controls.cantidad.touched && form.controls.cantidad.invalid) { <mat-error>Debe ser mayor que cero</mat-error> }</mat-form-field>
+    <div class="costo"><span>Costo estimado de referencia</span><strong>{{ costoEstimado | currency:'COP':'symbol-narrow':'1.2-2' }}</strong></div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end"><button mat-button type="button" mat-dialog-close>Cancelar</button><button mat-flat-button type="submit" [disabled]="cargando() || !!error() || !materias().length">{{ datos.ingrediente ? 'Guardar' : 'Agregar' }}</button></mat-dialog-actions>
+</form>
