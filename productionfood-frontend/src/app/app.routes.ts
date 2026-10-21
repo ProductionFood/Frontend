@@ -110,6 +110,14 @@ export const routes: Routes = [
         data: { titulo: 'Materias primas' }
       },
       {
+        path: 'inventario',
+        canActivate: [rolGuard(['ADMIN', 'PRODUCCION', 'COMPRAS', 'CONSULTA'])],
+        loadChildren: () =>
+          import('./features/inventario/inventario.routes')
+            .then(m => m.INVENTARIO_ROUTES),
+        data: { titulo: 'Inventario de materias primas' }
+      },
+      {
         path: 'lotes-materia-prima',
         canActivate: [rolGuard(['ADMIN', 'PRODUCCION', 'COMPRAS', 'CONSULTA'])],
         loadChildren: () =>

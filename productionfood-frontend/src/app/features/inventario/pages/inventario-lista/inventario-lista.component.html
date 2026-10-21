@@ -1,0 +1,37 @@
+<header class="page-header">
+  <div><h1>Inventario de materias primas</h1><p>Consulta las existencias, identifica faltantes y revisa los movimientos de cada insumo.</p></div>
+</header>
+
+<section class="resumen" aria-label="Resumen del inventario">
+  <mat-card class="resumen-card"><mat-card-content><span class="resumen-numero">{{ totalMaterias() }}</span><span>materias primas</span></mat-card-content></mat-card>
+  <mat-card class="resumen-card bajo"><mat-card-content><span class="resumen-numero">{{ totalBajo() }}</span><span>bajo mínimo</span><mat-icon aria-hidden="true">warning</mat-icon></mat-card-content></mat-card>
+  <mat-card class="resumen-card agotado"><mat-card-content><span class="resumen-numero">{{ totalAgotadas() }}</span><span>agotadas</span><mat-icon aria-hidden="true">error</mat-icon></mat-card-content></mat-card>
+</section>
+
+<section class="filtros" aria-label="Filtros de inventario">
+  <mat-form-field appearance="outline"><mat-label>Materia prima</mat-label><mat-select [formControl]="filtros.controls.idMateriaPrima"><mat-option [value]="null">Todas</mat-option>@for (m of materias(); track m.idMateriaPrima) { <mat-option [value]="m.idMateriaPrima">{{ m.nombre }}</mat-option> }</mat-select></mat-form-field>
+  <mat-checkbox [formControl]="filtros.controls.soloStockBajo">Solo stock bajo</mat-checkbox>
+  <mat-checkbox [formControl]="filtros.controls.incluirInactivas">Incluir inactivas</mat-checkbox>
+</section>
+
+<mat-card class="tabla-card"><mat-card-content>
+  @if (cargando()) { <mat-progress-bar mode="indeterminate" aria-label="Cargando inventario" /> <div class="esqueleto" aria-hidden="true"><span></span><span></span><span></span></div> }
+  @if (error()) { <div class="estado error" role="alert"><mat-icon>error_outline</mat-icon><p>{{ error() }}</p><button mat-stroked-button type="button" (click)="recargar()">Reintentar</button></div> }
+  @if (!cargando() && !error() && filas().length === 0) {
+    @if (filtros.controls.soloStockBajo.value) { <div class="estado todo-ok"><mat-icon>check_circle</mat-icon><h2>Todas las materias primas están por encima del mínimo</h2><p>No hay faltantes de stock según los filtros seleccionados.</p></div> }
+    @else if (!filtros.controls.idMateriaPrima.value && !filtros.controls.incluirInactivas.value && total() === 0) { <div class="estado"><mat-icon>inventory_2</mat-icon><h2>No hay materias primas registradas</h2><p>Registra materias primas en el catálogo para comenzar a consultar su inventario.</p><a mat-stroked-button routerLink="/app/materias-primas">Ir a materias primas</a></div> }
+    @else { <div class="estado"><mat-icon>search_off</mat-icon><h2>No hay resultados para los filtros seleccionados</h2></div> }
+  }
+  @if (!error() && filas().length > 0) {
+    <div class="tabla-scroll"><table mat-table [dataSource]="filas()" matSort (matSortChange)="onOrden($event)" aria-label="Inventario de materias primas">
+      <ng-container matColumnDef="materiaPrima"><th mat-header-cell *matHeaderCellDef mat-sort-header="nombreMateriaPrima">Materia prima</th><td mat-cell *matCellDef="let fila"><a class="nombre-materia" [routerLink]="['/app/inventario', fila.idMateriaPrima, 'movimientos']"><mat-icon [class]="'semaforo '+estado(fila).toLowerCase()" aria-hidden="true">{{ iconoEstado(fila) }}</mat-icon><span>{{ nombre(fila) }}</span></a>@if (fila.activo === false) { <span class="inactiva">Inactiva</span> }</td></ng-container>
+      <ng-container matColumnDef="disponible"><th mat-header-cell *matHeaderCellDef>Disponible</th><td mat-cell *matCellDef="let fila"><strong>{{ disponible(fila) | number:'1.2-2':'es-CO' }} {{ unidad(fila) }}</strong></td></ng-container>
+      <ng-container matColumnDef="minimo"><th mat-header-cell *matHeaderCellDef>Mínimo</th><td mat-cell *matCellDef="let fila">{{ fila.stockMinimo | number:'1.2-2':'es-CO' }} {{ unidad(fila) }}</td></ng-container>
+      <ng-container matColumnDef="nivel"><th mat-header-cell *matHeaderCellDef>Nivel</th><td mat-cell *matCellDef="let fila"><div class="nivel"><mat-progress-bar [mode]="'determinate'" [value]="nivel(fila)" [color]="colorEstado(fila)" [attr.aria-label]="'Stock al '+(nivel(fila) | number:'1.0-0')+' por ciento del mínimo'"></mat-progress-bar><span>{{ nivel(fila) | number:'1.0-0' }}%</span></div></td></ng-container>
+      <ng-container matColumnDef="faltante"><th mat-header-cell *matHeaderCellDef>Falta</th><td mat-cell *matCellDef="let fila">@if (faltante(fila) > 0) { <span class="faltante">{{ faltante(fila) | number:'1.2-2':'es-CO' }} {{ unidad(fila) }}</span> } @else { <span class="sin-faltante">—</span> }</td></ng-container>
+      <ng-container matColumnDef="actualizado"><th mat-header-cell *matHeaderCellDef mat-sort-header="fechaActualizacion">Actualizado</th><td mat-cell *matCellDef="let fila">{{ fechaActualizacion(fila.fechaActualizacion) }}</td></ng-container>
+      <tr mat-header-row *matHeaderRowDef="columnas"></tr><tr mat-row *matRowDef="let row; columns: columnas" [class.fila-inactiva]="row.activo === false"></tr>
+    </table></div>
+    <mat-paginator [length]="total()" [pageIndex]="pagina()" [pageSize]="tamano()" [pageSizeOptions]="[10,20,50]" (page)="onPagina($event)" aria-label="Paginación del inventario" />
+  }
+</mat-card-content></mat-card>
