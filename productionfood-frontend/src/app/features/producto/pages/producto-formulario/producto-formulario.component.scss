@@ -1,0 +1,14 @@
+:host { display: block; }
+.dialog-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; padding: 1.25rem 1.5rem 0; }
+.dialog-header h2 { margin: 0; }
+.dialog-header p { margin: .35rem 0 0; color: var(--mat-sys-on-surface-variant, #626262); font-size: .9rem; }
+.formulario { display: flex; flex-direction: column; gap: .55rem; padding-top: 1rem; min-width: min(560px, 80vw); }
+.ancho-completo { width: 100%; }
+.fila-campos { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem; }
+.fila-campos mat-form-field { min-width: 0; width: 100%; }
+.error-general, .aviso-unidades, .estado-unidades { display: flex; align-items: center; gap: .65rem; border-radius: .65rem; padding: .8rem; font-size: .9rem; }
+.error-general { background: #fff0ef; color: #a52620; }
+.aviso-unidades { flex-wrap: wrap; background: #fff7e5; color: #795400; }
+.estado-unidades { color: var(--mat-sys-on-surface-variant, #626262); }
+mat-dialog-actions { padding: .5rem 1.5rem 1.25rem; gap: .5rem; }
+@media (max-width: 560px) { .formulario { min-width: 0; } .fila-campos { grid-template-columns: 1fr; gap: 0; } }
