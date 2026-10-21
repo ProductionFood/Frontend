@@ -34,7 +34,8 @@ export const MODULOS_REALES = [
   'clientes',
   'proveedores',
   'unidades-medida',
-  'materias-primas'
+  'materias-primas',
+  'lotes-materia-prima'
 ];
 
 export const NAV_GRUPOS: NavGrupo[] = [

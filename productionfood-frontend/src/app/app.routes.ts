@@ -110,6 +110,13 @@ export const routes: Routes = [
         data: { titulo: 'Materias primas' }
       },
       {
+        path: 'lotes-materia-prima',
+        canActivate: [rolGuard(['ADMIN', 'PRODUCCION', 'COMPRAS', 'CONSULTA'])],
+        loadChildren: () =>
+          import('./features/lote/lote.routes').then(m => m.LOTE_ROUTES),
+        data: { titulo: 'Lotes de materia prima' }
+      },
+      {
         // Ruta única genérica para todos los módulos pendientes.
         path: 'en-construccion/:ruta',
         loadComponent: () =>
