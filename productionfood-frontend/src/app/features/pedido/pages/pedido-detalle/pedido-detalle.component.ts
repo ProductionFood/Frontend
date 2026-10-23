@@ -1,0 +1,271 @@
+import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
+import {
+  Component,
+  DestroyRef,
+  inject,
+  signal
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTableModule } from '@angular/material/table';
+
+import { EMPTY, Subject, catchError, switchMap, tap } from 'rxjs';
+
+import { NotificacionService } from '../../../../core/ui/notificacion.service';
+import { SiRolDirective } from '../../../../shared/directives/si-rol.directive';
+import {
+  ConfirmarDialogComponent,
+  ConfirmarDialogData
+} from '../../../../shared/components/confirmar-dialog/confirmar-dialog.component';
+import { EstadoPedido, LineaPedido, Pedido } from '../../models/pedido.model';
+import { PedidoService } from '../../services/pedido.service';
+import { CancelarPedidoDialogComponent } from '../../components/cancelar-pedido-dialog/cancelar-pedido-dialog.component';
+import { PedidoFormularioComponent } from '../pedido-formulario/pedido-formulario.component';
+
+/**
+ * Detalle de un pedido (HU-16): cabecera con estado, acciones de la máquina
+ * de estados (R-02) y la zona de productos, que en esta historia muestra el
+ * detalle existente o avisa que faltan; el CRUD de ítems es HU-17. Cancelar
+ * abre el diálogo que explica la devolución de stock a los lotes (R-04).
+ */
+@Component({
+  selector: 'app-pedido-detalle',
+  standalone: true,
+  imports: [
+    DatePipe,
+    CurrencyPipe,
+    DecimalPipe,
+    RouterLink,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressBarModule,
+    MatTableModule,
+    SiRolDirective
+  ],
+  templateUrl: './pedido-detalle.component.html',
+  styleUrl: './pedido-detalle.component.scss'
+})
+export class PedidoDetalleComponent {
+  private readonly route = inject(ActivatedRoute);
+  private readonly pedidoService = inject(PedidoService);
+  private readonly notificacion = inject(NotificacionService);
+  private readonly dialog = inject(MatDialog);
+  private readonly destroyRef = inject(DestroyRef);
+
+  readonly idPedido = Number(this.route.snapshot.paramMap.get('id'));
+
+  readonly pedido = signal<Pedido | null>(null);
+  readonly cargando = signal(false);
+  readonly error = signal<string | null>(null);
+
+  readonly columnasDetalle = ['producto', 'cantidad', 'precioUnitario', 'subtotal'];
+
+  private readonly recargar$ = new Subject<void>();
+
+  constructor() {
+    this.recargar$
+      .pipe(
+        tap(() => {
+          this.cargando.set(true);
+          this.error.set(null);
+        }),
+        switchMap(() =>
+          this.pedidoService.obtener(this.idPedido).pipe(
+            catchError((error: HttpErrorResponse) => {
+              this.pedido.set(null);
+              this.error.set(this.mensajeError(error));
+              this.cargando.set(false);
+              return EMPTY;
+            })
+          )
+        ),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(pedido => {
+        this.pedido.set(pedido);
+        this.cargando.set(false);
+        this.error.set(null);
+      });
+
+    this.recargar();
+  }
+
+  get titulo(): string {
+    return `Pedido #${this.idPedido}`;
+  }
+
+  /** Las líneas del detalle vienen en `GET /{id}`; su CRUD es HU-17. */
+  get detalle(): LineaPedido[] {
+    return this.pedido()?.detalle ?? [];
+  }
+
+  get sinProductos(): boolean {
+    return !this.cargando() && !this.error() && this.detalle.length === 0;
+  }
+
+  recargar(): void {
+    this.recargar$.next();
+  }
+
+  estadoTexto(estado: EstadoPedido): string {
+    switch (estado) {
+      case 'PENDIENTE':
+        return 'Pendiente';
+      case 'EN_PREPARACION':
+        return 'En preparación';
+      case 'ENTREGADO':
+        return 'Entregado';
+      case 'CANCELADO':
+        return 'Cancelado';
+    }
+  }
+
+  editar(): void {
+    const pedido = this.pedido();
+
+    if (!pedido || !pedido.editable || pedido.estado !== 'PENDIENTE') {
+      return;
+    }
+
+    this.dialog
+      .open(PedidoFormularioComponent, {
+        data: { pedido },
+        width: '520px',
+        maxWidth: '95vw',
+        autoFocus: 'first-tabbable',
+        disableClose: true
+      })
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(resultado => {
+        if (resultado === true) {
+          this.notificacion.exito('Pedido actualizado correctamente.');
+          this.recargar();
+        }
+      });
+  }
+
+  iniciarPreparacion(): void {
+    const pedido = this.pedido();
+
+    if (!pedido || pedido.estado !== 'PENDIENTE') {
+      return;
+    }
+
+    const data: ConfirmarDialogData = {
+      titulo: 'Iniciar preparación',
+      mensaje:
+        `¿Marcar el pedido #${pedido.idPedido} de «${pedido.cliente.nombre}» ` +
+        'como en preparación? Podrás entregarlo o cancelarlo desde su detalle.',
+      textoConfirmar: 'Iniciar preparación'
+    };
+
+    this.confirmarCambioEstado(data, 'EN_PREPARACION');
+  }
+
+  marcarEntregado(): void {
+    const pedido = this.pedido();
+
+    if (!pedido || pedido.estado !== 'EN_PREPARACION') {
+      return;
+    }
+
+    const data: ConfirmarDialogData = {
+      titulo: 'Marcar como entregado',
+      mensaje:
+        `¿Confirmar que el pedido #${pedido.idPedido} de «${pedido.cliente.nombre}» ` +
+        'fue entregado? Esta acción es definitiva: un pedido entregado no se ' +
+        'cancela ni se reabre.',
+      textoConfirmar: 'Marcar entregado'
+    };
+
+    this.confirmarCambioEstado(data, 'ENTREGADO');
+  }
+
+  cancelarPedido(): void {
+    const pedido = this.pedido();
+
+    if (
+      !pedido ||
+      (pedido.estado !== 'PENDIENTE' && pedido.estado !== 'EN_PREPARACION')
+    ) {
+      return;
+    }
+
+    this.dialog
+      .open(CancelarPedidoDialogComponent, {
+        data: { pedido },
+        width: '640px',
+        maxWidth: '95vw',
+        autoFocus: 'dialog',
+        disableClose: true
+      })
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(resultado => {
+        if (resultado === true) {
+          this.notificacion.exito(
+            'Pedido cancelado. Los productos volvieron al inventario.'
+          );
+          this.recargar();
+        }
+      });
+  }
+
+  private confirmarCambioEstado(
+    data: ConfirmarDialogData,
+    estado: EstadoPedido
+  ): void {
+    this.dialog
+      .open(ConfirmarDialogComponent, {
+        data,
+        width: '460px',
+        autoFocus: 'dialog'
+      })
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(confirmado => {
+        if (!confirmado) {
+          return;
+        }
+
+        this.pedidoService
+          .cambiarEstado(this.idPedido, estado)
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe({
+            next: () => {
+              this.notificacion.exito(
+                estado === 'EN_PREPARACION'
+                  ? 'El pedido pasó a en preparación.'
+                  : 'Pedido marcado como entregado.'
+              );
+              this.recargar();
+            },
+            error: (error: HttpErrorResponse) => {
+              if (error.status === 409) {
+                this.notificacion.advertencia(this.mensajeError(error));
+                this.recargar();
+                return;
+              }
+              this.notificacion.error(this.mensajeError(error));
+            }
+          });
+      });
+  }
+
+  private mensajeError(error: HttpErrorResponse): string {
+    const cuerpo = error.error as { message?: string } | null;
+
+    if (cuerpo && typeof cuerpo.message === 'string') {
+      return cuerpo.message;
+    }
+
+    return 'No se pudo cargar el pedido.';
+  }
+}

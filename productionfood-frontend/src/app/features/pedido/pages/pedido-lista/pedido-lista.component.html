@@ -1,0 +1,151 @@
+<header class="page-header">
+  <div class="header-info">
+    <p>Gestiona los pedidos de tus clientes: crea, prepara y entrega.</p>
+  </div>
+
+  <button
+    *siRol="['ADMIN', 'VENTAS']"
+    mat-flat-button
+    color="primary"
+    type="button"
+    (click)="abrirFormulario()"
+  >
+    <mat-icon>add</mat-icon>
+    Nuevo pedido
+  </button>
+</header>
+
+<section class="filtros">
+  <mat-form-field appearance="outline">
+    <mat-label>Cliente</mat-label>
+    <mat-select [formControl]="filtros.controls.idCliente">
+      <mat-option [value]="null">Todos</mat-option>
+      @for (cliente of clientes(); track cliente.idCliente) {
+        <mat-option [value]="cliente.idCliente">
+          {{ cliente.nombre }}
+        </mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Estado</mat-label>
+    <mat-select [formControl]="filtros.controls.estado">
+      <mat-option [value]="null">Todos</mat-option>
+      @for (estado of estados; track estado) {
+        <mat-option [value]="estado">{{ estadoTexto(estado) }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="filtro-fechas">
+    <mat-label>Rango de fechas</mat-label>
+    <mat-date-range-input [formGroup]="filtros" [rangePicker]="picker">
+      <input matStartDate formControlName="desde" placeholder="Desde" />
+      <input matEndDate formControlName="hasta" placeholder="Hasta" />
+    </mat-date-range-input>
+    <mat-datepicker-toggle matIconSuffix [for]="picker" />
+    <mat-date-range-picker #picker />
+  </mat-form-field>
+</section>
+
+@if (errorRango()) {
+  <p class="error-rango">
+    <mat-icon>error_outline</mat-icon>
+    La fecha inicial no puede ser posterior a la final.
+  </p>
+}
+
+<app-tabla-paginada
+  [columnas]="columnas"
+  [datos]="pedidos()"
+  [total]="total()"
+  [page]="pagina()"
+  [size]="tamano()"
+  [cargando]="cargando()"
+  [error]="error()"
+  [mensajeVacio]="mensajeVacio"
+  (cambiarPagina)="onPagina($event)"
+  (cambiarOrden)="onOrden($event)"
+  (reintentar)="recargar()"
+>
+  <ng-template appTablaColumna="id" let-pedido>
+    #{{ pedido.idPedido }}
+  </ng-template>
+
+  <ng-template appTablaColumna="cliente" let-pedido>
+    {{ pedido.cliente.nombre }}
+  </ng-template>
+
+  <ng-template appTablaColumna="fechaPedido" let-pedido>
+    {{ pedido.fechaPedido | date: 'dd/MM/yy' }}
+  </ng-template>
+
+  <ng-template appTablaColumna="fechaEntrega" let-pedido>
+    @if (!pedido.fechaEntrega) {
+      <span class="sin-entrega">—</span>
+    } @else if (esVencido(pedido)) {
+      <span class="entrega vencida">
+        <mat-icon>error</mat-icon>
+        {{ pedido.fechaEntrega | date: 'dd/MM/yy' }}
+      </span>
+    } @else if (esHoy(pedido)) {
+      <span class="entrega hoy">
+        <mat-icon>schedule</mat-icon>
+        HOY
+      </span>
+    } @else {
+      {{ pedido.fechaEntrega | date: 'dd/MM/yy' }}
+    }
+  </ng-template>
+
+  <ng-template appTablaColumna="cantidadItems" let-pedido>
+    {{ pedido.cantidadItems }}
+  </ng-template>
+
+  <ng-template appTablaColumna="totalPedido" let-pedido>
+    {{ pedido.totalPedido | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
+  </ng-template>
+
+  <ng-template appTablaColumna="estado" let-pedido>
+    <span
+      class="chip-estado"
+      [class.pendiente]="pedido.estado === 'PENDIENTE'"
+      [class.en-preparacion]="pedido.estado === 'EN_PREPARACION'"
+      [class.entregado]="pedido.estado === 'ENTREGADO'"
+      [class.cancelado]="pedido.estado === 'CANCELADO'"
+    >
+      <span class="punto"></span>
+      {{ estadoTexto(pedido.estado) }}
+    </span>
+  </ng-template>
+
+  <ng-template appTablaColumna="acciones" let-pedido>
+    <button
+      mat-icon-button
+      type="button"
+      aria-label="Acciones del pedido"
+      [matMenuTriggerFor]="menuPedido"
+    >
+      <mat-icon>more_vert</mat-icon>
+    </button>
+
+    <mat-menu #menuPedido="matMenu">
+      <button mat-menu-item type="button" [routerLink]="['/app/pedidos', pedido.idPedido]">
+        <mat-icon>visibility</mat-icon>
+        <span>Ver detalle</span>
+      </button>
+      @if (pedido.editable && pedido.estado === 'PENDIENTE') {
+        <button
+          *siRol="['ADMIN', 'VENTAS']"
+          mat-menu-item
+          type="button"
+          (click)="abrirFormulario(pedido)"
+        >
+          <mat-icon>edit</mat-icon>
+          <span>Editar</span>
+        </button>
+      }
+    </mat-menu>
+  </ng-template>
+</app-tabla-paginada>
