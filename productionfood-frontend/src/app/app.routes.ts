@@ -141,6 +141,13 @@ export const routes: Routes = [
         data: { titulo: 'Lotes de materia prima' }
       },
       {
+        path: 'compras',
+        canActivate: [rolGuard(['ADMIN', 'COMPRAS', 'PRODUCCION', 'CONSULTA'])],
+        loadChildren: () =>
+          import('./features/compra/compra.routes').then(m => m.COMPRA_ROUTES),
+        data: { titulo: 'Compras' }
+      },
+      {
         // Ruta única genérica para todos los módulos pendientes.
         path: 'en-construccion/:ruta',
         loadComponent: () =>

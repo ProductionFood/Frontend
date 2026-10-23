@@ -1,0 +1,93 @@
+<h2 mat-dialog-title>
+  {{ esEdicion ? 'Editar compra' : 'Nueva compra' }}
+</h2>
+
+<form [formGroup]="form" (ngSubmit)="guardar()">
+  <mat-dialog-content class="contenido">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Proveedor</mat-label>
+      <mat-select formControlName="idProveedor">
+        @if (cargandoProveedores()) {
+          <mat-option disabled>Cargando proveedores...</mat-option>
+        } @else {
+          @for (proveedor of proveedores(); track proveedor.idProveedor) {
+            <mat-option [value]="proveedor.idProveedor">
+              {{ proveedor.nombre }}
+            </mat-option>
+          }
+        }
+      </mat-select>
+      @if (form.controls.idProveedor.touched && form.controls.idProveedor.invalid) {
+        <mat-error>{{ proveedorError }}</mat-error>
+      }
+    </mat-form-field>
+
+    @if (sinProveedores) {
+      <div class="sin-proveedores">
+        <mat-icon>info</mat-icon>
+        <span>Primero debe registrar proveedores activos.</span>
+      </div>
+    }
+
+    @if (errorProveedores()) {
+      <div class="sin-proveedores">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ errorProveedores() }}</span>
+      </div>
+    }
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Fecha de compra</mat-label>
+      <input
+        matInput
+        [matDatepicker]="picker"
+        formControlName="fecha"
+        [max]="maxFecha"
+      />
+      <mat-datepicker-toggle matIconSuffix [for]="picker" />
+      <mat-datepicker #picker />
+      <mat-hint>Puede ser pasada, pero no futura</mat-hint>
+      @if (form.controls.fecha.touched && form.controls.fecha.invalid) {
+        <mat-error>{{ fechaError }}</mat-error>
+      }
+    </mat-form-field>
+
+    @if (!esEdicion) {
+      <p class="nota-estado">
+        <mat-icon>info</mat-icon>
+        La compra se registra como <strong>Pendiente</strong>. El estado
+        cambia desde su detalle al recibir o cancelar.
+      </p>
+    }
+
+    @if (errorGeneral()) {
+      <div class="error-general">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ errorGeneral() }}</span>
+      </div>
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button
+      mat-stroked-button
+      type="button"
+      (click)="cancelar()"
+      [disabled]="guardando()"
+    >
+      Cancelar
+    </button>
+    <button
+      mat-flat-button
+      color="primary"
+      type="submit"
+      [disabled]="form.invalid || guardando() || sinProveedores"
+    >
+      @if (guardando()) {
+        <mat-spinner diameter="18" />
+      } @else {
+        {{ esEdicion ? 'Guardar cambios' : 'Registrar compra' }}
+      }
+    </button>
+  </mat-dialog-actions>
+</form>
