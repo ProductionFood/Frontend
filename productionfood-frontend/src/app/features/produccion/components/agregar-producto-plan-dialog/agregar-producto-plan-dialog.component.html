@@ -1,0 +1,12 @@
+<h2 mat-dialog-title>Agregar producto al plan</h2>
+<mat-dialog-content>
+ @if(cargando()){<mat-progress-bar mode="indeterminate"/><p>Cargando productos y existencias...</p>}
+ @if(error()){<p class="error" role="alert">{{error()}}</p>}
+ @if(!cargando()){
+ <div class="campos"><mat-form-field appearance="outline"><mat-label>Producto</mat-label><mat-select [formControl]="productoId" required>@for(p of productos();track p.idProducto){<mat-option [value]="p.idProducto">{{p.nombre}} ({{p.unidad.abreviatura}})</mat-option>}</mat-select><mat-error>Seleccione un producto</mat-error></mat-form-field>
+ <mat-form-field appearance="outline"><mat-label>Cantidad a producir</mat-label><input matInput type="number" min="0.000001" step="1" [formControl]="cantidad" required/><mat-error>Debe ser mayor que cero</mat-error></mat-form-field></div>
+ @if(productoId.value && !receta){<section class="aviso" role="status"><strong>Este producto no tiene receta activa.</strong><p>Puede planificarlo, pero no se calculará el consumo teórico ni la eficiencia (HU-26).</p><a mat-stroked-button href="/app/recetas">Crear receta primero</a>@if(sinRecetaConfirmada()){<p>Pulse «Agregar de todos modos» para confirmar.</p>}</section>}
+ @if(receta && cantidad.value && cantidad.value!>0){<section class="aviso"><strong>Materia prima estimada</strong><p>Según receta: {{receta!.nombre}} · rendimiento {{receta!.cantidadProducir}}</p>@for(n of necesidades;track n.nombre){<div class="insumo"><span>{{n.nombre}}</span><span>{{n.requerida.toFixed(3)}} {{n.unidad}} · disponible {{n.disponible===null?'Sin datos':n.disponible}} @if(n.disponible===null||n.disponible<n.requerida){<strong class="error">Insuficiente</strong>}@else{✓}</span></div>}@if(faltantes){<p class="error" role="status">Hay materias primas sin stock suficiente o sin información. Planificar no descuenta inventario.</p>}</section>}
+ }
+</mat-dialog-content>
+<mat-dialog-actions align="end"><button mat-button mat-dialog-close [disabled]="guardando()">Cancelar</button><button mat-flat-button [disabled]="cargando()||guardando()||productoId.invalid||cantidad.invalid" (click)="agregar()">{{guardando()?'Guardando...':sinRecetaConfirmada()?'Agregar de todos modos':'Agregar'}}</button></mat-dialog-actions>
