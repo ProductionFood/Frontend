@@ -1,0 +1,17 @@
+<h2 mat-dialog-title>Agregar producto al pedido</h2>
+<mat-dialog-content><form id="formProducto" (ngSubmit)="guardar()">
+@if(cargando()){<mat-spinner diameter="28" aria-label="Cargando productos"/>}
+@if(error()){<p role="alert">{{error()}} <button mat-button type="button" (click)="cargar()">Reintentar</button></p>}
+@if(!cargando()&&!error()&&productos().length===0){<p>No hay productos disponibles en inventario. <a href="/app/inventario">Ver inventario</a></p>}
+@if(productos().length){<mat-form-field appearance="outline"><mat-label>Producto</mat-label><mat-select [formControl]="idProducto" (selectionChange)="seleccionar($event.value)">@for(p of productos();track p.idProducto){<mat-option [value]="p.idProducto">{{p.nombre}} — {{p.stockDisponible}} disponibles</mat-option>}</mat-select></mat-form-field>}
+@if(cargandoStock()){<mat-spinner diameter="24" aria-label="Consultando stock"/>}
+@if(stock();as s){<mat-form-field appearance="outline"><mat-label>Cantidad</mat-label><input matInput type="number" min="1" [max]="disponible()" [formControl]="cantidad" /></mat-form-field>
+<p>Precio unitario: {{producto()?.precioVenta | currency:'COP':'symbol-narrow':'1.2-2'}}</p>
+@if(insuficiente()){<p class="alerta" role="alert">Solo hay {{disponible()}} unidades disponibles. Faltan {{cantidadActual()-disponible()}} unidades.</p>}
+<section class="fefo"><strong>Se tomará de estos lotes (FEFO):</strong>
+@for(l of fefo();track l.codigoLote){<p><mat-icon [class.alerta]="dias(l.fechaVencimiento)<=3">inventory_2</mat-icon> {{l.codigoLote}} — {{l.tomar}} und · vence en {{dias(l.fechaVencimiento)}} días</p>}
+<p>Quedarán {{stockRestante()}} unidades disponibles</p></section>
+<p><strong>Subtotal estimado: {{subtotal() | currency:'COP':'symbol-narrow':'1.2-2'}}</strong></p>}
+@if(fieldError()){<p class="alerta" role="alert">{{fieldError()}}</p>}
+</form></mat-dialog-content>
+<mat-dialog-actions align="end"><button mat-button type="button" (click)="cerrar()">Cancelar</button><button mat-flat-button type="submit" form="formProducto" [disabled]="!stock()||insuficiente()||cantidad.invalid||enviando()||cargandoStock()">{{enviando()?'Agregando…':'Agregar'}}</button></mat-dialog-actions>
