@@ -1,0 +1,229 @@
+<header class="page-header">
+  <div class="header-info">
+    <a class="volver" mat-button routerLink="/app/compras">
+      <mat-icon>arrow_back</mat-icon>
+      Volver a Compras
+    </a>
+
+    <h1>Historial de compras</h1>
+    <p class="subtitulo">Analiza los gastos por proveedor, estado y período.</p>
+  </div>
+</header>
+
+<section class="filtros">
+  <mat-form-field appearance="outline">
+    <mat-label>Proveedor</mat-label>
+    <mat-select [formControl]="filtros.controls.idProveedor">
+      <mat-option [value]="null">Todos</mat-option>
+      @for (proveedor of proveedores(); track proveedor.idProveedor) {
+        <mat-option [value]="proveedor.idProveedor">
+          {{ proveedor.nombre }}
+        </mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Estado</mat-label>
+    <mat-select [formControl]="filtros.controls.estado">
+      <mat-option [value]="null">Todos</mat-option>
+      @for (estado of estados; track estado) {
+        <mat-option [value]="estado">{{ textoEstado(estado) }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="filtro-fechas">
+    <mat-label>Período</mat-label>
+    <mat-date-range-input [formGroup]="filtros" [rangePicker]="picker">
+      <input matStartDate formControlName="desde" placeholder="Desde" />
+      <input matEndDate formControlName="hasta" placeholder="Hasta" />
+    </mat-date-range-input>
+    <mat-datepicker-toggle matIconSuffix [for]="picker" />
+    <mat-date-range-picker #picker />
+  </mat-form-field>
+</section>
+
+@if (errorRango()) {
+  <p class="error-rango">
+    <mat-icon>error_outline</mat-icon>
+    La fecha inicial no puede ser posterior a la final.
+  </p>
+}
+
+@if (cargando()) {
+  <mat-progress-bar mode="indeterminate" aria-label="Cargando historial de compras" />
+}
+
+@if (error(); as mensaje) {
+  <section class="estado estado--error">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ mensaje }}</p>
+    <button mat-stroked-button type="button" (click)="recargar()">Reintentar</button>
+  </section>
+} @else {
+  @if (puedeVerAgregados && agregadosOk() && resumen(); as r) {
+    <app-resumen-compras-cards [resumen]="r" />
+  }
+
+  @if (puedeVerAgregados && agregadosOk() && gastoProveedor().length > 0) {
+    <app-gasto-proveedor-chart [datos]="gastoProveedor()" />
+  }
+
+  <section class="tabla-panel">
+    @if (!cargando() && compras().length === 0) {
+      <div class="estado estado--vacio">
+        @if (hayFiltrosActivos()) {
+          <mat-icon>search_off</mat-icon>
+          <p>Ninguna compra coincide con los filtros</p>
+          <button mat-stroked-button type="button" (click)="limpiarFiltros()">
+            Limpiar filtros
+          </button>
+        } @else {
+          <mat-icon>event_busy</mat-icon>
+          <p>No hay compras en el período seleccionado</p>
+          <button mat-stroked-button type="button" (click)="limpiarFiltros()">
+            Volver al mes actual
+          </button>
+        }
+      </div>
+    } @else {
+      <table
+        mat-table
+        [dataSource]="compras()"
+        multiTemplateDataRows
+        matSort
+        (matSortChange)="onOrden($event)"
+        aria-label="Historial de compras"
+      >
+        <ng-container matColumnDef="expand">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let compra">
+            <button
+              mat-icon-button
+              type="button"
+              [attr.aria-label]="'Ver ítems de la compra ' + compra.idCompra"
+              [attr.aria-expanded]="esExpandida(compra.idCompra)"
+              (click)="alternar(compra.idCompra); $event.stopPropagation()"
+            >
+              <mat-icon>
+                {{ esExpandida(compra.idCompra) ? 'expand_more' : 'chevron_right' }}
+              </mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>N.º</th>
+          <td mat-cell *matCellDef="let compra">#{{ compra.idCompra }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="proveedor">
+          <th mat-header-cell *matHeaderCellDef>Proveedor</th>
+          <td mat-cell *matCellDef="let compra">{{ compra.proveedor.nombre }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="fecha">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
+          <td mat-cell *matCellDef="let compra">
+            {{ compra.fecha | date: 'dd/MM/yyyy' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="cantidadItems">
+          <th mat-header-cell *matHeaderCellDef>Ítems</th>
+          <td mat-cell *matCellDef="let compra">{{ compra.cantidadItems }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="totalCompra">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
+          <td mat-cell *matCellDef="let compra">
+            {{ compra.totalCompra | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="estado">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Estado</th>
+          <td mat-cell *matCellDef="let compra">
+            <span
+              class="chip-estado"
+              [class.pendiente]="compra.estado === 'PENDIENTE'"
+              [class.recibida]="compra.estado === 'RECIBIDA'"
+              [class.cancelada]="compra.estado === 'CANCELADA'"
+            >
+              <span class="punto"></span>
+              {{ textoEstado(compra.estado) }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="detalle">
+          <td
+            mat-cell
+            *matCellDef="let compra"
+            [attr.colspan]="columnas.length"
+          >
+            @if (esExpandida(compra.idCompra)) {
+              <div class="detalle-contenido">
+                @if (cargandoDetalle() === compra.idCompra) {
+                  <p class="detalle-estado">Cargando ítems…</p>
+                } @else if (errorDetalle()) {
+                  <p class="detalle-estado detalle-estado--error">
+                    {{ errorDetalle() }}
+                  </p>
+                } @else if (detalleDe(compra.idCompra).length === 0) {
+                  <p class="detalle-estado">Esta compra no registra ítems</p>
+                } @else {
+                  <ul class="detalle-lineas">
+                    @for (linea of detalleDe(compra.idCompra); track linea.idDetalleCompra) {
+                      <li class="linea">
+                        <span class="mp">{{ linea.materiaPrima.nombre }}</span>
+                        <span class="cantidad">
+                          {{ linea.cantidad | number: '1.2-2' }}
+                          {{ linea.materiaPrima.unidad.abreviatura }}
+                        </span>
+                        <span class="precio">
+                          {{ linea.precioUnitario | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
+                        </span>
+                        <span class="subtotal">
+                          {{ linea.subtotal | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
+                        </span>
+                      </li>
+                    }
+                  </ul>
+                }
+              </div>
+            }
+          </td>
+        </ng-container>
+
+        <tr
+          mat-header-row
+          *matHeaderRowDef="columnas"
+        ></tr>
+        <tr
+          mat-row
+          *matRowDef="let compra; columns: columnas"
+          class="fila-principal"
+          [class.fila-expandida]="esExpandida(compra.idCompra)"
+          (click)="alternar(compra.idCompra)"
+        ></tr>
+        <tr
+          mat-row
+          *matRowDef="let compra; columns: ['detalle']"
+          class="fila-detalle"
+        ></tr>
+      </table>
+
+      <mat-paginator
+        [length]="total()"
+        [pageIndex]="pagina()"
+        [pageSize]="tamano()"
+        [pageSizeOptions]="[5, 10, 20, 50]"
+        showFirstLastButtons
+        aria-label="Páginas del historial"
+        (page)="onPagina($event)"
+      />
+    }
+  </section>
+}

@@ -10,7 +10,10 @@ import {
   CompraFiltro,
   CrearCompraDto,
   EstadoCompra,
-  RecepcionResultado
+  GastoProveedor,
+  RecepcionResultado,
+  ResumenCompras,
+  ResumenFiltro
 } from '../models/compra.model';
 
 @Injectable({ providedIn: 'root' })
@@ -38,8 +41,28 @@ export class CompraService {
     if (filtro.sort) {
       params = params.set('sort', filtro.sort);
     }
+    if (filtro.incluirDetalle !== undefined) {
+      params = params.set('incluirDetalle', filtro.incluirDetalle);
+    }
 
     return this.http.get<PageResponse<Compra>>(this.url, { params });
+  }
+
+  /**
+   * Totales agregados del período (HU-15). `CANCELADA` no cuenta como gasto
+   * (R-04): el ejecutado y el comprometido se informan por separado.
+   */
+  resumen(filtro: ResumenFiltro): Observable<ResumenCompras> {
+    return this.http.get<ResumenCompras>(`${this.url}/resumen`, {
+      params: this.paramsPeriodo(filtro)
+    });
+  }
+
+  /** Gasto agrupado por proveedor (HU-15), ordenado de mayor a menor. */
+  gastoPorProveedor(filtro: ResumenFiltro): Observable<GastoProveedor[]> {
+    return this.http.get<GastoProveedor[]>(`${this.url}/por-proveedor`, {
+      params: this.paramsPeriodo(filtro)
+    });
   }
 
   /** Devuelve la compra con su `detalle` (incluye `stockActual` por línea). */
@@ -67,5 +90,18 @@ export class CompraService {
     return this.http.patch<RecepcionResultado>(`${this.url}/${id}/estado`, {
       estado
     });
+  }
+
+  private paramsPeriodo(filtro: ResumenFiltro): HttpParams {
+    let params = new HttpParams();
+
+    if (filtro.fechaInicio) {
+      params = params.set('fechaInicio', filtro.fechaInicio);
+    }
+    if (filtro.fechaFin) {
+      params = params.set('fechaFin', filtro.fechaFin);
+    }
+
+    return params;
   }
 }

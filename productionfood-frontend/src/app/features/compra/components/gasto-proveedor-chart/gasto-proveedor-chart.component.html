@@ -1,0 +1,21 @@
+<section class="panel">
+  <h2>Gasto por proveedor</h2>
+
+  <ul class="barras">
+    @for (fila of principales(); track fila.proveedor) {
+      <li class="fila">
+        <span class="nombre" [title]="fila.proveedor">{{ fila.proveedor }}</span>
+
+        <span class="pista">
+          <span class="barra" [style.width.%]="ancho(fila.porcentaje)"></span>
+        </span>
+
+        <span class="total">
+          {{ fila.total | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
+        </span>
+
+        <span class="porcentaje">{{ fila.porcentaje | number: '1.1-1' }} %</span>
+      </li>
+    }
+  </ul>
+</section>
