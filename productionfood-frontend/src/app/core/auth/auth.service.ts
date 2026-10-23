@@ -71,10 +71,11 @@ export class AuthService {
   readonly usuario = signal<Usuario | null>(null);
 
   readonly autenticado = computed(() => {
+    const usuario = this.usuario();
     const token = this.obtenerToken();
 
     return token !== null &&
-      this.usuario() !== null &&
+      usuario !== null &&
       !this.tokenEstaExpirado(token);
   });
 
