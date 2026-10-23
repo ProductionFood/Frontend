@@ -86,13 +86,30 @@ export class LayoutComponent {
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
         takeUntilDestroyed()
       )
-      .subscribe(() => {
-        const datos =
-          this.router.routerState.snapshot.root.firstChild?.firstChild?.data;
-        this.tituloActual.set(
-          (datos?.['titulo'] as string) ?? 'Dashboard'
-        );
-      });
+      .subscribe(() => this.actualizarTitulo());
+
+    this.actualizarTitulo();
+  }
+
+  /**
+   * Título del topbar para la ruta actual, resuelto desde NAV_GRUPOS (el
+   * mismo origen que el navbar lateral): los nombres de módulo no se
+   * duplican en las rutas de app.routes.ts.
+   */
+  private actualizarTitulo(): void {
+    const segmentos = this.router.url
+      .replace(/[?#].*$/, '')
+      .split('/')
+      .filter(Boolean);
+
+    const ruta =
+      segmentos[1] === 'en-construccion' ? segmentos[2] : segmentos[1];
+
+    const item = NAV_GRUPOS.flatMap(grupo => grupo.items).find(
+      i => i.ruta === ruta
+    );
+
+    this.tituloActual.set(item?.titulo ?? 'Dashboard');
   }
 
   /**
