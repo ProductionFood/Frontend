@@ -1,0 +1,146 @@
+<h2 mat-dialog-title>Agregar ítem a la compra</h2>
+
+<mat-dialog-content>
+  @if (errorGeneral(); as error) {
+    <div class="alerta-error" role="alert">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ error }}</span>
+    </div>
+  }
+
+  @if (cargandoMaterias()) {
+    <div class="estado-carga" role="status">
+      <mat-spinner diameter="28" />
+      <p>Cargando materias primas…</p>
+    </div>
+  } @else if (errorMaterias(); as error) {
+    <div class="alerta-error" role="alert">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ error }}</span>
+      <button mat-button type="button" (click)="cargarMaterias()">
+        Reintentar
+      </button>
+    </div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="guardar()">
+      <div class="campo">
+        <mat-form-field appearance="outline">
+          <mat-label>Materia prima</mat-label>
+          <mat-select formControlName="idMateriaPrima">
+            @for (materia of materias(); track materia.idMateriaPrima) {
+              <mat-option [value]="materia.idMateriaPrima">
+                {{ materia.nombre }} ({{ materia.unidad.abreviatura }})
+              </mat-option>
+            } @empty {
+              <mat-option disabled>
+                No hay materias primas disponibles para agregar.
+              </mat-option>
+            }
+          </mat-select>
+          <mat-hint>
+            Solo se muestran las que aún no están en esta compra. Para
+            cambiar una cantidad, edite la fila.
+          </mat-hint>
+          @if (
+            form.controls.idMateriaPrima.invalid &&
+            form.controls.idMateriaPrima.touched
+          ) {
+            <mat-error>Seleccione una materia prima</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <div class="fila-campos">
+        <mat-form-field appearance="outline">
+          <mat-label>Cantidad</mat-label>
+          <input
+            matInput
+            type="number"
+            step="0.01"
+            min="0.01"
+            inputmode="decimal"
+            formControlName="cantidad"
+          />
+          @if (materiaSeleccionada(); as materia) {
+            <span matSuffix>{{ materia.unidad.abreviatura }}</span>
+          }
+          @if (
+            form.controls.cantidad.invalid &&
+            form.controls.cantidad.touched
+          ) {
+            <mat-error>
+              @if (form.controls.cantidad.errors?.['min']) {
+                Debe ser mayor que cero
+              } @else if (form.controls.cantidad.errors?.['servidor']) {
+                {{ form.controls.cantidad.errors?.['servidor'] }}
+              } @else {
+                Ingrese la cantidad
+              }
+            </mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Precio unitario</mat-label>
+          <span matPrefix>$&nbsp;</span>
+          <input
+            matInput
+            type="number"
+            step="0.01"
+            min="0"
+            inputmode="decimal"
+            formControlName="precioUnitario"
+          />
+          @if (materiaSeleccionada(); as materia) {
+            <mat-hint>
+              Costo de referencia:
+              {{ materia.costoUnitario | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
+            </mat-hint>
+          }
+          @if (
+            form.controls.precioUnitario.invalid &&
+            form.controls.precioUnitario.touched
+          ) {
+            <mat-error>
+              @if (form.controls.precioUnitario.errors?.['min']) {
+                No puede ser negativo
+              } @else if (form.controls.precioUnitario.errors?.['servidor']) {
+                {{ form.controls.precioUnitario.errors?.['servidor'] }}
+              } @else {
+                Ingrese el precio unitario
+              }
+            </mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <div class="subtotal-vista">
+        <span>Subtotal:</span>
+        <strong>
+          {{ subtotalVista() | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
+        </strong>
+        <small>Vista previa; el total lo calcula el servidor.</small>
+      </div>
+    </form>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button type="button" (click)="cancelar()" [disabled]="enviando()">
+    Cancelar
+  </button>
+  <button
+    mat-flat-button
+    color="primary"
+    type="button"
+    (click)="guardar()"
+    [disabled]="enviando() || cargandoMaterias() || form.invalid"
+  >
+    @if (enviando()) {
+      <mat-spinner diameter="18" />
+    } @else {
+      <mat-icon>add</mat-icon>
+    }
+    Agregar
+  </button>
+</mat-dialog-actions>

@@ -1,9 +1,8 @@
-import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   Component,
   DestroyRef,
-  computed,
   inject,
   signal
 } from '@angular/core';
@@ -15,9 +14,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatTableModule } from '@angular/material/table';
 
-import { EMPTY, Subject, catchError, switchMap, tap } from 'rxjs';
+import { EMPTY, Subject, catchError, forkJoin, switchMap, tap } from 'rxjs';
 
 import { NotificacionService } from '../../../../core/ui/notificacion.service';
 import { SiRolDirective } from '../../../../shared/directives/si-rol.directive';
@@ -26,30 +24,32 @@ import {
   ConfirmarDialogData
 } from '../../../../shared/components/confirmar-dialog/confirmar-dialog.component';
 import { Compra } from '../../models/compra.model';
+import { DetalleCompraListaResponse } from '../../models/detalle-compra.model';
 import { CompraService } from '../../services/compra.service';
+import { DetalleCompraService } from '../../services/detalle-compra.service';
 import { RecepcionDialogComponent } from '../../components/recepcion-dialog/recepcion-dialog.component';
+import { DetalleCompraTablaComponent } from '../../components/detalle-compra-tabla/detalle-compra-tabla.component';
 
 /**
- * Detalle de una compra (HU-13): cabecera con estado, tabla de líneas en
- * solo lectura (HU-14 hará el CRUD) y acciones de estado. Recibir abre el
- * diálogo de recepción que muestra el impacto sobre el inventario antes de
- * confirmar; Cancelar pide confirmación. Ambas acciones desaparecen cuando
- * la compra ya no es editable (R-04).
+ * Detalle de una compra (HU-13 + HU-14): cabecera con estado y acciones de
+ * estado, y la tabla de ítems gestionada por `DetalleCompraTablaComponent`
+ * (CRUD de HU-14). Recibir abre el diálogo de recepción que muestra el
+ * impacto sobre el inventario antes de confirmar; Cancelar pide
+ * confirmación. Ambas acciones desaparecen cuando la compra ya no es
+ * editable (R-04).
  */
 @Component({
   selector: 'app-compra-detalle',
   standalone: true,
   imports: [
-    CurrencyPipe,
     DatePipe,
-    DecimalPipe,
     RouterLink,
     MatButtonModule,
     MatCardModule,
     MatIconModule,
     MatProgressBarModule,
-    MatTableModule,
-    SiRolDirective
+    SiRolDirective,
+    DetalleCompraTablaComponent
   ],
   templateUrl: './compra-detalle.component.html',
   styleUrl: './compra-detalle.component.scss'
@@ -57,6 +57,7 @@ import { RecepcionDialogComponent } from '../../components/recepcion-dialog/rece
 export class CompraDetalleComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly compraService = inject(CompraService);
+  private readonly detalleService = inject(DetalleCompraService);
   private readonly notificacion = inject(NotificacionService);
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);
@@ -64,21 +65,9 @@ export class CompraDetalleComponent {
   readonly idCompra = Number(this.route.snapshot.paramMap.get('id'));
 
   readonly compra = signal<Compra | null>(null);
+  readonly lista = signal<DetalleCompraListaResponse | null>(null);
   readonly cargando = signal(false);
   readonly error = signal<string | null>(null);
-
-  readonly columnasLineas = [
-    'materiaPrima',
-    'cantidad',
-    'precioUnitario',
-    'subtotal'
-  ];
-
-  readonly lineas = computed(() => this.compra()?.detalle ?? []);
-
-  readonly totalLineas = computed(() =>
-    this.lineas().reduce((suma, linea) => suma + linea.subtotal, 0)
-  );
 
   private readonly recargar$ = new Subject<void>();
 
@@ -90,9 +79,13 @@ export class CompraDetalleComponent {
           this.error.set(null);
         }),
         switchMap(() =>
-          this.compraService.obtener(this.idCompra).pipe(
+          forkJoin({
+            compra: this.compraService.obtener(this.idCompra),
+            detalle: this.detalleService.listar(this.idCompra)
+          }).pipe(
             catchError((error: HttpErrorResponse) => {
               this.compra.set(null);
+              this.lista.set(null);
               this.error.set(this.mensajeError(error));
               this.cargando.set(false);
               return EMPTY;
@@ -101,8 +94,9 @@ export class CompraDetalleComponent {
         ),
         takeUntilDestroyed(this.destroyRef)
       )
-      .subscribe(compra => {
+      .subscribe(({ compra, detalle }) => {
         this.compra.set(compra);
+        this.lista.set(detalle);
         this.cargando.set(false);
         this.error.set(null);
       });
