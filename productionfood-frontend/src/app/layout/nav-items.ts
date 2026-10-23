@@ -40,7 +40,8 @@ export const MODULOS_REALES = [
   'productos',
   'recetas',
   'compras',
-  'pedidos'
+  'pedidos',
+  'devoluciones'
 ];
 
 export const NAV_GRUPOS: NavGrupo[] = [

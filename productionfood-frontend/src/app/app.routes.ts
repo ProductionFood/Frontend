@@ -126,6 +126,11 @@ export const routes: Routes = [
           import('./features/pedido/pedido.routes').then(m => m.PEDIDO_ROUTES)
       },
       {
+        path: 'devoluciones',
+        canActivate: [rolGuard(['ADMIN', 'VENTAS', 'CONSULTA'])],
+        loadChildren: () => import('./features/devolucion/devolucion.routes').then(m => m.DEVOLUCION_ROUTES)
+      },
+      {
         path: 'compras',
         canActivate: [rolGuard(['ADMIN', 'COMPRAS', 'PRODUCCION', 'CONSULTA'])],
         loadChildren: () =>
