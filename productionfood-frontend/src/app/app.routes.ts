@@ -1,19 +1,8 @@
-import { ActivatedRouteSnapshot, ResolveFn, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 
 import { authGuard } from './core/auth/auth.guard';
 import { rolGuard } from './core/auth/rol.guard';
 import { MODULOS_REALES, NAV_GRUPOS } from './layout/nav-items';
-
-/**
- * Título del topbar para `/app/en-construccion/:ruta`, resuelto desde
- * NAV_GRUPOS (fallback: "Módulo en construcción").
- */
-const resolverTituloConstruccion: ResolveFn<string> = route => {
-  const item = NAV_GRUPOS.flatMap(grupo => grupo.items).find(
-    i => i.ruta === route.paramMap.get('ruta')
-  );
-  return item?.titulo ?? 'Módulo en construcción';
-};
 
 /**
  * Módulos pendientes: solo redirigen a la ruta genérica
@@ -65,39 +54,34 @@ export const routes: Routes = [
         canActivate: [rolGuard(['ADMIN'])],
         loadChildren: () =>
           import('./features/usuario/usuario.routes')
-            .then(m => m.USUARIO_ROUTES),
-        data: { titulo: 'Usuarios' }
+            .then(m => m.USUARIO_ROUTES)
       },
       {
         path: 'bitacora',
         canActivate: [rolGuard(['ADMIN'])],
         loadChildren: () =>
           import('./features/bitacora/bitacora.routes')
-            .then(m => m.BITACORA_ROUTES),
-        data: { titulo: 'Bitácora' }
+            .then(m => m.BITACORA_ROUTES)
       },
       {
         path: 'clientes',
         canActivate: [rolGuard(['ADMIN', 'VENTAS', 'PRODUCCION', 'CONSULTA'])],
         loadChildren: () =>
           import('./features/cliente/cliente.routes')
-            .then(m => m.CLIENTE_ROUTES),
-        data: { titulo: 'Clientes' }
+            .then(m => m.CLIENTE_ROUTES)
       },
       {
         path: 'proveedores',
         canActivate: [rolGuard(['ADMIN', 'COMPRAS', 'CONSULTA'])],
         loadChildren: () =>
           import('./features/proveedor/proveedor.routes')
-            .then(m => m.PROVEEDOR_ROUTES),
-        data: { titulo: 'Proveedores' }
+            .then(m => m.PROVEEDOR_ROUTES)
       },
       {
         path: 'unidades-medida',
         loadChildren: () =>
           import('./features/unidad-medida/unidad-medida.routes')
-            .then(m => m.UNIDAD_MEDIDA_ROUTES),
-        data: { titulo: 'Unidades de medida' }
+            .then(m => m.UNIDAD_MEDIDA_ROUTES)
       },
       {
         path: 'materias-primas',
@@ -106,61 +90,53 @@ export const routes: Routes = [
         ],
         loadChildren: () =>
           import('./features/materia-prima/materia-prima.routes')
-            .then(m => m.MATERIA_PRIMA_ROUTES),
-        data: { titulo: 'Materias primas' }
+            .then(m => m.MATERIA_PRIMA_ROUTES)
       },
       {
         path: 'productos',
         canActivate: [rolGuard(['ADMIN', 'VENTAS', 'PRODUCCION', 'CONSULTA'])],
         loadChildren: () =>
           import('./features/producto/producto.routes')
-            .then(m => m.PRODUCTO_ROUTES),
-        data: { titulo: 'Productos' }
+            .then(m => m.PRODUCTO_ROUTES)
       },
       {
         path: 'recetas',
         canActivate: [rolGuard(['ADMIN', 'PRODUCCION', 'CONSULTA'])],
         loadChildren: () =>
           import('./features/receta/receta.routes')
-            .then(m => m.RECETA_ROUTES),
-        data: { titulo: 'Recetas' }
+            .then(m => m.RECETA_ROUTES)
       },
       {
         path: 'inventario',
         canActivate: [rolGuard(['ADMIN', 'PRODUCCION', 'COMPRAS', 'CONSULTA'])],
         loadChildren: () =>
           import('./features/inventario/inventario.routes')
-            .then(m => m.INVENTARIO_ROUTES),
-        data: { titulo: 'Inventario de materias primas' }
+            .then(m => m.INVENTARIO_ROUTES)
       },
       {
         path: 'lotes-materia-prima',
         canActivate: [rolGuard(['ADMIN', 'PRODUCCION', 'COMPRAS', 'CONSULTA'])],
         loadChildren: () =>
-          import('./features/lote/lote.routes').then(m => m.LOTE_ROUTES),
-        data: { titulo: 'Lotes de materia prima' }
+          import('./features/lote/lote.routes').then(m => m.LOTE_ROUTES)
       },
       {
         path: 'pedidos',
         canActivate: [rolGuard(['ADMIN', 'VENTAS', 'PRODUCCION', 'CONSULTA'])],
         loadChildren: () =>
-          import('./features/pedido/pedido.routes').then(m => m.PEDIDO_ROUTES),
-        data: { titulo: 'Pedidos' }
+          import('./features/pedido/pedido.routes').then(m => m.PEDIDO_ROUTES)
       },
       {
         path: 'compras',
         canActivate: [rolGuard(['ADMIN', 'COMPRAS', 'PRODUCCION', 'CONSULTA'])],
         loadChildren: () =>
-          import('./features/compra/compra.routes').then(m => m.COMPRA_ROUTES),
-        data: { titulo: 'Compras' }
+          import('./features/compra/compra.routes').then(m => m.COMPRA_ROUTES)
       },
       {
         // Ruta única genérica para todos los módulos pendientes.
         path: 'en-construccion/:ruta',
         loadComponent: () =>
           import('./features/en-construccion/en-construccion.component')
-            .then(m => m.EnConstruccionComponent),
-        resolve: { titulo: resolverTituloConstruccion }
+            .then(m => m.EnConstruccionComponent)
       },
       ...redirectsPendientes,
       {
