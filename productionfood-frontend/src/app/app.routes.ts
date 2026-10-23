@@ -114,6 +114,11 @@ export const routes: Routes = [
             .then(m => m.INVENTARIO_ROUTES)
       },
       {
+        path: 'lotes-producto',
+        canActivate: [rolGuard(['ADMIN', 'PRODUCCION', 'VENTAS', 'CONSULTA'])],
+        loadChildren: () => import('./features/lote/lote-producto.routes').then(m => m.LOTE_PRODUCTO_ROUTES)
+      },
+      {
         path: 'lotes-materia-prima',
         canActivate: [rolGuard(['ADMIN', 'PRODUCCION', 'COMPRAS', 'CONSULTA'])],
         loadChildren: () =>

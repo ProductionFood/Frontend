@@ -36,6 +36,7 @@ export const MODULOS_REALES = [
   'unidades-medida',
   'materias-primas',
   'lotes-materia-prima',
+  'lotes-producto',
   'inventario',
   'productos',
   'recetas',
