@@ -14,8 +14,9 @@ import { NotificacionService } from '../../../../core/ui/notificacion.service';
 import { EstadoPlan, PlanProduccion } from '../../models/plan-produccion.model';
 import { PlanProduccionService } from '../../services/plan-produccion.service';
 import { DetallePlanTablaComponent } from '../../components/detalle-plan-tabla/detalle-plan-tabla.component';
+import { ConsumoTablaComponent } from '../../components/consumo-tabla/consumo-tabla.component';
 import { CancelarPlanDialogComponent } from '../../components/cancelar-plan-dialog/cancelar-plan-dialog.component';
-@Component({selector:'app-plan-detalle',standalone:true,imports:[DatePipe,RouterLink,MatButtonModule,MatCardModule,MatChipsModule,MatDialogModule,MatProgressBarModule,MatTableModule,DetallePlanTablaComponent],templateUrl:'./plan-detalle.component.html',styleUrl:'./plan-detalle.component.scss'})
+@Component({selector:'app-plan-detalle',standalone:true,imports:[DatePipe,RouterLink,MatButtonModule,MatCardModule,MatChipsModule,MatDialogModule,MatProgressBarModule,MatTableModule,DetallePlanTablaComponent,ConsumoTablaComponent],templateUrl:'./plan-detalle.component.html',styleUrl:'./plan-detalle.component.scss'})
 export class PlanDetalleComponent {
  private readonly route=inject(ActivatedRoute);private readonly service=inject(PlanProduccionService);private readonly dialog=inject(MatDialog);private readonly notify=inject(NotificacionService);private readonly destroy=inject(DestroyRef);readonly auth=inject(AuthService);
  readonly plan=signal<PlanProduccion|null>(null);readonly cargando=signal(true);readonly guardando=signal(false);readonly error=signal('');readonly columnas=['producto','planificado','producido','avance'];readonly id=Number(this.route.snapshot.paramMap.get('id'));

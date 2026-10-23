@@ -1,0 +1,10 @@
+<mat-card><mat-card-header><mat-card-title>Consumo de materia prima · {{producto}}</mat-card-title></mat-card-header><mat-card-content>
+@if(estado==='EN_PROCESO'&&editable){<button mat-flat-button (click)="registrar()">Registrar consumo</button>}
+@if(cargando()){<mat-progress-bar mode="indeterminate" aria-label="Cargando consumos"/>}
+@if(error()){<p role="alert" class="error">{{error()}}</p><button mat-button (click)="cargar()">Reintentar</button>}
+@if(!cargando()&&!error()){
+@if(consumos().length===0){<p>No se han registrado consumos para este producto.</p>}
+@else{<div class="scroll"><table><thead><tr><th>Materia prima</th><th>Teórico</th><th>Real</th><th>Desviación</th><th>Eficiencia</th><th>Registro</th><th>Acciones</th></tr></thead><tbody>
+@for(c of consumos();track c.idConsumo??c.idMateriaPrima){<tr><td>{{c.materiaPrima?.nombre??('Materia prima #'+c.idMateriaPrima)}} @if(c.fueraReceta){<small>⚠ Fuera de receta</small>}</td><td>{{c.cantidadTeorica===null||c.cantidadTeorica===undefined?'—':(c.cantidadTeorica|number:'1.3-3')}}</td><td>{{c.cantidadReal|number:'1.3-3'}} {{c.materiaPrima?.unidad?.abreviatura??''}}</td><td><app-indicador-desviacion [valor]="porcentaje(c)"/></td><td>@if(eficiencia(c) !== null){ {{eficiencia(c)|number:'1.1-1'}} % }@else{<span matTooltip="No se puede calcular: no se registró consumo">— ⓘ</span>}</td><td>{{c.fechaRegistro?(c.fechaRegistro|date:'dd/MM HH:mm'):'—'}}</td><td>@if(estado==='EN_PROCESO'&&editable&&c.idConsumo){<button mat-button (click)="corregir(c)">Corregir</button>}</td></tr>}
+</tbody></table></div>}
+}</mat-card-content></mat-card>
