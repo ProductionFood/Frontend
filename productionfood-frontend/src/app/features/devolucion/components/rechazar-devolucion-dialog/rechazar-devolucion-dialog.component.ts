@@ -1,0 +1,12 @@
+import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { Devolucion } from '../../models/devolucion.model';
+import { DevolucionService } from '../../services/devolucion.service';
+@Component({selector:'app-rechazar-devolucion-dialog',standalone:true,imports:[MatDialogModule,MatButtonModule,MatFormFieldModule,MatInputModule,ReactiveFormsModule],template:`<h2 mat-dialog-title>Rechazar devolución</h2><mat-dialog-content><p>Pedido #{{data.idPedido}} · {{data.cantidad}} unidades</p><form id="rechazo" (ngSubmit)="rechazar()"><mat-form-field appearance="outline" style="width:100%"><mat-label>Motivo del rechazo</mat-label><textarea matInput rows="3" [formControl]="motivo" maxlength="255"></textarea><mat-error>Indique el motivo del rechazo.</mat-error></mat-form-field></form>@if(error()){<p role="alert">{{error()}}</p>}</mat-dialog-content><mat-dialog-actions align="end"><button mat-button [disabled]="enviando()" (click)="ref.close(false)">Cancelar</button><button mat-flat-button form="rechazo" [disabled]="motivo.invalid||enviando()">{{enviando()?'Rechazando…':'Confirmar rechazo'}}</button></mat-dialog-actions>`})
+export class RechazarDevolucionDialogComponent {readonly data=inject<Devolucion>(MAT_DIALOG_DATA);readonly ref=inject(MatDialogRef<RechazarDevolucionDialogComponent>);private readonly service=inject(DevolucionService);private readonly destroyRef=inject(DestroyRef);readonly motivo=new FormControl('',{nonNullable:true,validators:[Validators.required,Validators.maxLength(255)]});readonly enviando=signal(false);readonly error=signal('');rechazar(){if(this.motivo.invalid||this.enviando())return;this.enviando.set(true);this.service.cambiarEstado(this.data.idDevolucion,{estado:'RECHAZADA',motivoRechazo:this.motivo.value.trim()}).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({next:()=>this.ref.close(true),error:(e:HttpErrorResponse)=>{this.enviando.set(false);this.error.set(typeof e.error?.message==='string'?e.error.message:'No fue posible rechazar la devolución.');}});}}

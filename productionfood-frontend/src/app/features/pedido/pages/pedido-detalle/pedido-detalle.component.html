@@ -105,7 +105,7 @@
       @if(p.editable){<button *siRol="['ADMIN','VENTAS']" mat-flat-button type="button" (click)="agregarProducto()"><mat-icon>add</mat-icon> Agregar producto</button>}
     </div>
     @if(detalle.length===0){<div class="estado sin-productos"><p>El pedido todavía no tiene productos.</p></div>}
-    @else {<app-detalle-pedido-tabla [lineas]="detalle" [editable]="p.editable" (editar)="editarCantidad($event)" (quitar)="quitarProducto($event)"/>}
+    @else {<app-detalle-pedido-tabla [lineas]="detalle" [editable]="p.editable" [devolvible]="p.estado === 'ENTREGADO'" (devolver)="registrarDevolucion($event)" (editar)="editarCantidad($event)" (quitar)="quitarProducto($event)"/>}
     <p class="total">Total: <strong>{{p.totalPedido | currency:'COP':'symbol-narrow':'1.2-2'}}</strong></p>
   </section>
 }

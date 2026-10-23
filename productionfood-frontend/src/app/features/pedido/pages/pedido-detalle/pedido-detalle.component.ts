@@ -1,3 +1,4 @@
+import { DevolucionFormularioComponent } from '../../../devolucion/pages/devolucion-formulario/devolucion-formulario.component';
 import { AgregarProductoDialogComponent } from '../../components/agregar-producto-dialog/agregar-producto-dialog.component';
 import { DetallePedidoTablaComponent } from '../../components/detalle-pedido-tabla/detalle-pedido-tabla.component';
 import { DetallePedidoService } from '../../services/detalle-pedido.service';
@@ -223,6 +224,11 @@ export class PedidoDetalleComponent {
       });
   }
 
+  registrarDevolucion(linea: LineaPedido): void {
+    const pedido=this.pedido();
+    if(!pedido||pedido.estado!=='ENTREGADO')return;
+    this.dialog.open(DevolucionFormularioComponent,{data:{pedido,linea},width:'560px',maxWidth:'95vw',disableClose:true}).afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(ok=>{if(ok){this.notificacion.exito('Devolución registrada, pendiente de aprobación.');this.recargar();}});
+  }
   agregarProducto(): void {
     if (!this.pedido()?.editable) return;
     this.dialog.open(AgregarProductoDialogComponent,{data:{idPedido:this.idPedido,idsExcluidos:this.detalle.map(l=>l.producto.idProducto)},width:'560px',maxWidth:'95vw',disableClose:true}).afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(ok=>{if(ok)this.recargar();});
