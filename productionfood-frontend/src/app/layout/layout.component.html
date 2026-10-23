@@ -74,6 +74,7 @@
       <span class="toolbar-title">{{ tituloActual() }}</span>
 
       <span class="spacer"></span>
+      @if(['ADMIN','PRODUCCION','COMPRAS'].includes(authService.rol()??'')){<app-indicador-alertas />}
 
       <button
         class="perfil"

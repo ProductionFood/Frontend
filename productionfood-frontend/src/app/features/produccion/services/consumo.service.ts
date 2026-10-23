@@ -1,3 +1,4 @@
+import {ResultadoConsumoLote,RegistroConsumoLote} from '../models/impacto-inventario.model';
 import {inject,Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
@@ -9,5 +10,6 @@ import {ConsumoMateriaPrima,ResumenConsumoTeorico,CrearConsumoDto,CorregirConsum
  listar(plan:number,detalle:number):Observable<ConsumoMateriaPrima[]>{return this.http.get<ConsumoMateriaPrima[]>(`${this.base(plan,detalle)}/consumos`);}
  teorico(plan:number,detalle:number):Observable<ResumenConsumoTeorico>{return this.http.get<ResumenConsumoTeorico>(`${this.base(plan,detalle)}/consumo-teorico`);}
  registrar(plan:number,detalle:number,dto:CrearConsumoDto):Observable<ConsumoMateriaPrima>{return this.http.post<ConsumoMateriaPrima>(`${this.base(plan,detalle)}/consumos`,dto);}
+ registrarLote(plan:number,detalle:number,dto:RegistroConsumoLote):Observable<ResultadoConsumoLote>{return this.http.post<ResultadoConsumoLote>(`${this.base(plan,detalle)}/consumos/lote`,dto);}
  corregir(plan:number,detalle:number,id:number,dto:CorregirConsumoDto):Observable<ConsumoMateriaPrima>{return this.http.patch<ConsumoMateriaPrima>(`${this.base(plan,detalle)}/consumos/${id}`,dto);}
 }
