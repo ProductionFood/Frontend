@@ -18,6 +18,22 @@
   color: var(--tinta-600);
 }
 
+.header-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.enlace-historial {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  color: var(--verde-700);
+  font-size: 12.5px;
+}
+
 .filtros {
   display: flex;
   align-items: center;

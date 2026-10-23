@@ -1,5 +1,12 @@
 <header class="page-header">
-  <p>Registra las adquisiciones de materia prima a tus proveedores.</p>
+  <div class="header-info">
+    <p>Registra las adquisiciones de materia prima a tus proveedores.</p>
+
+    <a class="enlace-historial" mat-button routerLink="/app/compras/historial">
+      <mat-icon>history</mat-icon>
+      Ver historial
+    </a>
+  </div>
 
   <button
     *siRol="['ADMIN', 'COMPRAS']"
