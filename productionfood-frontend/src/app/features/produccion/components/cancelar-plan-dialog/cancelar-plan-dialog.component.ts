@@ -1,0 +1,6 @@
+import { Component, inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { PlanProduccion } from '../../models/plan-produccion.model';
+@Component({selector:'app-cancelar-plan-dialog',standalone:true,imports:[MatButtonModule,MatDialogModule],template:`<h2 mat-dialog-title>Cancelar el plan #{{data.idPlanProduccion}}</h2><mat-dialog-content><p>El plan quedará CANCELADO y no podrá reactivarse.</p><p role="alert"><strong>La materia prima ya consumida NO volverá al inventario.</strong></p><p>Consumos registrados: {{data.consumos?.length??0}}. Para corregir consumos mal registrados, use un ajuste de inventario.</p><p>Esta acción no se puede deshacer.</p></mat-dialog-content><mat-dialog-actions align="end"><button mat-button (click)="dialog.close(false)">Volver</button><button mat-flat-button (click)="dialog.close(true)">Cancelar el plan</button></mat-dialog-actions>`})
+export class CancelarPlanDialogComponent{readonly data=inject<PlanProduccion>(MAT_DIALOG_DATA);readonly dialog=inject(MatDialogRef<CancelarPlanDialogComponent>);}
