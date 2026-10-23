@@ -1,0 +1,211 @@
+:host {
+  display: block;
+}
+
+.tabla-card {
+  border: 1px solid var(--linea);
+  box-shadow: none !important;
+}
+
+mat-card-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+mat-card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 650;
+}
+
+.solo-lectura {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--linea);
+  color: var(--tinta-600);
+  font-size: 10.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.solo-lectura mat-icon {
+  width: 13px;
+  height: 13px;
+  font-size: 13px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.alerta-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radio-s);
+  background: #fdecea;
+  color: #b71c1c;
+  font-size: 12.5px;
+}
+
+.alerta-error mat-icon {
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.tabla-scroll {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 640px;
+}
+
+.mat-mdc-header-cell {
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.035em;
+  color: var(--tinta-600);
+}
+
+.mat-mdc-cell,
+.mat-mdc-header-cell {
+  padding: 0.85rem 0.75rem;
+}
+
+.mat-mdc-cell strong {
+  display: block;
+  font-weight: 600;
+}
+
+.mat-mdc-cell small {
+  color: var(--tinta-600);
+  font-size: 11px;
+}
+
+.celda-num {
+  white-space: nowrap;
+}
+
+.campo-inline {
+  width: 130px;
+}
+
+.ref {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ref mat-icon {
+  width: 15px;
+  height: 15px;
+  font-size: 15px;
+}
+
+.ref.sube {
+  color: #c62828;
+}
+
+.ref.baja {
+  color: var(--verde-700);
+}
+
+.ref.igual {
+  color: var(--tinta-600);
+}
+
+.acciones {
+  white-space: nowrap;
+  text-align: right;
+}
+
+.acciones mat-spinner {
+  display: inline-block;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.mat-mdc-footer-cell {
+  border-top: 2px solid var(--linea);
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+.footer-items {
+  color: var(--tinta-600);
+  font-size: 12px;
+}
+
+.footer-total {
+  text-align: right;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.footer-total .total-label {
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+.footer-total strong {
+  font-size: 1.05rem;
+}
+
+.estado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2.5rem 1rem;
+  gap: 0.6rem;
+}
+
+.estado > mat-icon {
+  font-size: 2.4rem;
+  width: 2.4rem;
+  height: 2.4rem;
+  color: var(--tinta-400);
+}
+
+.estado h2,
+.estado p {
+  margin: 0;
+}
+
+.estado h2 {
+  font-size: 1rem;
+}
+
+.estado p {
+  color: var(--tinta-600);
+  font-size: 13px;
+}

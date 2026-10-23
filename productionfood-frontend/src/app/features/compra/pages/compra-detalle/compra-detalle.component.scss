@@ -50,65 +50,6 @@
   border-color: var(--linea);
 }
 
-.aviso-detalle {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0 0 12px;
-  padding: 10px 12px;
-  border-radius: var(--radio-s);
-  background: var(--naranja-100);
-  color: #92610b;
-  font-size: 12.5px;
-}
-
-.aviso-detalle mat-icon {
-  width: 18px;
-  height: 18px;
-  font-size: 18px;
-}
-
-.tabla-card {
-  border: 1px solid var(--linea);
-  box-shadow: none !important;
-}
-
-.tabla-scroll {
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  min-width: 560px;
-}
-
-.mat-mdc-header-cell {
-  font-size: 0.72rem;
-  font-weight: 750;
-  letter-spacing: 0.035em;
-  color: var(--tinta-600);
-}
-
-.mat-mdc-cell,
-.mat-mdc-header-cell {
-  padding: 0.85rem 0.75rem;
-}
-
-.total-fila {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 8px;
-  margin-top: 0.5rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--linea);
-  font-size: 0.95rem;
-}
-
-.total-fila strong {
-  font-size: 1.05rem;
-}
-
 .estado {
   display: flex;
   flex-direction: column;
