@@ -38,7 +38,8 @@ export const MODULOS_REALES = [
   'lotes-materia-prima',
   'inventario',
   'productos',
-  'recetas'
+  'recetas',
+  'compras'
 ];
 
 export const NAV_GRUPOS: NavGrupo[] = [
