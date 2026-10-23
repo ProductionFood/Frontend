@@ -1,0 +1,98 @@
+<h2 mat-dialog-title>
+  {{ esEdicion ? 'Editar pedido' : 'Nuevo pedido' }}
+</h2>
+
+<form [formGroup]="form" (ngSubmit)="guardar()">
+  <mat-dialog-content class="contenido">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Cliente</mat-label>
+      <mat-select formControlName="idCliente">
+        @if (cargandoClientes()) {
+          <mat-option disabled>Cargando clientes...</mat-option>
+        } @else {
+          @for (cliente of clientes(); track cliente.idCliente) {
+            <mat-option [value]="cliente.idCliente">
+              {{ cliente.nombre }}
+            </mat-option>
+          }
+        }
+      </mat-select>
+      @if (form.controls.idCliente.touched && form.controls.idCliente.invalid) {
+        <mat-error>{{ clienteError }}</mat-error>
+      }
+    </mat-form-field>
+
+    @if (sinClientes) {
+      <div class="sin-clientes">
+        <mat-icon>info</mat-icon>
+        <span>
+          Primero debe registrar clientes activos.
+          <a href="#" (click)="$event.preventDefault(); irAClientes()">
+            Ir a Clientes
+          </a>
+        </span>
+      </div>
+    }
+
+    @if (errorClientes()) {
+      <div class="sin-clientes">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ errorClientes() }}</span>
+      </div>
+    }
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Fecha de entrega</mat-label>
+      <input
+        matInput
+        [matDatepicker]="picker"
+        formControlName="fechaEntrega"
+        [min]="minFecha"
+      />
+      <mat-datepicker-toggle matIconSuffix [for]="picker" />
+      <mat-datepicker #picker />
+      <mat-hint>Opcional. No puede ser anterior a la fecha del pedido.</mat-hint>
+      @if (
+        form.controls.fechaEntrega.touched && form.controls.fechaEntrega.invalid
+      ) {
+        <mat-error>{{ fechaError }}</mat-error>
+      }
+    </mat-form-field>
+
+    <p class="nota-estado">
+      <mat-icon>info</mat-icon>
+      La fecha del pedido se registra automáticamente:
+      {{ fechaPedidoInfo | date: 'dd/MM/yyyy' }}
+    </p>
+
+    @if (errorGeneral()) {
+      <div class="error-general">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ errorGeneral() }}</span>
+      </div>
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button
+      mat-stroked-button
+      type="button"
+      (click)="cancelar()"
+      [disabled]="guardando()"
+    >
+      Cancelar
+    </button>
+    <button
+      mat-flat-button
+      color="primary"
+      type="submit"
+      [disabled]="form.invalid || guardando() || sinClientes"
+    >
+      @if (guardando()) {
+        <mat-spinner diameter="18" />
+      } @else {
+        {{ esEdicion ? 'Guardar cambios' : 'Crear pedido' }}
+      }
+    </button>
+  </mat-dialog-actions>
+</form>

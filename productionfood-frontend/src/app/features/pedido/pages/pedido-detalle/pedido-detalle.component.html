@@ -1,0 +1,164 @@
+<header class="page-header">
+  <div class="header-info">
+    <a class="volver" mat-button routerLink="/app/pedidos">
+      <mat-icon>arrow_back</mat-icon>
+      Volver a Pedidos
+    </a>
+
+    <div class="titulo-fila">
+      <h1>{{ titulo }}</h1>
+      @if (pedido(); as p) {
+        <span
+          class="chip-estado"
+          [class.pendiente]="p.estado === 'PENDIENTE'"
+          [class.en-preparacion]="p.estado === 'EN_PREPARACION'"
+          [class.entregado]="p.estado === 'ENTREGADO'"
+          [class.cancelado]="p.estado === 'CANCELADO'"
+        >
+          <span class="punto"></span>
+          {{ estadoTexto(p.estado) }}
+        </span>
+      }
+    </div>
+
+    @if (pedido(); as p) {
+      <p class="subtitulo">
+        {{ p.cliente.nombre }} · Pedido {{ p.fechaPedido | date: 'dd/MM/yyyy' }}
+        @if (p.fechaEntrega) {
+          · Entrega {{ p.fechaEntrega | date: 'dd/MM/yyyy' }}
+        }
+      </p>
+    }
+  </div>
+
+  @if (pedido(); as p) {
+    @if (p.estado === 'PENDIENTE' || p.estado === 'EN_PREPARACION') {
+      <div class="header-acciones">
+        <button
+          *siRol="['ADMIN', 'VENTAS']"
+          mat-stroked-button
+          type="button"
+          class="btn-cancelar"
+          (click)="cancelarPedido()"
+        >
+          <mat-icon>cancel</mat-icon>
+          Cancelar pedido
+        </button>
+
+        @if (p.editable && p.estado === 'PENDIENTE') {
+          <button
+            *siRol="['ADMIN', 'VENTAS']"
+            mat-stroked-button
+            type="button"
+            (click)="editar()"
+          >
+            <mat-icon>edit</mat-icon>
+            Editar
+          </button>
+        }
+
+        @if (p.estado === 'PENDIENTE') {
+          <button
+            *siRol="['ADMIN', 'VENTAS']"
+            mat-flat-button
+            color="primary"
+            type="button"
+            (click)="iniciarPreparacion()"
+          >
+            <mat-icon>pending</mat-icon>
+            Iniciar preparación
+          </button>
+        } @else {
+          <button
+            *siRol="['ADMIN', 'VENTAS']"
+            mat-flat-button
+            color="primary"
+            type="button"
+            (click)="marcarEntregado()"
+          >
+            <mat-icon>download_done</mat-icon>
+            Marcar como entregado
+          </button>
+        }
+      </div>
+    }
+  }
+</header>
+
+@if (cargando()) {
+  <mat-progress-bar mode="indeterminate" aria-label="Cargando pedido" />
+}
+
+@if (error()) {
+  <div class="estado error" role="alert">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error() }}</p>
+    <button mat-stroked-button type="button" (click)="recargar()">
+      Reintentar
+    </button>
+  </div>
+}
+
+@if (sinProductos) {
+  <div class="estado sin-productos" role="status">
+    <mat-icon>shopping_cart</mat-icon>
+    <h2>Agregue productos a este pedido</h2>
+    <p>
+      El pedido todavía no tiene ítems. Su total es $0,00 hasta que se
+      registren los productos que el cliente pidió.
+    </p>
+  </div>
+}
+
+@if (!cargando() && !error() && detalle.length > 0) {
+  <section class="detalle-tabla">
+    <div class="tabla-scroll">
+      <table
+        mat-table
+        [dataSource]="detalle"
+        aria-label="Productos del pedido"
+      >
+        <ng-container matColumnDef="producto">
+          <th mat-header-cell *matHeaderCellDef>Producto</th>
+          <td mat-cell *matCellDef="let linea">
+            {{ linea.producto.nombre }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="cantidad">
+          <th mat-header-cell *matHeaderCellDef>Cantidad</th>
+          <td mat-cell *matCellDef="let linea">
+            {{ linea.cantidad | number: '1.2-2' }}
+            {{ linea.producto.unidad }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="precioUnitario">
+          <th mat-header-cell *matHeaderCellDef>Precio</th>
+          <td mat-cell *matCellDef="let linea">
+            {{ linea.precioUnitario | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="subtotal">
+          <th mat-header-cell *matHeaderCellDef>Subtotal</th>
+          <td mat-cell *matCellDef="let linea">
+            {{ linea.subtotal | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columnasDetalle"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnasDetalle"></tr>
+      </table>
+    </div>
+
+    @if (pedido(); as p) {
+      <p class="total">
+        Total:
+        <strong>
+          {{ p.totalPedido | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
+        </strong>
+      </p>
+    }
+  </section>
+}
