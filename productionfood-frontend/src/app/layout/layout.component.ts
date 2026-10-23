@@ -1,5 +1,11 @@
 import { Component, computed, inject, signal, ViewChild } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import {
+  NavigationEnd,
+  Router,
+  RouterLink,
+  RouterLinkActive,
+  RouterOutlet
+} from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
@@ -7,6 +13,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { AuthService } from '../core/auth/auth.service';
@@ -36,11 +43,13 @@ import {
 })
 export class LayoutComponent {
   readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
   private readonly breakpoint = inject(BreakpointObserver);
 
   readonly grupos: NavGrupo[] = NAV_GRUPOS;
   readonly modoCompacto = signal(false);
   readonly colapsado = signal(false);
+  readonly tituloActual = signal('Dashboard');
 
   readonly iniciales = computed(() => {
     const nombre = this.authService.usuario()?.nombre ?? 'Usuario';
@@ -71,6 +80,36 @@ export class LayoutComponent {
       .observe([Breakpoints.Handset, Breakpoints.TabletPortrait])
       .pipe(takeUntilDestroyed())
       .subscribe(estado => this.modoCompacto.set(estado.matches));
+
+    this.router.events
+      .pipe(
+        filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+        takeUntilDestroyed()
+      )
+      .subscribe(() => this.actualizarTitulo());
+
+    this.actualizarTitulo();
+  }
+
+  /**
+   * Título del topbar para la ruta actual, resuelto desde NAV_GRUPOS (el
+   * mismo origen que el navbar lateral): los nombres de módulo no se
+   * duplican en las rutas de app.routes.ts.
+   */
+  private actualizarTitulo(): void {
+    const segmentos = this.router.url
+      .replace(/[?#].*$/, '')
+      .split('/')
+      .filter(Boolean);
+
+    const ruta =
+      segmentos[1] === 'en-construccion' ? segmentos[2] : segmentos[1];
+
+    const item = NAV_GRUPOS.flatMap(grupo => grupo.items).find(
+      i => i.ruta === ruta
+    );
+
+    this.tituloActual.set(item?.titulo ?? 'Dashboard');
   }
 
   /**

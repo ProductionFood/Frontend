@@ -334,6 +334,14 @@ mat-sidenav-container.shell {
   border-bottom: 1px solid var(--linea);
 }
 
+.toolbar-title {
+  margin-left: 4px;
+  font-family: var(--fuente-display);
+  font-weight: 600;
+  font-size: 20px;
+  color: var(--verde-900);
+}
+
 .spacer {
   flex: 1;
 }
