@@ -1,3 +1,4 @@
+import {IndicadorAlertasComponent} from './components/indicador-alertas/indicador-alertas.component';
 import { Component, computed, inject, signal, ViewChild } from '@angular/core';
 import {
   NavigationEnd,
@@ -36,7 +37,8 @@ import {
     MatListModule,
     MatButtonModule,
     MatIconModule,
-    MatMenuModule
+    MatMenuModule,
+    IndicadorAlertasComponent
   ],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss'

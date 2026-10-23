@@ -2,15 +2,16 @@
 <mat-dialog-content><p>Registrar consumos <strong>descontará materia prima del inventario</strong>. La operación solo debe confirmarse después de verificar las cantidades reales.</p>
 @if(cargando()){<mat-progress-bar mode="indeterminate" aria-label="Consultando receta e inventario"/>}
 @if(error()){<p class="error" role="alert">{{error()}}</p><button mat-button (click)="cargar()">Reintentar consulta</button>}
-@if(!cargando()){
+@if(!cargando()&&!resultado){
 @if(sinReceta){<p role="status">Este producto no tiene receta. Registre los ingredientes manualmente; no habrá consumo teórico.</p>}
 <p>Planificado: {{cantidadPlanificada}} · Rendimiento de receta: {{rendimiento||'Sin receta'}}</p>
 <div class="scroll"><table><thead><tr><th>Materia prima</th><th>Teórico</th><th>Real consumido</th><th>Disponible</th><th>Impacto en stock</th></tr></thead><tbody>
-@for(l of lineas();track l.idMateriaPrima){<tr><td>{{l.nombreMateriaPrima}} @if(l.cantidadTeorica===0){<small>Fuera de receta</small>}</td><td>{{l.cantidadTeorica|number:'1.3-3'}} {{l.unidad}}</td><td><mat-form-field appearance="outline"><mat-label>Cantidad real de {{l.nombreMateriaPrima}}</mat-label><input matInput type="number" min="0" step="0.001" [(ngModel)]="l.real" [disabled]="registrados.has(l.idMateriaPrima)" /></mat-form-field></td><td>{{l.cantidadDisponible|number:'1.3-3'}} {{l.unidad}}</td><td [class.error]="l.real>l.cantidadDisponible">{{l.cantidadDisponible|number:'1.3-3'}} → {{l.cantidadDisponible-l.real|number:'1.3-3'}} {{l.unidad}}</td></tr>}
+@for(l of lineas();track l.idMateriaPrima){<tr><td>{{l.nombreMateriaPrima}} @if(l.cantidadTeorica===0){<small>Fuera de receta</small>}</td><td>{{l.cantidadTeorica|number:'1.3-3'}} {{l.unidad}}</td><td><mat-form-field appearance="outline"><mat-label>Cantidad real de {{l.nombreMateriaPrima}}</mat-label><input matInput type="number" min="0" step="0.001" [(ngModel)]="l.real"  /></mat-form-field></td><td>{{l.cantidadDisponible|number:'1.3-3'}} {{l.unidad}}</td><td [class.error]="l.real>l.cantidadDisponible">{{l.cantidadDisponible|number:'1.3-3'}} → {{l.cantidadDisponible-l.real|number:'1.3-3'}} {{l.unidad}}</td></tr>}
 </tbody></table></div>
 <div class="extra"><mat-form-field appearance="outline"><mat-label>Ingrediente fuera de receta</mat-label><mat-select [(value)]="extraId">@for(e of extras();track e.idMateriaPrima){<mat-option [value]="e.idMateriaPrima" [disabled]="incluido(e.idMateriaPrima)">{{e.nombre}}</mat-option>}</mat-select></mat-form-field><button mat-button (click)="agregarExtra()" [disabled]="extraId===null">Agregar ingrediente</button></div>
 @if(faltantes.length){<p role="alert" class="error">Stock insuficiente: @for(l of faltantes;track l.idMateriaPrima){ {{l.nombreMateriaPrima}} (disponible {{l.cantidadDisponible}} {{l.unidad}}). }</p>}
 @if(invalido){<p role="alert">Todas las cantidades deben ser mayores o iguales a cero, con máximo 3 decimales, y no superar el inventario disponible.</p>}
-@if(registrados.size){<p role="status">{{registrados.size}} consumo(s) registrado(s). Si hubo un fallo, reintente sin duplicar los anteriores.</p>}
-}</mat-dialog-content>
-<mat-dialog-actions align="end"><button mat-button mat-dialog-close [disabled]="guardando()">Cerrar</button><button mat-flat-button (click)="guardar()" [disabled]="cargando()||guardando()||invalido||!!error()">{{guardando()?'Registrando…':'Registrar consumo'}}</button></mat-dialog-actions>
+<app-impacto-inventario [filas]="impacto" />
+@if(stockError){<p role="alert" class="error">{{stockError}}</p>}
+} @if(resultado){<h3 role="status">Consumo registrado. Inventario actualizado</h3>@for(s of resultado.saldos;track s.idMateriaPrima){<p>{{s.nombreMateriaPrima}}: {{s.saldoAnterior|number:'1.2-2'}} → {{s.saldoPosterior|number:'1.2-2'}} {{s.unidad}}</p>}<app-alertas-stock [alertas]="alertas" />}</mat-dialog-content>
+<mat-dialog-actions align="end"><button mat-button (click)="cerrar()" [disabled]="guardando()">Cerrar</button>@if(!resultado){<button mat-flat-button (click)="guardar()" [disabled]="cargando()||guardando()||invalido||!!error()">{{guardando()?'Registrando…':'Registrar consumo'}}</button>}</mat-dialog-actions>
