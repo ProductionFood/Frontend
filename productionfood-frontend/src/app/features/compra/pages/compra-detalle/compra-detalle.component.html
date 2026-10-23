@@ -1,0 +1,138 @@
+<header class="page-header">
+  <div class="header-info">
+    <a class="volver" mat-button routerLink="/app/compras">
+      <mat-icon>arrow_back</mat-icon>
+      Volver a Compras
+    </a>
+
+    <div class="titulo-fila">
+      <h1>{{ titulo }}</h1>
+      @if (compra(); as c) {
+        <span
+          class="chip-estado"
+          [class.pendiente]="c.estado === 'PENDIENTE'"
+          [class.recibida]="c.estado === 'RECIBIDA'"
+          [class.cancelada]="c.estado === 'CANCELADA'"
+        >
+          <span class="punto"></span>
+          {{ c.estado === 'PENDIENTE' ? 'Pendiente' : c.estado === 'RECIBIDA' ? 'Recibida' : 'Cancelada' }}
+        </span>
+      }
+    </div>
+
+    @if (compra(); as c) {
+      <p class="subtitulo">
+        {{ c.proveedor.nombre }} · {{ c.fecha | date: 'dd/MM/yyyy' }}
+      </p>
+    }
+  </div>
+
+  @if (compra(); as c) {
+    @if (c.editable && c.estado === 'PENDIENTE') {
+      <div class="header-acciones">
+        <button
+          *siRol="['ADMIN', 'COMPRAS']"
+          mat-stroked-button
+          type="button"
+          class="btn-cancelar"
+          (click)="cancelarCompra()"
+        >
+          <mat-icon>cancel</mat-icon>
+          Cancelar compra
+        </button>
+        <button
+          *siRol="['ADMIN', 'COMPRAS']"
+          mat-flat-button
+          color="primary"
+          type="button"
+          (click)="recibir()"
+        >
+          <mat-icon>download_done</mat-icon>
+          Recibir
+        </button>
+      </div>
+    }
+  }
+</header>
+
+@if (cargando()) {
+  <mat-progress-bar mode="indeterminate" aria-label="Cargando compra" />
+}
+
+@if (error()) {
+  <div class="estado error" role="alert">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error() }}</p>
+    <button mat-stroked-button type="button" (click)="recargar()">
+      Reintentar
+    </button>
+  </div>
+}
+
+@if (!cargando() && !error() && compra(); as c) {
+  @if (c.estado === 'PENDIENTE' && c.cantidadItems === 0) {
+    <p class="aviso-detalle">
+      <mat-icon>warning_amber</mat-icon>
+      Agregue al menos un ítem antes de recibir la compra.
+    </p>
+  }
+
+  <mat-card class="tabla-card">
+    <mat-card-content>
+      <div class="tabla-scroll">
+        <table
+          mat-table
+          [dataSource]="lineas()"
+          aria-label="Ítems de la compra"
+        >
+          <ng-container matColumnDef="materiaPrima">
+            <th mat-header-cell *matHeaderCellDef>Materia prima</th>
+            <td mat-cell *matCellDef="let linea">
+              {{ linea.materiaPrima.nombre }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="cantidad">
+            <th mat-header-cell *matHeaderCellDef>Cantidad</th>
+            <td mat-cell *matCellDef="let linea">
+              {{ linea.cantidad | number: '1.2-2' }}
+              {{ linea.materiaPrima.unidad.abreviatura }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="precioUnitario">
+            <th mat-header-cell *matHeaderCellDef>Precio unit.</th>
+            <td mat-cell *matCellDef="let linea">
+              {{ linea.precioUnitario | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="subtotal">
+            <th mat-header-cell *matHeaderCellDef>Subtotal</th>
+            <td mat-cell *matCellDef="let linea">
+              {{ linea.subtotal | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="columnasLineas"></tr>
+          <tr mat-row *matRowDef="let row; columns: columnasLineas"></tr>
+        </table>
+      </div>
+
+      @if (lineas().length === 0) {
+        <div class="estado">
+          <mat-icon>remove_shopping_cart</mat-icon>
+          <h2>Esta compra no tiene ítems</h2>
+          <p>Agregue al menos un ítem antes de poder recibirla (HU-14).</p>
+        </div>
+      }
+
+      <div class="total-fila">
+        <span>Total:</span>
+        <strong>
+          {{ totalLineas() | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
+        </strong>
+      </div>
+    </mat-card-content>
+  </mat-card>
+}
