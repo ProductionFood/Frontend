@@ -1,3 +1,6 @@
+import { AgregarProductoDialogComponent } from '../../components/agregar-producto-dialog/agregar-producto-dialog.component';
+import { DetallePedidoTablaComponent } from '../../components/detalle-pedido-tabla/detalle-pedido-tabla.component';
+import { DetallePedidoService } from '../../services/detalle-pedido.service';
 import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
@@ -46,12 +49,14 @@ import { PedidoFormularioComponent } from '../pedido-formulario/pedido-formulari
     MatIconModule,
     MatProgressBarModule,
     MatTableModule,
-    SiRolDirective
+    SiRolDirective,
+    DetallePedidoTablaComponent
   ],
   templateUrl: './pedido-detalle.component.html',
   styleUrl: './pedido-detalle.component.scss'
 })
 export class PedidoDetalleComponent {
+  private readonly detalleService = inject(DetallePedidoService);
   private readonly route = inject(ActivatedRoute);
   private readonly pedidoService = inject(PedidoService);
   private readonly notificacion = inject(NotificacionService);
@@ -216,6 +221,27 @@ export class PedidoDetalleComponent {
           this.recargar();
         }
       });
+  }
+
+  agregarProducto(): void {
+    if (!this.pedido()?.editable) return;
+    this.dialog.open(AgregarProductoDialogComponent,{data:{idPedido:this.idPedido,idsExcluidos:this.detalle.map(l=>l.producto.idProducto)},width:'560px',maxWidth:'95vw',disableClose:true}).afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(ok=>{if(ok)this.recargar();});
+  }
+  editarCantidad(linea: LineaPedido): void {
+    if(!this.pedido()?.editable)return;
+    const entrada=prompt(`Nueva cantidad de ${linea.producto.nombre}:`,String(linea.cantidad));
+    if(entrada===null)return;
+    const cantidad=Number(entrada);
+    if(!Number.isFinite(cantidad)||cantidad<=0){this.notificacion.advertencia('Ingrese una cantidad válida.');return;}
+    const delta=cantidad-linea.cantidad;
+    if(!delta)return;
+    if(!confirm(delta>0?`Se descontarán ${delta} unidades más. ¿Continuar?`:`Se devolverán ${-delta} unidades al inventario. ¿Continuar?`))return;
+    this.detalleService.actualizar(this.idPedido,linea.idDetallePedido,{cantidad}).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({next:()=>this.recargar(),error:(e:HttpErrorResponse)=>{this.notificacion.error(this.mensajeError(e));this.recargar();}});
+  }
+  quitarProducto(linea: LineaPedido): void {
+    if(!this.pedido()?.editable)return;
+    const data:ConfirmarDialogData={titulo:'Quitar producto',mensaje:`¿Quitar ${linea.producto.nombre}? Las ${linea.cantidad} unidades volverán a sus lotes de inventario.`,textoConfirmar:'Quitar producto'};
+    this.dialog.open(ConfirmarDialogComponent,{data,width:'460px'}).afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(ok=>{if(ok)this.detalleService.eliminar(this.idPedido,linea.idDetallePedido).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({next:()=>this.recargar(),error:(e:HttpErrorResponse)=>this.notificacion.error(this.mensajeError(e))});});
   }
 
   private confirmarCambioEstado(
