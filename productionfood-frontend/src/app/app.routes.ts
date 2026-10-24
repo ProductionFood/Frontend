@@ -147,6 +147,15 @@ export const routes: Routes = [
           import('./features/compra/compra.routes').then(m => m.COMPRA_ROUTES)
       },
       {
+        // HU-26: eficiencia de producción (ADMIN/PRODUCCION).
+        path: 'reportes',
+        canActivate: [rolGuard(['ADMIN', 'PRODUCCION'])],
+        loadChildren: () =>
+          import('./features/reporte/reporte.routes').then(
+            m => m.REPORTE_ROUTES
+          )
+      },
+      {
         // Ruta única genérica para todos los módulos pendientes.
         path: 'en-construccion/:ruta',
         loadComponent: () =>

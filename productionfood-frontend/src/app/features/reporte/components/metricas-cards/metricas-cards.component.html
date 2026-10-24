@@ -1,0 +1,102 @@
+<section class="metricas">
+  <mat-card class="metrica">
+    <span class="etiqueta">
+      Cumplimiento del plan
+      <mat-icon
+        class="ayuda"
+        matTooltip="producido / planificado × 100. Responde a: ¿se fabricó lo que se prometió?"
+        matTooltipPosition="above"
+      >info</mat-icon>
+    </span>
+
+    @if (resumen().cumplimientoPromedio !== null) {
+      <p class="cifra">
+        {{ resumen().cumplimientoPromedio | number: '1.1-1' }} %
+      </p>
+      <p class="frase">
+        Se produjo el
+        {{ resumen().cumplimientoPromedio | number: '1.1-1' }} %
+        de lo planificado
+      </p>
+    } @else {
+      <p
+        class="cifra cifra--nula"
+        matTooltip="No se puede calcular: no hay cantidades planificadas en el período"
+      >—</p>
+      <p class="frase">Sin datos suficientes para medir el cumplimiento</p>
+    }
+
+    <p class="meta">
+      {{ resumen().planesAnalizados }} planes ·
+      {{ resumen().planesCancelados }} cancelados
+    </p>
+  </mat-card>
+
+  <mat-card class="metrica">
+    <span class="etiqueta">
+      Rendimiento ajustado
+      <mat-icon
+        class="ayuda"
+        [matTooltip]="ayudaAjustado"
+        matTooltipPosition="above"
+      >info</mat-icon>
+    </span>
+
+    @if (ajustado(); as a) {
+      <p class="cifra">{{ a.valor | number: '1.1-1' }} %</p>
+      <p class="frase">
+        @if (a.diferencia < 0.05) {
+          Por cada unidad producida se consumió exactamente lo previsto
+        } @else {
+          Por cada unidad producida se consumió un
+          {{ a.diferencia | number: '1.1-1' }} % {{ a.texto }}
+        }
+      </p>
+    } @else {
+      <p
+        class="cifra cifra--nula"
+        matTooltip="No se puede calcular: hay consumos con cantidad real en cero"
+      >—</p>
+      <p class="frase">Sin consumos comparables en el período</p>
+    }
+
+    <p class="meta">Ajustado por lo realmente producido</p>
+  </mat-card>
+
+  <mat-card class="metrica">
+    <span class="etiqueta">
+      Desviación materia prima
+      <mat-icon
+        class="ayuda"
+        matTooltip="(real − teórica) / teórica × 100. Positiva: se gastó de más. Es la métrica más directamente legible (R-04)."
+        matTooltipPosition="above"
+      >info</mat-icon>
+    </span>
+
+    @if (resumen().desviacionMateriaPrima !== null) {
+      <p
+        class="cifra"
+        [class.cifra--exceso]="(resumen().desviacionMateriaPrima ?? 0) > 0"
+        [class.cifra--ahorro]="(resumen().desviacionMateriaPrima ?? 0) < 0"
+      >
+        {{ signo(resumen().desviacionMateriaPrima) }}{{
+          absoluto(resumen().desviacionMateriaPrima) | number: '1.1-1'
+        }} %
+      </p>
+      <p class="frase">
+        Se gastó un
+        {{ absoluto(resumen().desviacionMateriaPrima) | number: '1.1-1' }} %
+        {{ (resumen().desviacionMateriaPrima ?? 0) > 0 ? 'más' : ((resumen().desviacionMateriaPrima ?? 0) < 0 ? 'menos' : '') }}
+        de materia prima de lo previsto
+      </p>
+    } @else {
+      <p
+        class="cifra cifra--nula"
+        matTooltip="No se puede calcular: no hay consumo teórico registrado en el período"
+      >—</p>
+      <p class="frase">Sin consumo teórico para comparar</p>
+    }
+
+    <p class="meta">Acumulado del período</p>
+  </mat-card>
+</section>

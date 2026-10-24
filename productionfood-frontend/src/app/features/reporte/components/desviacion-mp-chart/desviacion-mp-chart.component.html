@@ -1,0 +1,50 @@
+<section class="panel">
+  <header class="panel-cabecera">
+    <h2>Desviación por materia prima</h2>
+    <span class="criterio">Acumulado · ordenado por magnitud</span>
+  </header>
+
+  @if (ordenadas().length === 0) {
+    <p class="vacio">Sin consumos registrados en el período.</p>
+  } @else {
+    <ul class="barras">
+      @for (fila of ordenadas(); track fila.materiaPrima) {
+        <li class="fila">
+          <span class="nombre" [title]="fila.materiaPrima">{{ fila.materiaPrima }}</span>
+
+          <span class="pista" aria-hidden="true">
+            <span class="lado lado--izq">
+              @if ((fila.desviacion ?? 0) < 0) {
+                <span class="barra barra--ahorro" [style.width.%]="ancho(fila.desviacion)"></span>
+              }
+            </span>
+            <span class="eje"></span>
+            <span class="lado lado--der">
+              @if ((fila.desviacion ?? 0) > 0) {
+                <span class="barra barra--exceso" [style.width.%]="ancho(fila.desviacion)"></span>
+              }
+            </span>
+          </span>
+
+          <span [class]="'valor valor--' + clase(fila.desviacion)">
+            @if (fila.desviacion === null) {
+              <span
+                class="nulo"
+                matTooltip="No se puede calcular: no hay consumo teórico acumulado para este insumo"
+              >—</span>
+            } @else {
+              {{ signo(fila.desviacion) }}{{ absoluto(fila.desviacion) | number: '1.1-1' }} %
+            }
+          </span>
+
+          <span class="detalle">
+            {{ fila.teoricaAcumulada | number: '1.0-3' }} →
+            {{ fila.realAcumulada | number: '1.0-3' }} {{ fila.unidad }}
+          </span>
+
+          <span class="planes">{{ fila.planes }} planes</span>
+        </li>
+      }
+    </ul>
+  }
+</section>
