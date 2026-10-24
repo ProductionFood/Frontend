@@ -1,0 +1,141 @@
+<header class="page-header">
+  <div>
+    <h1>Alertas de stock</h1>
+    <p class="subtitulo">
+      Materias primas por debajo del mínimo, ordenadas por urgencia.
+    </p>
+  </div>
+
+  <mat-checkbox [formControl]="filtros.controls.incluirInactivas">
+    Incluir inactivas
+  </mat-checkbox>
+</header>
+
+@if (cargando()) {
+  <mat-progress-bar mode="indeterminate" aria-label="Cargando alertas de stock" />
+}
+
+@if (error(); as mensaje) {
+  <section class="estado estado--error">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ mensaje }}</p>
+    <button mat-stroked-button type="button" (click)="recargar()">Reintentar</button>
+  </section>
+} @else if (datos(); as d) {
+  <section class="resumen" aria-label="Resumen de alertas">
+    <mat-card class="tarjeta">
+      <mat-card-content>
+        <span class="cifra">{{ d.resumen.total }}</span>
+        <span class="etiqueta">en alerta</span>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="tarjeta tarjeta--agotadas">
+      <mat-card-content>
+        <span class="cifra">{{ d.resumen.agotadas }}</span>
+        <span class="etiqueta">
+          agotada{{ d.resumen.agotadas === 1 ? '' : 's' }}
+          <mat-icon aria-hidden="true">error</mat-icon>
+        </span>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="tarjeta tarjeta--costo">
+      <mat-card-content>
+        <span class="cifra">
+          {{ d.costoReposicionTotal | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+        </span>
+        <span class="etiqueta">costo de reposición estimado</span>
+      </mat-card-content>
+    </mat-card>
+  </section>
+
+  @if (d.items.length === 0) {
+    <section class="estado estado--vacio">
+      <mat-icon>check_circle</mat-icon>
+      <p>Todas las materias primas están por encima de su stock mínimo</p>
+      <small>Última verificación: {{ d.generadoEn | date: 'dd/MM/yyyy HH:mm' }}</small>
+    </section>
+  } @else {
+    <section class="tabla-panel">
+      <table mat-table [dataSource]="d.items" aria-label="Materias primas en alerta">
+        <ng-container matColumnDef="materiaPrima">
+          <th mat-header-cell *matHeaderCellDef>Materia prima</th>
+          <td mat-cell *matCellDef="let item" class="principal">
+            {{ item.nombre }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="disponible">
+          <th mat-header-cell *matHeaderCellDef class="numerica">Disponible</th>
+          <td mat-cell *matCellDef="let item" class="numerica">
+            {{ item.cantidadDisponible | number: '1.2-2' }} {{ item.unidad }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="minimo">
+          <th mat-header-cell *matHeaderCellDef class="numerica">Mínimo</th>
+          <td mat-cell *matCellDef="let item" class="numerica">
+            {{ item.stockMinimo | number: '1.2-2' }} {{ item.unidad }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="nivel">
+          <th mat-header-cell *matHeaderCellDef>Nivel</th>
+          <td mat-cell *matCellDef="let item">
+            <div class="nivel">
+              <app-nivel-stock-bar
+                [disponible]="item.cantidadDisponible"
+                [minimo]="item.stockMinimo"
+                [nivel]="item.nivel"
+              />
+              <span
+                class="chip-estado"
+                [class.agotado]="item.nivel === 'AGOTADO'"
+                [class.bajo]="item.nivel === 'BAJO'"
+              >
+                {{ item.nivel === 'AGOTADO' ? 'Agotada' : 'Baja' }}
+              </span>
+            </div>
+            @if (item.nivel === 'AGOTADO') {
+              <small class="bloquea">Bloquea la producción</small>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="faltante">
+          <th mat-header-cell *matHeaderCellDef class="numerica">Falta</th>
+          <td mat-cell *matCellDef="let item" class="numerica faltante">
+            {{ item.faltante | number: '1.2-2' }} {{ item.unidad }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="reposicion">
+          <th mat-header-cell *matHeaderCellDef class="numerica">Reposición</th>
+          <td mat-cell *matCellDef="let item" class="numerica">
+            {{ item.costoReposicion | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+        <tr mat-row *matRowDef="let item; columns: columnas"></tr>
+      </table>
+
+      <footer class="pie">
+        <small class="nota-costo">
+          El costo de reposición es una referencia, no una cotización.
+        </small>
+
+        <a
+          *siRol="['ADMIN', 'COMPRAS']"
+          mat-flat-button
+          color="primary"
+          routerLink="/app/inventario/alertas/sugerencia"
+        >
+          Ver sugerencia de compra
+          <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+        </a>
+      </footer>
+    </section>
+  }
+}

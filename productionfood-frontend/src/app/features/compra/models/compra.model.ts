@@ -73,6 +73,21 @@ export interface ActualizarCompraDto {
   fecha: string;
 }
 
+/**
+ * Ítems que llegan prellenados desde la sugerencia de compra (HU-27 R-06):
+ * el faltante con margen del 20 % y el costo unitario de referencia.
+ */
+export interface CompraPrefillItem {
+  idMateriaPrima: number;
+  cantidad: number;
+  precioUnitario: number;
+}
+
+export interface CompraPrefill {
+  idProveedor: number | null;
+  items: CompraPrefillItem[];
+}
+
 export interface CompraFiltro {
   idProveedor?: number;
   estado?: EstadoCompra;

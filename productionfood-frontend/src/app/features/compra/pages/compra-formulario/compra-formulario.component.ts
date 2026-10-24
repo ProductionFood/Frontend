@@ -24,6 +24,8 @@ import { MatSelectModule } from '@angular/material/select';
 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
+import { concatMap, finalize, from } from 'rxjs';
+
 import {
   ConfirmarDialogComponent,
   ConfirmarDialogData
@@ -32,12 +34,17 @@ import { Proveedor } from '../../../proveedor/models/proveedor.model';
 import { ProveedorService } from '../../../proveedor/services/proveedor.service';
 import {
   Compra,
+  CompraPrefill,
+  CompraPrefillItem,
   CrearCompraDto
 } from '../../models/compra.model';
 import { CompraService } from '../../services/compra.service';
+import { DetalleCompraService } from '../../services/detalle-compra.service';
 
 export interface CompraFormularioData {
   compra?: Compra;
+  /** Ítems sugeridos por HU-27: se agregan al detalle tras crear la cabecera. */
+  prefill?: CompraPrefill;
 }
 
 interface CuerpoError {
@@ -71,6 +78,7 @@ interface CuerpoError {
 export class CompraFormularioComponent {
   private readonly fb = inject(FormBuilder);
   private readonly compraService = inject(CompraService);
+  private readonly detalleService = inject(DetalleCompraService);
   private readonly proveedorService = inject(ProveedorService);
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);
@@ -88,16 +96,25 @@ export class CompraFormularioComponent {
   readonly cargandoProveedores = signal(true);
   readonly errorProveedores = signal<string | null>(null);
 
+  /** Ítems de la sugerencia de compra (HU-27); vacío en el flujo normal. */
+  readonly itemsSugeridos: CompraPrefillItem[] = this.datos.prefill?.items ?? [];
+
+  /** Cabecera ya creada cuando fallaron los ítems sugeridos. */
+  private compraCreada: Compra | null = null;
+
   /** R-07: la fecha puede ser pasada, pero no futura. */
   readonly maxFecha = new Date();
 
   readonly form = this.fb.group({
     idProveedor: this.fb.control<number | null>(
-      this.datos.compra?.proveedor.idProveedor ?? null,
+      this.datos.compra?.proveedor.idProveedor ??
+        this.datos.prefill?.idProveedor ??
+        null,
       [Validators.required]
     ),
     fecha: this.fb.control<Date | null>(
-      this.aFecha(this.datos.compra?.fecha),
+      this.aFecha(this.datos.compra?.fecha) ??
+        (this.datos.prefill ? new Date() : null),
       [Validators.required]
     )
   });
@@ -113,6 +130,11 @@ export class CompraFormularioComponent {
   }
 
   guardar(): void {
+    if (this.compraCreada) {
+      this.agregarItems(this.compraCreada);
+      return;
+    }
+
     if (this.form.invalid || this.guardando()) {
       this.form.markAllAsTouched();
       return;
@@ -141,7 +163,15 @@ export class CompraFormularioComponent {
         });
 
     peticion.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => this.ref.close(true),
+      next: compra => {
+        if (!this.datos.compra && this.itemsSugeridos.length > 0) {
+          this.compraCreada = compra;
+          this.agregarItems(compra);
+          return;
+        }
+
+        this.ref.close(true);
+      },
       error: (error: HttpErrorResponse) => {
         this.guardando.set(false);
         this.aplicarError(error);
@@ -149,8 +179,37 @@ export class CompraFormularioComponent {
     });
   }
 
+  /**
+   * Agrega al detalle los ítems de la sugerencia de compra (HU-27 R-06) una
+   * vez creada la cabecera. Si falla, la cabecera ya existe: el botón
+   * reintenta los ítems sin duplicarla.
+   */
+  private agregarItems(compra: Compra): void {
+    this.guardando.set(true);
+    this.errorGeneral.set(null);
+
+    from(this.itemsSugeridos)
+      .pipe(
+        concatMap(item => this.detalleService.agregar(compra.idCompra, item)),
+        finalize(() => this.guardando.set(false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        complete: () => this.ref.close(true),
+        error: () =>
+          this.errorGeneral.set(
+            `La compra #${compra.idCompra} se creó, pero no se pudieron agregar los ítems sugeridos. Reintente o agréguelos desde su detalle.`
+          )
+      });
+  }
+
   cancelar(): void {
     if (this.guardando()) {
+      return;
+    }
+
+    if (this.compraCreada) {
+      this.ref.close(true);
       return;
     }
 
