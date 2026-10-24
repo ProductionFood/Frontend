@@ -1,0 +1,87 @@
+<header class="page-header">
+  <div class="header-info">
+    <a class="volver" mat-button routerLink="/app/inventario/alertas">
+      <mat-icon>arrow_back</mat-icon>
+      Volver a alertas
+    </a>
+
+    <h1>Sugerencia de compra</h1>
+    <p class="subtitulo">
+      Agrupada por el proveedor de la última compra de cada insumo. Las
+      cantidades incluyen un margen del 20 % sobre el faltante.
+    </p>
+  </div>
+</header>
+
+@if (cargando()) {
+  <mat-progress-bar mode="indeterminate" aria-label="Cargando sugerencia de compra" />
+}
+
+@if (error(); as mensaje) {
+  <section class="estado estado--error">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ mensaje }}</p>
+    <button mat-stroked-button type="button" (click)="recargar()">Reintentar</button>
+  </section>
+} @else if (!cargando() && datos().length === 0) {
+  <section class="estado estado--vacio">
+    <mat-icon>check_circle</mat-icon>
+    <p>No hay materias primas por debajo del mínimo: no hace falta reponer</p>
+  </section>
+} @else {
+  @for (grupo of datos(); track $index) {
+    <mat-expansion-panel class="grupo" [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon [class.sin-proveedor]="!grupo.proveedor">
+            {{ grupo.proveedor ? 'inventory_2' : 'warning_amber' }}
+          </mat-icon>
+          {{ grupo.proveedor?.nombre ?? 'Sin proveedor sugerido' }}
+        </mat-panel-title>
+        <mat-panel-description>
+          {{ grupo.totalEstimado | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      @if (!grupo.proveedor) {
+        <p class="aviso">
+          <mat-icon>warning_amber</mat-icon>
+          Estas materias primas no tienen compras previas registradas.
+          Seleccione un proveedor manualmente al crear la compra.
+        </p>
+      }
+
+      <ul class="items">
+        @for (item of grupo.items; track item.materiaPrima) {
+          <li class="item">
+            <span class="nombre">{{ item.materiaPrima }}</span>
+            <span class="detalle">
+              falta {{ item.faltante | number: '1.0-2' }} →
+              comprar {{ item.cantidadSugerida | number: '1.0-2' }}
+            </span>
+            <span class="costo">
+              {{ item.costoEstimado | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+            </span>
+          </li>
+        }
+      </ul>
+
+      <footer class="grupo-pie">
+        <span class="total">
+          Total estimado:
+          <strong>{{ grupo.totalEstimado | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}</strong>
+        </span>
+
+        <button mat-flat-button color="primary" type="button" (click)="crearCompra(grupo)">
+          {{ grupo.proveedor ? 'Crear compra a este proveedor' : 'Crear compra' }}
+        </button>
+      </footer>
+    </mat-expansion-panel>
+  }
+
+  <p class="nota">
+    <mat-icon>info</mat-icon>
+    Es una sugerencia, no una compra automática: la cantidad y el proveedor se
+    confirman en el formulario de compra.
+  </p>
+}

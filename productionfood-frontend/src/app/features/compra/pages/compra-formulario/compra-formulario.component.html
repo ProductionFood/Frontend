@@ -60,6 +60,15 @@
       </p>
     }
 
+    @if (!esEdicion && itemsSugeridos.length > 0) {
+      <p class="nota-estado">
+        <mat-icon>info</mat-icon>
+        Se agregarán <strong>{{ itemsSugeridos.length }}</strong>
+        {{ itemsSugeridos.length === 1 ? 'ítem' : 'ítems' }} de la sugerencia
+        de compra al registrar.
+      </p>
+    }
+
     @if (errorGeneral()) {
       <div class="error-general">
         <mat-icon>error_outline</mat-icon>

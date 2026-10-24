@@ -34,7 +34,7 @@ import {
 import { TablaColumnaDirective } from '../../../../shared/components/tabla-paginada/tabla-columna.directive';
 import { Proveedor } from '../../../proveedor/models/proveedor.model';
 import { ProveedorService } from '../../../proveedor/services/proveedor.service';
-import { Compra, EstadoCompra } from '../../models/compra.model';
+import { Compra, CompraPrefill, EstadoCompra } from '../../models/compra.model';
 import { CompraService } from '../../services/compra.service';
 import { CompraFormularioComponent } from '../compra-formulario/compra-formulario.component';
 
@@ -135,6 +135,7 @@ export class CompraListaComponent {
 
     this.cargarProveedores();
     this.recargar();
+    this.abrirSugeridaSiExiste();
   }
 
   recargar(): void {
@@ -154,10 +155,10 @@ export class CompraListaComponent {
     this.recargar();
   }
 
-  abrirFormulario(compra?: Compra): void {
+  abrirFormulario(compra?: Compra, prefill?: CompraPrefill): void {
     this.dialog
       .open(CompraFormularioComponent, {
-        data: { compra },
+        data: { compra, prefill },
         width: '520px',
         maxWidth: '95vw',
         autoFocus: 'first-tabbable',
@@ -175,6 +176,25 @@ export class CompraListaComponent {
           this.recargar();
         }
       });
+  }
+
+  /**
+   * La sugerencia de compra (HU-27) navega aquí con el proveedor y los ítems
+   * sugeridos: se abre el formulario prellenado una sola vez.
+   */
+  private abrirSugeridaSiExiste(): void {
+    const estado = window.history.state as {
+      compraSugerida?: CompraPrefill | null;
+    } | null;
+
+    const prefill = estado?.compraSugerida ?? null;
+
+    if (!prefill) {
+      return;
+    }
+
+    window.history.replaceState(null, '');
+    this.abrirFormulario(undefined, prefill);
   }
 
   nombreProveedor(id: number): string {

@@ -1,4 +1,4 @@
-import { CommonModule, DecimalPipe } from '@angular/common';
+﻿import { DecimalPipe } from '@angular/common';
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
@@ -8,14 +8,18 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 
-import { InventarioMateriaPrima } from '../../../features/inventario/models/inventario.model';
-import { InventarioService } from '../../../features/inventario/services/inventario.service';
+import { catchError, filter, finalize, forkJoin, fromEvent, of } from 'rxjs';
+
+import {
+  AlertaStock,
+  ResumenAlertas
+} from '../../../features/inventario/models/alerta.model';
+import { AlertaService } from '../../../features/inventario/services/alerta.service';
 
 @Component({
   selector: 'app-indicador-alertas',
   standalone: true,
   imports: [
-    CommonModule,
     DecimalPipe,
     RouterLink,
     MatBadgeModule,
@@ -83,21 +87,21 @@ import { InventarioService } from '../../../features/inventario/services/inventa
             @for (alerta of alertas(); track alerta.idMateriaPrima) {
               <div class="alerta-item">
                 <div class="alerta-titulo">
-                  <strong>{{ nombreAlerta(alerta) }}</strong>
+                  <strong>{{ alerta.nombre }}</strong>
                   <span
                     class="estado-chip"
-                    [class.agotado]="alerta.estadoStock === 'AGOTADO'"
-                    [class.bajo]="alerta.estadoStock === 'BAJO'"
+                    [class.agotado]="alerta.nivel === 'AGOTADO'"
+                    [class.bajo]="alerta.nivel === 'BAJO'"
                   >
-                    {{ alerta.estadoStock === 'AGOTADO' ? 'Agotado' : 'Stock bajo' }}
+                    {{ alerta.nivel === 'AGOTADO' ? 'Agotado' : 'Stock bajo' }}
                   </span>
                 </div>
                 <p>
-                  Disponible: {{ disponible(alerta) | number:'1.2-2' }} {{ unidad(alerta) }} ·
-                  Mínimo: {{ alerta.stockMinimo | number:'1.2-2' }} {{ unidad(alerta) }}
+                  Disponible: {{ alerta.cantidadDisponible | number:'1.2-2' }} {{ alerta.unidad }} ·
+                  Mínimo: {{ alerta.stockMinimo | number:'1.2-2' }} {{ alerta.unidad }}
                 </p>
                 <small>
-                  Faltan {{ faltante(alerta) | number:'1.2-2' }} {{ unidad(alerta) }}
+                  Faltan {{ alerta.faltante | number:'1.2-2' }} {{ alerta.unidad }}
                   para llegar al mínimo.
                 </small>
               </div>
@@ -108,7 +112,7 @@ import { InventarioService } from '../../../features/inventario/services/inventa
         <mat-divider></mat-divider>
 
         <div class="menu-actions">
-          <a mat-button routerLink="/app/inventario">Ver alertas</a>
+          <a mat-button routerLink="/app/inventario/alertas">Ver alertas</a>
           <a mat-flat-button routerLink="/app/compras">Registrar compra</a>
         </div>
       </div>
@@ -381,17 +385,16 @@ import { InventarioService } from '../../../features/inventario/services/inventa
   ]
 })
 export class IndicadorAlertasComponent {
-  private readonly inventario = inject(InventarioService);
+  private readonly alertasService = inject(AlertaService);
   private readonly destroy = inject(DestroyRef);
 
   readonly cargando = signal(true);
   readonly error = signal(false);
   readonly cantidad = signal(0);
-  readonly alertas = signal<InventarioMateriaPrima[]>([]);
+  readonly alertas = signal<AlertaStock[]>([]);
+  readonly resumen = signal<ResumenAlertas | null>(null);
 
-  readonly hayAgotados = computed(() =>
-    this.alertas().some(alerta => alerta.estadoStock === 'AGOTADO')
-  );
+  readonly hayAgotados = computed(() => (this.resumen()?.agotadas ?? 0) > 0);
 
   readonly tituloBoton = computed(() => {
     if (this.cargando()) return 'Consultando…';
@@ -436,33 +439,28 @@ export class IndicadorAlertasComponent {
     if (this.cantidad() === 0) {
       return 'Todo el inventario se encuentra dentro de los niveles esperados';
     }
-    return this.hayAgotados()
-      ? 'Hay materias primas agotadas o por debajo del mínimo'
+
+    const resumen = this.resumen();
+
+    return resumen
+      ? `${resumen.agotadas} agotadas · ${resumen.bajas} bajo mínimo`
       : 'Hay materias primas por debajo del stock mínimo';
   });
 
   constructor() {
     this.consultarAlertas();
+
+    // Sin sondeo agresivo: al cargar y al volver a la pestaña (HU-27).
+    fromEvent(document, 'visibilitychange')
+      .pipe(
+        filter(() => document.visibilityState === 'visible'),
+        takeUntilDestroyed(this.destroy)
+      )
+      .subscribe(() => this.consultarAlertas());
   }
 
   badgeValue(): number {
     return this.cantidad() > 99 ? 99 : this.cantidad();
-  }
-
-  nombreAlerta(alerta: InventarioMateriaPrima): string {
-    return alerta.nombreMateriaPrima ?? alerta.nombre ?? alerta.materiaPrima?.nombre ?? 'Materia prima';
-  }
-
-  unidad(alerta: InventarioMateriaPrima): string {
-    return alerta.unidad?.abreviatura ?? alerta.materiaPrima?.unidad?.abreviatura ?? 'und';
-  }
-
-  disponible(alerta: InventarioMateriaPrima): number {
-    return alerta.disponible ?? alerta.cantidadDisponible ?? 0;
-  }
-
-  faltante(alerta: InventarioMateriaPrima): number {
-    return Math.max(0, (alerta.stockMinimo ?? 0) - this.disponible(alerta));
   }
 
   recargar(): void {
@@ -473,26 +471,26 @@ export class IndicadorAlertasComponent {
     this.cargando.set(true);
     this.error.set(false);
 
-    this.inventario
-      .listar({
-        page: 0,
-        size: 6,
-        soloStockBajo: true,
-        sort: 'cantidadDisponible,asc'
-      })
-      .pipe(takeUntilDestroyed(this.destroy))
-      .subscribe({
-        next: respuesta => {
-          this.alertas.set(respuesta.content ?? []);
-          this.cantidad.set(respuesta.totalElements ?? respuesta.content.length ?? 0);
-          this.cargando.set(false);
-        },
-        error: () => {
+    forkJoin({
+      resumen: this.alertasService.resumen().pipe(catchError(() => of(null))),
+      listado: this.alertasService.alertas().pipe(catchError(() => of(null)))
+    })
+      .pipe(
+        finalize(() => this.cargando.set(false)),
+        takeUntilDestroyed(this.destroy)
+      )
+      .subscribe(({ resumen, listado }) => {
+        if (!resumen) {
           this.alertas.set([]);
           this.cantidad.set(0);
+          this.resumen.set(null);
           this.error.set(true);
-          this.cargando.set(false);
+          return;
         }
+
+        this.resumen.set(resumen);
+        this.cantidad.set(resumen.total);
+        this.alertas.set((listado?.items ?? []).slice(0, 6));
       });
   }
 }
