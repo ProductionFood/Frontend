@@ -1,0 +1,46 @@
+<h2 mat-dialog-title>Generar reporte</h2>
+
+<mat-dialog-content class="contenido" [formGroup]="form">
+  <p class="intro">
+    Se abrirá el reporte con el período seleccionado. Todos los reportes
+    respetan sus propios permisos.
+  </p>
+
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>Reporte</mat-label>
+    <mat-select formControlName="reporte">
+      @for (reporte of reportes; track reporte.id) {
+        <mat-option [value]="reporte.id">{{ reporte.titulo }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>Período</mat-label>
+    <mat-date-range-input [formGroup]="form" [rangePicker]="picker">
+      <input matStartDate formControlName="desde" placeholder="Desde" />
+      <input matEndDate formControlName="hasta" placeholder="Hasta" />
+    </mat-date-range-input>
+    <mat-datepicker-toggle matIconSuffix [for]="picker" />
+    <mat-date-range-picker #picker />
+  </mat-form-field>
+
+  @if (rangoInvalido) {
+    <p class="error-rango" role="alert">
+      La fecha inicial no puede ser posterior a la final.
+    </p>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="cancelar()">Cancelar</button>
+  <button
+    mat-flat-button
+    color="primary"
+    type="button"
+    [disabled]="rangoInvalido"
+    (click)="generar()"
+  >
+    Generar
+  </button>
+</mat-dialog-actions>
