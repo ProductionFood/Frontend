@@ -1,6 +1,5 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
@@ -14,7 +13,7 @@ import { ResumenEficiencia } from '../../models/eficiencia.model';
 @Component({
   selector: 'app-metricas-cards',
   standalone: true,
-  imports: [DecimalPipe, MatCardModule, MatIconModule, MatTooltipModule],
+  imports: [DecimalPipe, MatIconModule, MatTooltipModule],
   templateUrl: './metricas-cards.component.html',
   styleUrl: './metricas-cards.component.scss'
 })

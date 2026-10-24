@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+﻿import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -8,7 +8,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -23,7 +22,7 @@ import { Devolucion, EstadoDevolucion } from '../../models/devolucion.model';
 import { DevolucionService } from '../../services/devolucion.service';
 import { AprobarDevolucionDialogComponent } from '../../components/aprobar-devolucion-dialog/aprobar-devolucion-dialog.component';
 import { RechazarDevolucionDialogComponent } from '../../components/rechazar-devolucion-dialog/rechazar-devolucion-dialog.component';
-@Component({selector:'app-devolucion-lista',standalone:true,imports:[DatePipe,ReactiveFormsModule,RouterLink,MatButtonModule,MatTableModule,MatIconModule,MatMenuModule,MatChipsModule,MatFormFieldModule,MatSelectModule,MatDatepickerModule,MatInputModule,MatProgressBarModule,MatPaginatorModule,MatSortModule,SiRolDirective],templateUrl:'./devolucion-lista.component.html',styleUrl:'./devolucion-lista.component.scss'})
+@Component({selector:'app-devolucion-lista',standalone:true,imports:[DatePipe,ReactiveFormsModule,RouterLink,MatButtonModule,MatTableModule,MatIconModule,MatMenuModule,MatFormFieldModule,MatSelectModule,MatDatepickerModule,MatInputModule,MatProgressBarModule,MatPaginatorModule,MatSortModule,SiRolDirective],templateUrl:'./devolucion-lista.component.html',styleUrl:'./devolucion-lista.component.scss'})
 export class DevolucionListaComponent {
  private readonly service=inject(DevolucionService);private readonly destroyRef=inject(DestroyRef);private readonly dialog=inject(MatDialog);private readonly notificacion=inject(NotificacionService);
  readonly cargando=signal(true);readonly error=signal('');readonly devoluciones=signal<Devolucion[]>([]);readonly total=signal(0);readonly pagina=signal(0);readonly tamano=signal(10);readonly orden=signal('fechaRegistro,desc');

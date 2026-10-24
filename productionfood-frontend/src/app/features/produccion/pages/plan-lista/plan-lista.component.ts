@@ -5,8 +5,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -19,7 +17,7 @@ import { MatSortModule, Sort } from '@angular/material/sort';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { EstadoPlan, PlanProduccion } from '../../models/plan-produccion.model';
 import { PlanProduccionService } from '../../services/plan-produccion.service';
-@Component({selector:'app-plan-lista',standalone:true,imports:[DatePipe,ReactiveFormsModule,RouterLink,MatButtonModule,MatCardModule,MatChipsModule,MatDatepickerModule,MatFormFieldModule,MatIconModule,MatInputModule,MatPaginatorModule,MatProgressBarModule,MatSelectModule,MatTableModule,MatSortModule],templateUrl:'./plan-lista.component.html',styleUrl:'./plan-lista.component.scss'})
+@Component({selector:'app-plan-lista',standalone:true,imports:[DatePipe,ReactiveFormsModule,RouterLink,MatButtonModule,MatDatepickerModule,MatFormFieldModule,MatIconModule,MatInputModule,MatPaginatorModule,MatProgressBarModule,MatSelectModule,MatTableModule,MatSortModule],templateUrl:'./plan-lista.component.html',styleUrl:'./plan-lista.component.scss'})
 export class PlanListaComponent {
  private readonly fb=inject(FormBuilder);private readonly service=inject(PlanProduccionService);private readonly destroy=inject(DestroyRef);readonly auth=inject(AuthService);
  readonly filtro=this.fb.group({estado:this.fb.control<EstadoPlan|null>(null),idResponsable:this.fb.control<number|null>(null),inicio:this.fb.control<Date|null>(null),fin:this.fb.control<Date|null>(null)});
@@ -31,4 +29,5 @@ export class PlanListaComponent {
  ordenar(e:Sort):void{this.sort.set(e.direction?`${e.active},${e.direction}`:'fechaProduccion,desc');this.cargar();}
  hoy(p:PlanProduccion):boolean{const d=new Date();return p.fechaProduccion===`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
  avance(p:PlanProduccion):number{const det=p.detalles??[];const total=det.reduce((s,l)=>s+l.cantidadPlanificada,0);return total?Math.min(100,Math.round(det.reduce((s,l)=>s+l.cantidadProducida,0)*100/total)):0;}
+ textoEstado(estado:EstadoPlan):string{switch(estado){case'PLANIFICADO':return'Planificado';case'EN_PROCESO':return'En proceso';case'COMPLETADO':return'Completado';case'CANCELADO':return'Cancelado';}}
 }
