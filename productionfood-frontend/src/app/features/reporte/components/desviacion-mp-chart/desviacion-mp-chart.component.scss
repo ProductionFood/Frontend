@@ -1,8 +1,13 @@
+:host {
+  display: block;
+}
+
 .panel {
   padding: 18px 20px;
   border: 1px solid var(--linea);
-  border-radius: 12px;
+  border-radius: var(--radio-m);
   background: var(--blanco);
+  box-shadow: var(--sombra);
   margin-bottom: 20px;
 }
 
@@ -16,11 +21,10 @@
 
 h2 {
   margin: 0;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--tinta-600);
+  font-family: var(--fuente-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--verde-900);
 }
 
 .criterio {

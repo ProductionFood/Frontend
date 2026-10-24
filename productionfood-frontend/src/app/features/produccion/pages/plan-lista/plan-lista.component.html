@@ -1,14 +1,158 @@
-<section class="toolbar"><div><h1>Planes de producción</h1><p class="subtitulo">Organice y consulte la producción programada.</p></div>@if(auth.rol()==='ADMIN'||auth.rol()==='PRODUCCION'){<a mat-flat-button routerLink="nuevo"><mat-icon>add</mat-icon>Nuevo plan</a>}</section>
-<form class="filtros" [formGroup]="filtro" aria-label="Filtros de planes de producción"><mat-form-field appearance="outline" subscriptSizing="dynamic"><mat-label>Estado</mat-label><mat-select formControlName="estado"><mat-option [value]="null">Todos</mat-option><mat-option value="PLANIFICADO">Planificado</mat-option><mat-option value="EN_PROCESO">En proceso</mat-option><mat-option value="COMPLETADO">Completado</mat-option><mat-option value="CANCELADO">Cancelado</mat-option></mat-select></mat-form-field><mat-form-field appearance="outline" subscriptSizing="dynamic"><mat-label>Responsable</mat-label><mat-select formControlName="idResponsable"><mat-option [value]="null">Todos</mat-option>@if(auth.usuario();as u){<mat-option [value]="u.idUsuario">{{u.nombre}} (usted)</mat-option>}</mat-select></mat-form-field><mat-form-field appearance="outline" subscriptSizing="dynamic"><mat-label>Desde</mat-label><input matInput [matDatepicker]="desde" formControlName="inicio"><mat-datepicker-toggle matIconSuffix [for]="desde"/><mat-datepicker #desde/></mat-form-field><mat-form-field appearance="outline" subscriptSizing="dynamic"><mat-label>Hasta</mat-label><input matInput [matDatepicker]="hasta" formControlName="fin"><mat-datepicker-toggle matIconSuffix [for]="hasta"/><mat-datepicker #hasta/></mat-form-field></form>
-@if(cargando()){<mat-progress-bar mode="indeterminate" aria-label="Cargando planes"/>}
-@if(error()){<div role="alert" class="estado-error"><mat-icon aria-hidden="true">cloud_off</mat-icon><div><strong>No se pudo cargar el listado</strong><p>{{error()}}</p><button mat-stroked-button type="button" (click)="cargar()">Reintentar</button></div></div>}
-@if(!cargando()&&!error()&&datos().length===0){<mat-card><mat-card-content><p>{{total()===0&&!filtro.dirty?'No hay planes de producción. Cree el primero.':'Ningún plan coincide con los filtros.'}}</p></mat-card-content></mat-card>}
-@if(!error()&&datos().length>0){<div class="tabla"><table mat-table [dataSource]="datos()" matSort (matSortChange)="ordenar($event)">
-<ng-container matColumnDef="numero"><th mat-header-cell *matHeaderCellDef>N.º</th><td mat-cell *matCellDef="let p">#{{p.idPlanProduccion}}</td></ng-container>
-<ng-container matColumnDef="fecha"><th mat-header-cell *matHeaderCellDef mat-sort-header="fechaProduccion">Producción</th><td mat-cell *matCellDef="let p">@if(hoy(p)){<strong class="hoy">HOY · </strong>}{{p.fechaProduccion | date:'dd/MM/yyyy'}}</td></ng-container>
-<ng-container matColumnDef="responsable"><th mat-header-cell *matHeaderCellDef>Responsable</th><td mat-cell *matCellDef="let p">{{p.responsable?.nombre??'—'}}</td></ng-container>
-<ng-container matColumnDef="productos"><th mat-header-cell *matHeaderCellDef>Productos</th><td mat-cell *matCellDef="let p">{{p.cantidadProductos??p.detalles?.length??0}}</td></ng-container>
-<ng-container matColumnDef="avance"><th mat-header-cell *matHeaderCellDef>Avance</th><td mat-cell *matCellDef="let p"><mat-progress-bar [value]="avance(p)" mode="determinate"/>{{avance(p)}}%</td></ng-container>
-<ng-container matColumnDef="estado"><th mat-header-cell *matHeaderCellDef>Estado</th><td mat-cell *matCellDef="let p"><mat-chip [class]="p.estado">{{p.estado.replace('_',' ')}}</mat-chip></td></ng-container>
-<ng-container matColumnDef="acciones"><th mat-header-cell *matHeaderCellDef>Acciones</th><td mat-cell *matCellDef="let p"><a mat-button [routerLink]="[p.idPlanProduccion]">Ver detalle</a></td></ng-container>
-<tr mat-header-row *matHeaderRowDef="columnas"></tr><tr mat-row *matRowDef="let row;columns:columnas" [class.destacado]="hoy(row)"></tr></table></div><mat-paginator [length]="total()" [pageIndex]="page()" [pageSize]="size()" [pageSizeOptions]="[5,10,20]" (page)="cambiarPagina($event)"/>}
+<section class="toolbar">
+  <div>
+    <p class="subtitulo">Organice y consulte la producción programada.</p>
+  </div>
+
+  @if (auth.rol() === 'ADMIN' || auth.rol() === 'PRODUCCION') {
+    <a mat-flat-button class="btn-nuevo" routerLink="nuevo">
+      <mat-icon>add</mat-icon>
+      Nuevo plan
+    </a>
+  }
+</section>
+
+<form class="filtros" [formGroup]="filtro" aria-label="Filtros de planes de producción">
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>Estado</mat-label>
+    <mat-select formControlName="estado">
+      <mat-option [value]="null">Todos</mat-option>
+      <mat-option value="PLANIFICADO">Planificado</mat-option>
+      <mat-option value="EN_PROCESO">En proceso</mat-option>
+      <mat-option value="COMPLETADO">Completado</mat-option>
+      <mat-option value="CANCELADO">Cancelado</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>Responsable</mat-label>
+    <mat-select formControlName="idResponsable">
+      <mat-option [value]="null">Todos</mat-option>
+      @if (auth.usuario(); as u) {
+        <mat-option [value]="u.idUsuario">{{ u.nombre }} (usted)</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>Desde</mat-label>
+    <input matInput [matDatepicker]="desde" formControlName="inicio" />
+    <mat-datepicker-toggle matIconSuffix [for]="desde" />
+    <mat-datepicker #desde />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>Hasta</mat-label>
+    <input matInput [matDatepicker]="hasta" formControlName="fin" />
+    <mat-datepicker-toggle matIconSuffix [for]="hasta" />
+    <mat-datepicker #hasta />
+  </mat-form-field>
+</form>
+
+@if (cargando()) {
+  <mat-progress-bar mode="indeterminate" aria-label="Cargando planes" />
+}
+
+@if (error()) {
+  <div role="alert" class="estado-error">
+    <mat-icon aria-hidden="true">cloud_off</mat-icon>
+    <div>
+      <strong>No se pudo cargar el listado</strong>
+      <p>{{ error() }}</p>
+      <button mat-stroked-button type="button" (click)="cargar()">Reintentar</button>
+    </div>
+  </div>
+}
+
+<section class="tabla-card">
+  <header class="tabla-header">
+    <h2>Planes registrados</h2>
+    <span>{{ total() }} {{ total() === 1 ? 'plan' : 'planes' }}</span>
+  </header>
+
+  @if (!cargando() && !error() && datos().length === 0) {
+    <div class="vacio">
+      <mat-icon>event_busy</mat-icon>
+      <p>
+        {{ total() === 0 && !filtro.dirty
+          ? 'No hay planes de producción. Cree el primero.'
+          : 'Ningún plan coincide con los filtros.' }}
+      </p>
+    </div>
+  } @else if (!error() && datos().length > 0) {
+    <div class="tabla-scroll">
+      <table mat-table [dataSource]="datos()" matSort (matSortChange)="ordenar($event)">
+        <ng-container matColumnDef="numero">
+          <th mat-header-cell *matHeaderCellDef>N.º</th>
+          <td mat-cell *matCellDef="let p" class="plan-id">#{{ p.idPlanProduccion }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="fecha">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="fechaProduccion">Producción</th>
+          <td mat-cell *matCellDef="let p">
+            @if (hoy(p)) {
+              <strong class="hoy">HOY · </strong>
+            }
+            {{ p.fechaProduccion | date: 'dd/MM/yyyy' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="responsable">
+          <th mat-header-cell *matHeaderCellDef>Responsable</th>
+          <td mat-cell *matCellDef="let p">{{ p.responsable?.nombre ?? '—' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="productos">
+          <th mat-header-cell *matHeaderCellDef>Productos</th>
+          <td mat-cell *matCellDef="let p" class="cantidad">{{ p.cantidadProductos ?? p.detalles?.length ?? 0 }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="avance">
+          <th mat-header-cell *matHeaderCellDef>Avance</th>
+          <td mat-cell *matCellDef="let p">
+            <div class="progreso">
+              <span class="progreso-pista">
+                <span class="progreso-barra" [style.width.%]="avance(p)"></span>
+              </span>
+              <small>{{ avance(p) }}%</small>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="estado">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let p">
+            <span
+              class="status"
+              [class.pending]="p.estado === 'PLANIFICADO'"
+              [class.process]="p.estado === 'EN_PROCESO'"
+              [class.completed]="p.estado === 'COMPLETADO'"
+              [class.cancelled]="p.estado === 'CANCELADO'"
+            >
+              <span class="punto"></span>
+              {{ textoEstado(p.estado) }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let p">
+            <a mat-button [routerLink]="[p.idPlanProduccion]">Ver detalle</a>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnas" [class.destacado]="hoy(row)"></tr>
+      </table>
+    </div>
+
+    <mat-paginator
+      [length]="total()"
+      [pageIndex]="page()"
+      [pageSize]="size()"
+      [pageSizeOptions]="[5, 10, 20]"
+      (page)="cambiarPagina($event)"
+      aria-label="Páginas de planes"
+    />
+  }
+</section>
