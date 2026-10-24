@@ -25,6 +25,13 @@
   gap: 6px;
 }
 
+.acciones-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .filtros {
   display: flex;
   align-items: center;

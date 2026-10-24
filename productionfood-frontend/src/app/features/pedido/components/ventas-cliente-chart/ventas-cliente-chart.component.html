@@ -1,0 +1,25 @@
+<section class="panel">
+  <h2>Ventas por cliente</h2>
+
+  @if (principales().length === 0) {
+    <p class="vacio">Sin ventas registradas en el período.</p>
+  } @else {
+    <ul class="barras">
+      @for (fila of principales(); track fila.cliente) {
+        <li class="fila">
+          <span class="nombre" [title]="fila.cliente">{{ fila.cliente }}</span>
+
+          <span class="pista">
+            <span class="barra" [style.width.%]="ancho(fila.porcentaje)"></span>
+          </span>
+
+          <span class="total">
+            {{ fila.total | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+          </span>
+
+          <span class="porcentaje">{{ fila.porcentaje | number: '1.1-1' }} %</span>
+        </li>
+      }
+    </ul>
+  }
+</section>

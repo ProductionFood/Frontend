@@ -9,7 +9,11 @@ import {
   CrearPedidoDto,
   EstadoPedido,
   Pedido,
-  PedidoFiltro
+  PedidoFiltro,
+  ProductoVendido,
+  ResumenPedidos,
+  ResumenPedidosFiltro,
+  VentaCliente
 } from '../models/pedido.model';
 
 @Injectable({ providedIn: 'root' })
@@ -17,7 +21,9 @@ export class PedidoService {
   private readonly http = inject(HttpClient);
   private readonly url = `${environment.apiUrl}/pedidos`;
 
-  listar(filtro: PedidoFiltro): Observable<PageResponse<Pedido>> {
+  listar<T extends Pedido = Pedido>(
+    filtro: PedidoFiltro
+  ): Observable<PageResponse<T>> {
     let params = new HttpParams()
       .set('page', filtro.page)
       .set('size', filtro.size);
@@ -38,7 +44,31 @@ export class PedidoService {
       params = params.set('sort', filtro.sort);
     }
 
-    return this.http.get<PageResponse<Pedido>>(this.url, { params });
+    return this.http.get<PageResponse<T>>(this.url, { params });
+  }
+
+  /** Totales del período (HU-25 R-03): entregado, en curso y cancelado por separado. */
+  resumen(filtro: ResumenPedidosFiltro): Observable<ResumenPedidos> {
+    return this.http.get<ResumenPedidos>(`${this.url}/resumen`, {
+      params: this.paramsPeriodo(filtro)
+    });
+  }
+
+  /** Ventas agrupadas por cliente, de mayor a menor (HU-25). */
+  ventasPorCliente(filtro: ResumenPedidosFiltro): Observable<VentaCliente[]> {
+    return this.http.get<VentaCliente[]>(`${this.url}/por-cliente`, {
+      params: this.paramsPeriodo(filtro)
+    });
+  }
+
+  /** Ranking por unidades vendidas, no por importe (HU-25 R-07). */
+  productosMasVendidos(
+    filtro: ResumenPedidosFiltro
+  ): Observable<ProductoVendido[]> {
+    return this.http.get<ProductoVendido[]>(
+      `${this.url}/productos-mas-vendidos`,
+      { params: this.paramsPeriodo(filtro) }
+    );
   }
 
   /** Devuelve el pedido con su `detalle` (incluye `lotesConsumidos` por línea). */
@@ -62,5 +92,18 @@ export class PedidoService {
    */
   cambiarEstado(id: number, estado: EstadoPedido): Observable<Pedido> {
     return this.http.patch<Pedido>(`${this.url}/${id}/estado`, { estado });
+  }
+
+  private paramsPeriodo(filtro: ResumenPedidosFiltro): HttpParams {
+    let params = new HttpParams();
+
+    if (filtro.fechaInicio) {
+      params = params.set('fechaInicio', filtro.fechaInicio);
+    }
+    if (filtro.fechaFin) {
+      params = params.set('fechaFin', filtro.fechaFin);
+    }
+
+    return params;
   }
 }

@@ -1,0 +1,289 @@
+<header class="page-header">
+  <div class="header-info">
+    <a class="volver" mat-button routerLink="/app/pedidos">
+      <mat-icon>arrow_back</mat-icon>
+      Volver a Pedidos
+    </a>
+
+    <h1>Consulta de pedidos</h1>
+    <p class="subtitulo">Analiza las ventas por cliente, estado y período.</p>
+  </div>
+</header>
+
+<section class="filtros">
+  <mat-form-field appearance="outline">
+    <mat-label>Cliente</mat-label>
+    <mat-select [formControl]="filtros.controls.idCliente">
+      <mat-option [value]="null">Todos</mat-option>
+      @for (cliente of clientes(); track cliente.idCliente) {
+        <mat-option [value]="cliente.idCliente">
+          {{ cliente.nombre }}
+        </mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Estado</mat-label>
+    <mat-select [formControl]="filtros.controls.estado">
+      <mat-option [value]="null">Todos</mat-option>
+      @for (estado of estados; track estado) {
+        <mat-option [value]="estado">{{ textoEstado(estado) }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="filtro-fechas">
+    <mat-label>Período</mat-label>
+    <mat-date-range-input [formGroup]="filtros" [rangePicker]="picker">
+      <input matStartDate formControlName="desde" placeholder="Desde" />
+      <input matEndDate formControlName="hasta" placeholder="Hasta" />
+    </mat-date-range-input>
+    <mat-datepicker-toggle matIconSuffix [for]="picker" />
+    <mat-date-range-picker #picker />
+  </mat-form-field>
+</section>
+
+@if (errorRango()) {
+  <p class="error-rango">
+    <mat-icon>error_outline</mat-icon>
+    La fecha inicial no puede ser posterior a la final.
+  </p>
+}
+
+@if (cargando()) {
+  <mat-progress-bar mode="indeterminate" aria-label="Cargando pedidos" />
+}
+
+@if (error(); as mensaje) {
+  <section class="estado estado--error">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ mensaje }}</p>
+    <button mat-stroked-button type="button" (click)="recargar()">Reintentar</button>
+  </section>
+} @else {
+  @if (puedeVerAgregados) {
+    @if (errorResumen()) {
+      <section class="panel-error">
+        <mat-icon>cloud_off</mat-icon>
+        <p>No se pudo cargar el resumen de ventas.</p>
+        <button mat-stroked-button type="button" (click)="cargarAgregados()">
+          Reintentar
+        </button>
+      </section>
+    } @else if (resumen(); as r) {
+      <app-resumen-ventas-cards [resumen]="r" />
+    } @else if (cargandoAgregados()) {
+      <p class="cargando-bloque">Cargando resumen de ventas…</p>
+    }
+
+    <div class="paneles">
+      @if (errorVentas()) {
+        <section class="panel-error">
+          <mat-icon>cloud_off</mat-icon>
+          <p>No se pudieron cargar las ventas por cliente.</p>
+          <button mat-stroked-button type="button" (click)="cargarAgregados()">
+            Reintentar
+          </button>
+        </section>
+      } @else if (ventasCliente().length > 0) {
+        <app-ventas-cliente-chart [datos]="ventasCliente()" />
+      }
+
+      @if (errorProductos()) {
+        <section class="panel-error">
+          <mat-icon>cloud_off</mat-icon>
+          <p>No se pudo cargar el ranking de productos.</p>
+          <button mat-stroked-button type="button" (click)="cargarAgregados()">
+            Reintentar
+          </button>
+        </section>
+      } @else if (productos().length > 0) {
+        <app-productos-vendidos-tabla [datos]="productos()" />
+      }
+    </div>
+  }
+
+  <section class="tabla-panel">
+    @if (!cargando() && pedidos().length === 0) {
+      <div class="estado estado--vacio">
+        @if (hayFiltrosActivos()) {
+          <mat-icon>search_off</mat-icon>
+          <p>Ningún pedido coincide con los filtros</p>
+          <button mat-stroked-button type="button" (click)="limpiarFiltros()">
+            Limpiar filtros
+          </button>
+        } @else {
+          <mat-icon>event_busy</mat-icon>
+          <p>No hay pedidos en el período seleccionado</p>
+          <button mat-stroked-button type="button" (click)="limpiarFiltros()">
+            Volver al mes actual
+          </button>
+        }
+      </div>
+    } @else {
+      <table
+        mat-table
+        [dataSource]="pedidos()"
+        multiTemplateDataRows
+        matSort
+        (matSortChange)="onOrden($event)"
+        aria-label="Consulta de pedidos"
+      >
+        <ng-container matColumnDef="expand">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let pedido">
+            <button
+              mat-icon-button
+              type="button"
+              [attr.aria-label]="'Ver productos del pedido ' + pedido.idPedido"
+              [attr.aria-expanded]="esExpandida(pedido.idPedido)"
+              (click)="alternar(pedido.idPedido); $event.stopPropagation()"
+            >
+              <mat-icon>
+                {{ esExpandida(pedido.idPedido) ? 'expand_more' : 'chevron_right' }}
+              </mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>N.º</th>
+          <td mat-cell *matCellDef="let pedido">#{{ pedido.idPedido }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="cliente">
+          <th mat-header-cell *matHeaderCellDef>Cliente</th>
+          <td mat-cell *matCellDef="let pedido">{{ pedido.cliente.nombre }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="fechaPedido">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Pedido</th>
+          <td mat-cell *matCellDef="let pedido">
+            {{ pedido.fechaPedido | date: 'dd/MM/yyyy' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="fechaEntrega">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Entrega</th>
+          <td mat-cell *matCellDef="let pedido">
+            @if (pedido.fechaEntrega) {
+              {{ pedido.fechaEntrega | date: 'dd/MM/yyyy' }}
+            } @else {
+              <span class="sin-datos">—</span>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="totalBruto">
+          <th mat-header-cell *matHeaderCellDef class="numerica" mat-sort-header>
+            Bruto
+          </th>
+          <td mat-cell *matCellDef="let pedido" class="numerica">
+            {{ pedido.totalBruto | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="devoluciones">
+          <th mat-header-cell *matHeaderCellDef class="numerica">Devol.</th>
+          <td mat-cell *matCellDef="let pedido" class="numerica">
+            @if (pedido.devoluciones > 0) {
+              <span class="devolucion">
+                {{ pedido.devoluciones | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
+              </span>
+            } @else {
+              <span class="sin-datos">—</span>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="totalNeto">
+          <th mat-header-cell *matHeaderCellDef class="numerica">Neto</th>
+          <td mat-cell *matCellDef="let pedido" class="numerica neto">
+            {{ pedido.totalNeto | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="estado">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Estado</th>
+          <td mat-cell *matCellDef="let pedido">
+            <span
+              class="chip-estado"
+              [class.pendiente]="pedido.estado === 'PENDIENTE'"
+              [class.en-preparacion]="pedido.estado === 'EN_PREPARACION'"
+              [class.entregado]="pedido.estado === 'ENTREGADO'"
+              [class.cancelado]="pedido.estado === 'CANCELADO'"
+            >
+              <span class="punto"></span>
+              {{ textoEstado(pedido.estado) }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="detalle">
+          <td
+            mat-cell
+            *matCellDef="let pedido"
+            [attr.colspan]="columnas.length"
+          >
+            @if (esExpandida(pedido.idPedido)) {
+              <div class="detalle-contenido">
+                @if (cargandoDetalle() === pedido.idPedido) {
+                  <p class="detalle-estado">Cargando productos…</p>
+                } @else if (errorDetalle()) {
+                  <p class="detalle-estado detalle-estado--error">
+                    {{ errorDetalle() }}
+                  </p>
+                } @else if (detalleDe(pedido.idPedido).length === 0) {
+                  <p class="detalle-estado">Este pedido no registra productos</p>
+                } @else {
+                  <ul class="detalle-lineas">
+                    @for (linea of detalleDe(pedido.idPedido); track linea.idDetallePedido) {
+                      <li class="linea">
+                        <span class="producto">{{ linea.producto.nombre }}</span>
+                        <span class="cantidad">
+                          {{ linea.cantidad | number: '1.0-2' }}
+                          {{ linea.producto.unidad }}
+                        </span>
+                        <span class="precio">
+                          {{ linea.precioUnitario | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
+                        </span>
+                        <span class="subtotal">
+                          {{ linea.subtotal | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
+                        </span>
+                      </li>
+                    }
+                  </ul>
+                }
+              </div>
+            }
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+        <tr
+          mat-row
+          *matRowDef="let pedido; columns: columnas"
+          class="fila-principal"
+          [class.fila-expandida]="esExpandida(pedido.idPedido)"
+          (click)="alternar(pedido.idPedido)"
+        ></tr>
+        <tr
+          mat-row
+          *matRowDef="let pedido; columns: ['detalle']"
+          class="fila-detalle"
+        ></tr>
+      </table>
+
+      <mat-paginator
+        [length]="total()"
+        [pageIndex]="pagina()"
+        [pageSize]="tamano()"
+        [pageSizeOptions]="[5, 10, 20, 50]"
+        showFirstLastButtons
+        aria-label="Páginas de la consulta"
+        (page)="onPagina($event)"
+      />
+    }
+  </section>
+}
