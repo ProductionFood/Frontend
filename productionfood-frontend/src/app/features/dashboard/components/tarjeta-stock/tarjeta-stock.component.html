@@ -1,0 +1,58 @@
+<mat-card class="tarjeta tarjeta--aviso">
+  <header class="tarjeta-cabecera">
+    <span class="semaforo semaforo--naranja" aria-hidden="true"></span>
+    <h2 class="tarjeta-titulo">Stock bajo</h2>
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando" role="status" aria-label="Cargando materias primas con stock bajo">
+      <mat-progress-spinner diameter="32" mode="indeterminate" />
+    </div>
+  } @else if (error()) {
+    <div class="estado estado--error" role="alert">
+      <mat-icon>cloud_off</mat-icon>
+      <p>No se pudo cargar</p>
+      <button mat-stroked-button type="button" (click)="reintentar.emit()">
+        Reintentar
+      </button>
+    </div>
+  } @else if (datos(); as d) {
+    @if (d.cantidad === 0) {
+      <div class="estado estado--ok">
+        <mat-icon>verified</mat-icon>
+        <p>Todas las materias primas por encima del mínimo</p>
+      </div>
+    } @else {
+      <p class="cifra">{{ d.cantidad }}</p>
+      <p class="cifra-texto">
+        materias primas
+        @if (d.agotadas > 0) {
+          · {{ d.agotadas }} {{ d.agotadas === 1 ? 'agotada' : 'agotadas' }}
+        }
+      </p>
+
+      <ul class="lista">
+        @for (item of itemsVisibles(); track item.nombre) {
+          <li class="fila">
+            <span class="fila-nombre">{{ item.nombre }}</span>
+            <span
+              class="fila-detalle"
+              [class.fila-detalle--vencido]="item.nivel === 'AGOTADO'"
+              [class.fila-detalle--aviso]="item.nivel !== 'AGOTADO'"
+            >
+              @if (item.nivel === 'AGOTADO') {
+                AGOTADA
+              } @else {
+                faltan {{ item.faltante | number: '1.0-2' }}
+              }
+            </span>
+          </li>
+        }
+      </ul>
+    }
+  }
+
+  <footer class="pie">
+    <a mat-button routerLink="/app/compras">Registrar compra</a>
+  </footer>
+</mat-card>
