@@ -13,7 +13,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import {
   EMPTY,
@@ -80,6 +80,7 @@ export class PedidoConsultaComponent {
   private readonly clienteService = inject(ClienteService);
   private readonly authService = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly route = inject(ActivatedRoute);
 
   /** Los endpoints de agregación son solo ADMIN/VENTAS (HU-25 §2). */
   readonly puedeVerAgregados = this.authService.tieneAlgunRol([
@@ -402,8 +403,29 @@ export class PedidoConsultaComponent {
     return this.fb.group({
       idCliente: this.fb.control<number | null>(null),
       estado: this.fb.control<EstadoPedido | null>(null),
-      desde: this.fb.control<Date | null>(this.mesPorDefecto.desde),
-      hasta: this.fb.control<Date | null>(this.mesPorDefecto.hasta)
+      desde: this.fb.control<Date | null>(
+        this.fechaDeQuery('fechaInicio', this.mesPorDefecto.desde)
+      ),
+      hasta: this.fb.control<Date | null>(
+        this.fechaDeQuery('fechaFin', this.mesPorDefecto.hasta)
+      )
     });
+  }
+
+  /** Período enviado por el hub de reportes (`?fechaInicio=&fechaFin=`). */
+  private fechaDeQuery(nombre: string, porDefecto: Date): Date {
+    const valor = this.route.snapshot.queryParamMap.get(nombre);
+
+    if (!valor) {
+      return porDefecto;
+    }
+
+    const [anio, mes, dia] = valor.split('-').map(Number);
+
+    if (!anio || !mes || !dia) {
+      return porDefecto;
+    }
+
+    return new Date(anio, mes - 1, dia);
   }
 }

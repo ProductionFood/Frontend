@@ -1,0 +1,93 @@
+@use '../../../../shared/styles/ui' as ui;
+
+:host {
+  display: block;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--esp-4);
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.subtitulo {
+  margin: 0;
+  max-width: 640px;
+  font-size: 13px;
+  color: var(--tinta-600);
+}
+
+.seccion-titulo {
+  @include ui.titulo-panel;
+  margin-bottom: var(--esp-4);
+}
+
+.reportes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 17px;
+}
+
+.reporte-card {
+  @include ui.tarjeta;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  padding: 20px;
+}
+
+.reporte-icono {
+  @include ui.kpi-icono;
+  margin-bottom: var(--esp-1);
+}
+
+.reporte-icono.azul {
+  @include ui.kpi-icono(var(--azul-100), #1d4ed8);
+}
+
+.reporte-icono.morado {
+  @include ui.kpi-icono(var(--morado-100), var(--morado-500));
+}
+
+.reporte-icono.naranja {
+  @include ui.kpi-icono(var(--naranja-100), #92610b);
+}
+
+h3 {
+  margin: 0;
+  font-family: var(--fuente-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--verde-900);
+}
+
+.descripcion {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--tinta-600);
+}
+
+.reporte-pie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-2);
+  margin-top: auto;
+  padding-top: var(--esp-3);
+  border-top: 1px solid var(--linea);
+}
+
+.meta {
+  font-size: 11px;
+  color: var(--tinta-400);
+}
+
+.reporte-pie a {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--verde-700);
+}

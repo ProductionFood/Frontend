@@ -3,8 +3,10 @@ import { Routes } from '@angular/router';
 export const REPORTE_ROUTES: Routes = [
   {
     path: '',
-    pathMatch: 'full',
-    redirectTo: 'eficiencia'
+    loadComponent: () =>
+      import('./pages/reporte-inicio/reporte-inicio.component').then(
+        m => m.ReporteInicioComponent
+      )
   },
   {
     path: 'eficiencia',
@@ -15,6 +17,6 @@ export const REPORTE_ROUTES: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'eficiencia'
+    redirectTo: ''
   }
 ];
