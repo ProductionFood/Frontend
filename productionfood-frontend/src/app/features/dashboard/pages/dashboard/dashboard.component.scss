@@ -10,23 +10,23 @@
 
 .page-header {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 20px;
+  gap: var(--esp-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--esp-5);
 }
 
 h1 {
   margin: 0;
   font-family: var(--fuente-display);
   font-weight: 600;
-  font-size: clamp(22px, 2.6vw, 28px);
-  letter-spacing: -0.3px;
+  font-size: 22px;
   color: var(--verde-900);
 }
 
 .fecha {
-  margin: 4px 0 0;
+  margin: var(--esp-1) 0 0;
   font-size: 12.5px;
   color: var(--tinta-600);
 }
@@ -34,11 +34,11 @@ h1 {
 .actualizacion {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--esp-2);
 }
 
 .marca-hora {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--tinta-400);
   white-space: nowrap;
 }
@@ -46,7 +46,7 @@ h1 {
 .tarjetas {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 16px;
+  gap: var(--esp-4);
 }
 
 .tarjetas > * {
@@ -71,11 +71,6 @@ h1 {
 }
 
 @media (max-width: 640px) {
-  .page-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
   .tarjetas {
     grid-template-columns: 1fr;
   }

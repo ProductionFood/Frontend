@@ -1,18 +1,18 @@
+@use '../../../../shared/styles/ui' as ui;
+
+:host {
+  display: block;
+}
+
 .panel {
+  @include ui.tarjeta;
   padding: 18px 20px;
-  border: 1px solid var(--linea);
-  border-radius: 12px;
-  background: var(--blanco);
-  margin-bottom: 24px;
+  margin-bottom: var(--esp-5);
 }
 
 h2 {
-  margin: 0 0 16px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--tinta-600);
+  @include ui.titulo-panel;
+  margin-bottom: var(--esp-4);
 }
 
 .barras {
@@ -20,14 +20,14 @@ h2 {
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 12px;
+  gap: var(--esp-3);
 }
 
 .fila {
   display: grid;
   grid-template-columns: minmax(120px, 200px) 1fr auto 64px;
   align-items: center;
-  gap: 12px;
+  gap: var(--esp-3);
 }
 
 .nombre {
@@ -51,6 +51,7 @@ h2 {
   height: 100%;
   border-radius: 999px;
   background: var(--verde-500);
+  transition: width var(--transicion-base);
 }
 
 .total {

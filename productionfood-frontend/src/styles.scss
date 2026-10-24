@@ -65,8 +65,54 @@ body {
   /* Radios */
   --radio-s:6px; --radio-m:10px; --radio-l:16px;
 
-  /* Sombra única (tarjetas con datos) */
-  --sombra:0 1px 2px rgba(16,27,39,.06), 0 4px 10px rgba(16,27,39,.05);
+  /* Sombras (guía §11: escala 1–3; tarjetas con datos usan la 2) */
+  --sombra-1:0 1px 2px rgba(16,27,39,.06);
+  --sombra-2:0 1px 2px rgba(16,27,39,.06), 0 4px 10px rgba(16,27,39,.05);
+  --sombra-3:0 4px 12px rgba(16,27,39,.08), 0 12px 24px rgba(16,27,39,.06);
+  --sombra:var(--sombra-2);
+
+  /* Espaciado base 4px (guía §04) */
+  --esp-1:4px; --esp-2:8px; --esp-3:12px;
+  --esp-4:16px; --esp-5:24px; --esp-6:32px;
+
+  /* Movimiento (guía §15) */
+  --transicion-rapida:120ms ease-out;
+  --transicion-base:200ms ease-out;
+}
+
+/* =========================================================
+   ProductionFood — controles Material estandarizados
+   Guía §05 (botones/badges), §03b (títulos) y §19 (modales).
+   ========================================================= */
+.mat-mdc-unelevated-button,
+.mat-mdc-raised-button,
+.mat-mdc-outlined-button,
+.mat-mdc-button {
+  border-radius: var(--radio-s);
+  font-weight: 600;
+}
+
+.mat-mdc-raised-button {
+  box-shadow: none;
+}
+
+.mat-mdc-chip {
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.mat-mdc-card-title {
+  font-family: var(--fuente-display);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--verde-900);
+}
+
+.mat-mdc-dialog-title {
+  font-family: var(--fuente-display);
+  font-weight: 600;
+  color: var(--verde-900);
 }
 
 /* =========================================================

@@ -1,4 +1,4 @@
-﻿import { DecimalPipe } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
@@ -132,36 +132,36 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
         min-height: 46px;
         padding: 8px 14px;
         border-radius: 999px;
-        border: 1px solid rgba(14, 31, 53, 0.12);
+        border: 1px solid var(--linea);
         background: #fff;
-        color: #1d2939;
-        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+        color: var(--tinta-900);
+        box-shadow: var(--sombra-1);
         transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
         cursor: pointer;
       }
 
       .alertas-trigger:hover {
         transform: translateY(-1px);
-        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+        box-shadow: var(--sombra-2);
       }
 
       .alertas-trigger:focus-visible {
-        outline: 2px solid #1faa70;
+        outline: 2px solid var(--verde-500);
         outline-offset: 2px;
       }
 
       .alertas-trigger.sin-alertas {
-        border-color: rgba(22, 76, 53, 0.16);
+        border-color: var(--linea);
       }
 
       .alertas-trigger.alerta-baja {
-        border-color: rgba(185, 119, 17, 0.32);
-        background: linear-gradient(180deg, #fffaf0 0%, #fff6e2 100%);
+        border-color: var(--naranja-100);
+        background: var(--blanco);
       }
 
       .alertas-trigger.alerta-alta {
-        border-color: rgba(190, 24, 93, 0.28);
-        background: linear-gradient(180deg, #fff5f5 0%, #fff1f2 100%);
+        border-color: var(--rojo-100);
+        background: var(--blanco);
       }
 
       .icono {
@@ -171,19 +171,19 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
         width: 34px;
         height: 34px;
         border-radius: 50%;
-        background: rgba(14, 31, 53, 0.06);
-        color: #0f172a;
+        background: var(--fondo);
+        color: var(--tinta-900);
         flex-shrink: 0;
       }
 
       .alerta-baja .icono {
-        background: rgba(185, 119, 17, 0.12);
-        color: #9a6700;
+        background: var(--naranja-100);
+        color: #92610b;
       }
 
       .alerta-alta .icono {
-        background: rgba(190, 24, 93, 0.12);
-        color: #be185d;
+        background: var(--rojo-100);
+        color: #b02a2e;
       }
 
       .texto {
@@ -200,11 +200,11 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
 
       .texto small {
         font-size: 0.78rem;
-        color: #667085;
+        color: var(--tinta-400);
       }
 
       .chevron {
-        color: #667085;
+        color: var(--tinta-400);
         flex-shrink: 0;
       }
 
@@ -233,18 +233,18 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
         margin: 0 0 4px;
         font-size: 1rem;
         font-weight: 800;
-        color: #101828;
+        color: var(--tinta-900);
       }
 
       .menu-header p {
         margin: 0;
-        color: #667085;
+        color: var(--tinta-400);
         font-size: 0.84rem;
       }
 
       .menu-header mat-icon {
         margin-top: 2px;
-        color: #164c35;
+        color: var(--verde-700);
       }
 
       .menu-header mat-icon.alerta-baja {
@@ -252,12 +252,12 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
       }
 
       .menu-header mat-icon.alerta-alta {
-        color: #be185d;
+        color: #b02a2e;
       }
 
       .menu-estado {
         padding: 18px 16px;
-        color: #475467;
+        color: var(--tinta-600);
         font-size: 0.9rem;
       }
 
@@ -272,13 +272,13 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
       }
 
       .menu-estado.vacio mat-icon {
-        color: #1faa70;
+        color: var(--verde-500);
       }
 
       .link-like {
         border: 0;
         background: transparent;
-        color: #164c35;
+        color: var(--verde-700);
         font-weight: 700;
         cursor: pointer;
         padding: 0;
@@ -291,7 +291,7 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
 
       .alerta-item {
         padding: 14px 16px;
-        border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+        border-bottom: 1px solid var(--linea);
       }
 
       .alerta-item:last-child {
@@ -310,7 +310,7 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
       .alerta-item small {
         display: block;
         margin: 0;
-        color: #475467;
+        color: var(--tinta-600);
       }
 
       .alerta-item p {
@@ -334,13 +334,13 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
       }
 
       .estado-chip.bajo {
-        background: #fff6e2;
-        color: #9a6700;
+        background: var(--naranja-100);
+        color: #92610b;
       }
 
       .estado-chip.agotado {
-        background: #fff1f2;
-        color: #be185d;
+        background: var(--rojo-100);
+        color: #b02a2e;
       }
 
       .menu-actions {
