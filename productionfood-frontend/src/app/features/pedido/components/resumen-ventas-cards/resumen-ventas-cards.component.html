@@ -1,0 +1,38 @@
+<article class="tarjeta tarjeta--neta">
+  <p class="etiqueta">Venta neta</p>
+  <p class="cifra">
+    {{ resumen().ventaNeta | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
+  </p>
+  <p class="detalle">
+    {{ resumen().entregados.cantidad }} entregados
+    · {{ resumen().cancelados.cantidad }} cancelados
+  </p>
+</article>
+
+<article class="tarjeta tarjeta--comprometido">
+  <p class="etiqueta">Comprometido</p>
+  <p class="cifra">
+    {{ resumen().enCurso.total | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
+  </p>
+  <p class="detalle">{{ resumen().enCurso.cantidad }} en curso</p>
+</article>
+
+<article class="tarjeta tarjeta--devoluciones" [class.tarjeta--atencion]="tieneDevoluciones()">
+  <p class="etiqueta">Devoluciones</p>
+  <p class="cifra">
+    {{ resumen().devoluciones | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
+  </p>
+  <p class="detalle">
+    <span class="punto" aria-hidden="true"></span>
+    {{ porcentajeDevoluciones() | number: '1.1-1' }} % sobre
+    {{ resumen().ventaBruta | currency: 'COP' : 'symbol-narrow' : '1.0-0' }} bruto
+  </p>
+</article>
+
+<article class="tarjeta tarjeta--ticket">
+  <p class="etiqueta">Ticket promedio</p>
+  <p class="cifra">
+    {{ resumen().ticketPromedio | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
+  </p>
+  <p class="detalle">por pedido entregado</p>
+</article>

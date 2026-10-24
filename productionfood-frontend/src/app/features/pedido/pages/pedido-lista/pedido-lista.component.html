@@ -3,16 +3,23 @@
     <p>Gestiona los pedidos de tus clientes: crea, prepara y entrega.</p>
   </div>
 
-  <button
-    *siRol="['ADMIN', 'VENTAS']"
-    mat-flat-button
-    color="primary"
-    type="button"
-    (click)="abrirFormulario()"
-  >
-    <mat-icon>add</mat-icon>
-    Nuevo pedido
-  </button>
+  <div class="acciones-header">
+    <a mat-stroked-button routerLink="/app/pedidos/consulta">
+      <mat-icon>insights</mat-icon>
+      Ver consulta
+    </a>
+
+    <button
+      *siRol="['ADMIN', 'VENTAS']"
+      mat-flat-button
+      color="primary"
+      type="button"
+      (click)="abrirFormulario()"
+    >
+      <mat-icon>add</mat-icon>
+      Nuevo pedido
+    </button>
+  </div>
 </header>
 
 <section class="filtros">

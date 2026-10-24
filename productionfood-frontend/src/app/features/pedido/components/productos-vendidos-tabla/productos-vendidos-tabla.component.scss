@@ -1,0 +1,61 @@
+.panel {
+  padding: 18px 20px;
+  border: 1px solid var(--linea);
+  border-radius: 12px;
+  background: var(--blanco);
+}
+
+.panel-cabecera {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+h2 {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--tinta-600);
+}
+
+.criterio {
+  font-size: 11px;
+  color: var(--tinta-400);
+}
+
+table {
+  width: 100%;
+}
+
+th.mat-mdc-header-cell {
+  background: #fafbfb;
+  color: var(--tinta-600);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+td.mat-mdc-cell {
+  color: var(--tinta-600);
+  font-size: 12px;
+}
+
+td.producto {
+  font-weight: 600;
+  color: var(--tinta-900);
+}
+
+.numerica {
+  text-align: right;
+}
+
+.vacio {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--tinta-400);
+}
