@@ -1,3 +1,5 @@
+@use '../../../../shared/styles/ui' as ui;
+
 :host {
   display: block;
 }
@@ -6,9 +8,9 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 1rem;
+  gap: var(--esp-4);
   flex-wrap: wrap;
-  margin-bottom: 1.25rem;
+  margin-bottom: 20px;
 }
 
 .header-info {
@@ -16,24 +18,27 @@
 }
 
 .volver {
-  margin-left: -0.5rem;
+  margin-left: -8px;
 }
 
 .titulo-fila {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--esp-3);
   flex-wrap: wrap;
-  margin-top: 0.25rem;
+  margin-top: var(--esp-1);
 }
 
 .titulo-fila h1 {
   margin: 0;
-  font-size: clamp(1.4rem, 2.3vw, 1.9rem);
+  font-family: var(--fuente-display);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--verde-900);
 }
 
 .subtitulo {
-  margin: 0.4rem 0 0;
+  margin: var(--esp-1) 0 0;
   color: var(--tinta-600);
   font-size: 13px;
 }
@@ -41,7 +46,7 @@
 .header-acciones {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--esp-2);
   flex-wrap: wrap;
 }
 
@@ -51,89 +56,64 @@
 }
 
 .estado {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 3rem 1rem;
-  gap: 0.6rem;
-}
+  @include ui.estado-vacio;
+  padding: 48px 16px;
 
-.estado > mat-icon {
-  font-size: 2.4rem;
-  width: 2.4rem;
-  height: 2.4rem;
-  color: var(--tinta-400);
-}
+  h2 {
+    margin: 0;
+    font-family: var(--fuente-display);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--verde-900);
+  }
 
-.estado h2,
-.estado p {
-  margin: 0;
-}
-
-.estado p {
-  color: var(--tinta-600);
-  max-width: 420px;
-  font-size: 13.5px;
+  p {
+    max-width: 420px;
+  }
 }
 
 .estado.error > mat-icon {
-  color: #c62828;
+  color: var(--rojo-500);
 }
 
 .detalle-tabla {
-  margin-top: 0.5rem;
+  margin-top: var(--esp-2);
 }
 
 .tabla-scroll {
+  @include ui.tarjeta-contenedor;
   overflow-x: auto;
-  border: 1px solid var(--linea);
-  border-radius: var(--radio-m);
 }
 
 .total {
-  margin: 12px 0 0;
+  margin: var(--esp-3) 0 0;
   text-align: right;
-  font-size: 14px;
+  font-size: 13px;
   color: var(--tinta-600);
 }
 
 .chip-estado {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 12px;
-  border-radius: 999px;
-  font-size: 10.5px;
-  font-weight: 600;
-  white-space: nowrap;
+  @include ui.badge(var(--tinta-400), var(--tinta-600));
 }
 
 .chip-estado .punto {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: currentColor;
+  @include ui.badge-punto;
 }
 
 .chip-estado.pendiente {
-  background: var(--naranja-100);
-  color: #92610b;
+  @include ui.badge(var(--naranja-100), #92610b);
 }
 
 .chip-estado.en-preparacion {
-  background: var(--azul-100);
-  color: #1d4ed8;
+  @include ui.badge(var(--azul-100), #1d4ed8);
 }
 
 .chip-estado.entregado {
-  background: var(--verde-100);
-  color: var(--verde-700);
+  @include ui.badge(var(--verde-100), var(--verde-700));
 }
 
 .chip-estado.cancelado {
-  background: var(--linea);
-  color: var(--tinta-600);
+  @include ui.badge(var(--rojo-100), #b02a2e);
 }
 
 @media (max-width: 650px) {

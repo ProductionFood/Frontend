@@ -1,0 +1,245 @@
+// =========================================================
+// ProductionFood — capa de UI estandarizada
+// Fuente: guía de diseño (deepseek_html_20260919_7207fa.html)
+//
+// Mixins con los valores aprobados por la guía. Los módulos los
+// importan con `@use '<ruta>/shared/styles/ui' as ui;` y no repiten
+// tamaños, radios, sombras ni colores de estado.
+// =========================================================
+
+// Contenedores (§11, §14): radio 10, borde línea, sombra escala 2.
+@mixin tarjeta {
+  background: var(--blanco);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio-m);
+  box-shadow: var(--sombra-2);
+}
+
+@mixin tarjeta-contenedor {
+  @include tarjeta;
+  overflow: hidden;
+}
+
+// Cabecera interna de tarjeta/tabla (§07): display-m 16/600.
+@mixin encabezado-tarjeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  padding: var(--esp-4) var(--esp-5);
+  border-bottom: 1px solid var(--linea);
+
+  h2 {
+    margin: 0;
+    font-family: var(--fuente-display);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--verde-900);
+  }
+
+  > span {
+    font-size: 11.5px;
+    color: var(--tinta-600);
+  }
+}
+
+// Tabla (§07): th 11/600 sobre fondo, td body-s 12.5 sobre tinta-900.
+@mixin tabla {
+  width: 100%;
+  border-collapse: collapse;
+
+  th.mat-mdc-header-cell {
+    background: var(--fondo);
+    color: var(--tinta-600);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--linea);
+  }
+
+  td.mat-mdc-cell {
+    color: var(--tinta-900);
+    font-size: 12.5px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--linea);
+  }
+
+  tr.mat-mdc-row {
+    transition: background var(--transicion-rapida);
+  }
+
+  tr.mat-mdc-row:hover {
+    background: #fafdfb;
+  }
+}
+
+// Tarjeta KPI (§05): etiqueta 11.5, cifra display 28/600, icono 40.
+@mixin kpi {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--esp-3);
+  padding: 20px;
+  background: var(--blanco);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio-m);
+  box-shadow: var(--sombra-2);
+}
+
+@mixin kpi-etiqueta {
+  margin: 0 0 var(--esp-2);
+  color: var(--tinta-600);
+  font-size: 11.5px;
+}
+
+@mixin kpi-numero {
+  margin: 0;
+  font-family: var(--fuente-display);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--tinta-900);
+}
+
+@mixin kpi-icono($fondo: var(--verde-100), $color: var(--verde-700)) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: var(--radio-m);
+  background: $fondo;
+  color: $color;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+// Badge de estado (§05): punto + texto, nunca solo color.
+@mixin badge($fondo, $color) {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: $fondo;
+  color: $color;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+@mixin badge-punto {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+// Título de panel o tarjeta (§03b: display-m 16/600 verde-900).
+@mixin titulo-panel {
+  margin: 0;
+  font-family: var(--fuente-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--verde-900);
+}
+
+// Filtros en tarjeta (§12): contenedor con padding 18/20.
+@mixin filtros-tarjeta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--esp-4);
+  padding: 18px 20px;
+  border: 1px solid var(--linea);
+  border-radius: var(--radio-m);
+  background: var(--blanco);
+  box-shadow: var(--sombra-2);
+}
+
+// Estado vacío (§07b): mensaje afirmativo, icono y acción.
+@mixin estado-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--esp-2);
+  padding: 44px 22px;
+  text-align: center;
+  color: var(--tinta-600);
+
+  mat-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 34px;
+    color: var(--tinta-400);
+  }
+
+  p {
+    margin: 0;
+    font-size: 12.5px;
+  }
+}
+
+// Error en bloque (§10): mensaje + reintentar.
+@mixin panel-error {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+  padding: var(--esp-4) 18px;
+  border: 1px solid #f2c8c8;
+  border-radius: var(--radio-m);
+  background: #fff6f5;
+  color: #b02a2e;
+  font-size: 12.5px;
+
+  p {
+    margin: 0;
+    flex: 1;
+  }
+}
+
+// Barra de progreso (§12b comparación plan vs. real).
+@mixin barra-progreso($color: var(--verde-500)) {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+
+  .progreso-pista {
+    flex: 1;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--fondo);
+    overflow: hidden;
+  }
+
+  .progreso-barra {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: $color;
+    transition: width var(--transicion-base);
+  }
+
+  small {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--tinta-600);
+  }
+}
+
+// Botón primario (§05 y §14): radio 6, sin sombra, pesos 600.
+@mixin boton-primario {
+  border-radius: var(--radio-s);
+  padding: 0 18px;
+  min-height: 40px;
+  font-weight: 600;
+  box-shadow: none;
+}

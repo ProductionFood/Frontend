@@ -1,3 +1,5 @@
+@use '../../../../shared/styles/ui' as ui;
+
 .titulo-icono {
   color: #b02a2e;
 }
@@ -7,13 +9,18 @@
 }
 
 .intro {
-  margin: 0 0 12px;
-  font-size: 13.5px;
+  margin: 0 0 var(--esp-3);
+  font-size: 13px;
   color: var(--tinta-600);
 }
 
 .tabla-scroll {
+  @include ui.tarjeta-contenedor;
   overflow-x: auto;
+}
+
+table {
+  @include ui.tabla;
 }
 
 .devolucion {
@@ -23,15 +30,9 @@
 }
 
 .lote {
+  @include ui.badge(var(--azul-100), #1d4ed8);
   display: inline-block;
   margin: 0 6px 4px 0;
-  padding: 3px 8px;
-  border-radius: 999px;
-  background: var(--azul-100);
-  color: #1d4ed8;
-  font-size: 11px;
-  font-weight: 600;
-  white-space: nowrap;
 }
 
 .sin-lote {
@@ -40,7 +41,7 @@
 
 .sin-productos {
   margin: 0;
-  padding: 10px 12px;
+  padding: var(--esp-2) var(--esp-3);
   border-radius: var(--radio-s);
   background: var(--fondo);
   color: var(--tinta-600);
@@ -50,9 +51,9 @@
 .aviso-irreversible {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
-  margin-top: 14px;
-  padding: 10px 12px;
+  gap: var(--esp-2);
+  margin-top: var(--esp-3);
+  padding: var(--esp-2) var(--esp-3);
   border-radius: var(--radio-s);
   background: var(--rojo-100);
   color: #b02a2e;
@@ -63,24 +64,12 @@
   width: 18px;
   height: 18px;
   font-size: 18px;
+  flex-shrink: 0;
 }
 
 .error-general {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 12px;
-  padding: 10px 12px;
-  border-radius: var(--radio-s);
-  background: var(--rojo-100);
-  color: #b02a2e;
-  font-size: 12.5px;
-}
-
-.error-general mat-icon {
-  width: 18px;
-  height: 18px;
-  font-size: 18px;
+  @include ui.panel-error;
+  margin-top: var(--esp-3);
 }
 
 .btn-confirmar {

@@ -1,3 +1,5 @@
+@use '../../../../shared/styles/ui' as ui;
+
 :host {
   display: block;
 }
@@ -6,13 +8,13 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 16px;
+  gap: var(--esp-4);
   flex-wrap: wrap;
   margin-bottom: 20px;
 }
 
 .page-header p {
-  margin: 5px 0 0;
+  margin: var(--esp-1) 0 0;
   max-width: 520px;
   font-size: 13px;
   color: var(--tinta-600);
@@ -28,16 +30,13 @@
 .acciones-header {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--esp-2);
   flex-wrap: wrap;
 }
 
 .filtros {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 16px;
+  @include ui.filtros-tarjeta;
+  margin-bottom: var(--esp-4);
 }
 
 .filtro-fechas {
@@ -48,7 +47,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  margin: 0 0 12px;
+  margin: 0 0 var(--esp-3);
   font-size: 12.5px;
   color: #b02a2e;
 }
@@ -66,7 +65,7 @@
 .entrega {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--esp-1);
   font-weight: 600;
   white-space: nowrap;
 }
@@ -84,44 +83,30 @@
 .entrega.hoy {
   color: #92610b;
   background: var(--naranja-100);
-  padding: 3px 8px;
+  padding: 2px 8px;
   border-radius: 999px;
 }
 
 .chip-estado {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 12px;
-  border-radius: 999px;
-  font-size: 10.5px;
-  font-weight: 600;
-  white-space: nowrap;
+  @include ui.badge(var(--tinta-400), var(--tinta-600));
 }
 
 .chip-estado .punto {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: currentColor;
+  @include ui.badge-punto;
 }
 
 .chip-estado.pendiente {
-  background: var(--naranja-100);
-  color: #92610b;
+  @include ui.badge(var(--naranja-100), #92610b);
 }
 
 .chip-estado.en-preparacion {
-  background: var(--azul-100);
-  color: #1d4ed8;
+  @include ui.badge(var(--azul-100), #1d4ed8);
 }
 
 .chip-estado.entregado {
-  background: var(--verde-100);
-  color: var(--verde-700);
+  @include ui.badge(var(--verde-100), var(--verde-700));
 }
 
 .chip-estado.cancelado {
-  background: var(--linea);
-  color: var(--tinta-600);
+  @include ui.badge(var(--rojo-100), #b02a2e);
 }

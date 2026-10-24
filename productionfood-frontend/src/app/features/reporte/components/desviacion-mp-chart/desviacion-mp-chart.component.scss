@@ -1,13 +1,12 @@
+@use '../../../../shared/styles/ui' as ui;
+
 :host {
   display: block;
 }
 
 .panel {
+  @include ui.tarjeta;
   padding: 18px 20px;
-  border: 1px solid var(--linea);
-  border-radius: var(--radio-m);
-  background: var(--blanco);
-  box-shadow: var(--sombra);
   margin-bottom: 20px;
 }
 
@@ -15,16 +14,12 @@
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: var(--esp-3);
+  margin-bottom: var(--esp-4);
 }
 
 h2 {
-  margin: 0;
-  font-family: var(--fuente-display);
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--verde-900);
+  @include ui.titulo-panel;
 }
 
 .criterio {
@@ -43,14 +38,14 @@ h2 {
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 12px;
+  gap: var(--esp-3);
 }
 
 .fila {
   display: grid;
   grid-template-columns: minmax(120px, 180px) minmax(120px, 1fr) 84px 170px 66px;
   align-items: center;
-  gap: 12px;
+  gap: var(--esp-3);
 }
 
 .nombre {
@@ -94,6 +89,7 @@ h2 {
   display: block;
   height: 8px;
   border-radius: 999px;
+  transition: width var(--transicion-base);
 }
 
 .barra--exceso {
@@ -146,7 +142,7 @@ h2 {
       'nombre valor'
       'pista pista'
       'detalle planes';
-    gap: 4px 12px;
+    gap: var(--esp-1) var(--esp-3);
   }
 
   .nombre { grid-area: nombre; }
