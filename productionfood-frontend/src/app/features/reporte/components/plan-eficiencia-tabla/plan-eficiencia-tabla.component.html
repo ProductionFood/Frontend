@@ -1,0 +1,188 @@
+<section class="panel">
+  <header class="panel-cabecera">
+    <h2>Planes del período</h2>
+    <span class="criterio">{{ planes().length }} planes con consumo registrado</span>
+  </header>
+
+  <table
+    mat-table
+    [dataSource]="planes()"
+    multiTemplateDataRows
+    aria-label="Planes del período con eficiencia"
+  >
+    <ng-container matColumnDef="expand">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let plan">
+        <button
+          mat-icon-button
+          type="button"
+          [attr.aria-label]="'Ver detalle del plan ' + plan.idPlan"
+          [attr.aria-expanded]="esExpandida(plan.idPlan)"
+          (click)="alternar(plan.idPlan); $event.stopPropagation()"
+        >
+          <mat-icon>
+            {{ esExpandida(plan.idPlan) ? 'expand_more' : 'chevron_right' }}
+          </mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="idPlan">
+      <th mat-header-cell *matHeaderCellDef>Plan</th>
+      <td mat-cell *matCellDef="let plan">#{{ plan.idPlan }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="fechaProduccion">
+      <th mat-header-cell *matHeaderCellDef>Fecha</th>
+      <td mat-cell *matCellDef="let plan">
+        {{ plan.fechaProduccion | date: 'dd/MM/yyyy' }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="responsable">
+      <th mat-header-cell *matHeaderCellDef>Responsable</th>
+      <td mat-cell *matCellDef="let plan">
+        @if (plan.responsable) {
+          {{ plan.responsable }}
+        } @else {
+          <span class="nulo">—</span>
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="cumplimiento">
+      <th mat-header-cell *matHeaderCellDef class="numerica">Cumpl.</th>
+      <td mat-cell *matCellDef="let plan" class="numerica">
+        @if (plan.cumplimiento !== null) {
+          {{ plan.cumplimiento | number: '1.1-1' }} %
+        } @else {
+          <span
+            class="nulo"
+            matTooltip="No se puede calcular: el plan no tiene cantidad planificada"
+          >—</span>
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="rendimiento">
+      <th mat-header-cell *matHeaderCellDef class="numerica">Rendim.</th>
+      <td mat-cell *matCellDef="let plan" class="numerica">
+        @if (plan.rendimiento !== null) {
+          {{ plan.rendimiento | number: '1.1-1' }} %
+        } @else {
+          <span class="nulo" [matTooltip]="tooltipRendimiento">—</span>
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="rendimientoAjustado">
+      <th mat-header-cell *matHeaderCellDef class="numerica">Ajustado</th>
+      <td mat-cell *matCellDef="let plan" class="numerica ajustado">
+        @if (plan.rendimientoAjustado !== null) {
+          {{ plan.rendimientoAjustado | number: '1.1-1' }} %
+        } @else {
+          <span class="nulo" [matTooltip]="tooltipAjustado">—</span>
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="estado">
+      <th mat-header-cell *matHeaderCellDef>Estado</th>
+      <td mat-cell *matCellDef="let plan">
+        <span
+          class="chip-estado"
+          [class.planificado]="plan.estado === 'PLANIFICADO'"
+          [class.en-proceso]="plan.estado === 'EN_PROCESO'"
+          [class.completado]="plan.estado === 'COMPLETADO'"
+          [class.cancelado]="plan.estado === 'CANCELADO'"
+        >
+          <span class="punto"></span>
+          {{ textoEstado(plan.estado) }}
+        </span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="detalle">
+      <td mat-cell *matCellDef="let plan" [attr.colspan]="columnas.length">
+        @if (esExpandida(plan.idPlan)) {
+          <div class="detalle-contenido">
+            <h3>Productos</h3>
+            @if (plan.productos.length === 0) {
+              <p class="sin-datos">El plan no registra productos</p>
+            } @else {
+              <ul class="lineas">
+                @for (producto of plan.productos; track producto.producto) {
+                  <li class="linea">
+                    <span class="principal">{{ producto.producto }}</span>
+                    <span class="dato">
+                      planificado {{ producto.planificada | number: '1.0-3' }} und
+                    </span>
+                    <span class="dato">
+                      producido {{ producto.producida | number: '1.0-3' }} und
+                    </span>
+                    <span class="valor">
+                      @if (producto.cumplimiento !== null) {
+                        {{ producto.cumplimiento | number: '1.1-1' }} %
+                      } @else {
+                        <span class="nulo">—</span>
+                      }
+                    </span>
+                  </li>
+                }
+              </ul>
+            }
+
+            <h3>Materias primas</h3>
+            @if (plan.consumos.length === 0) {
+              <p class="sin-datos">El plan no registra consumos</p>
+            } @else {
+              <ul class="lineas">
+                @for (consumo of plan.consumos; track consumo.materiaPrima) {
+                  <li class="linea">
+                    <span class="principal">{{ consumo.materiaPrima }}</span>
+                    <span class="dato">
+                      teórica {{ consumo.teorica | number: '1.0-3' }} · real
+                      {{ consumo.real | number: '1.0-3' }}
+                    </span>
+                    <span
+                      class="valor"
+                      [class.valor--exceso]="(consumo.desviacion ?? 0) > 0"
+                      [class.valor--ahorro]="(consumo.desviacion ?? 0) < 0"
+                    >
+                      @if (consumo.desviacion === null) {
+                        <span class="nulo">—</span>
+                      } @else {
+                        {{ signo(consumo.desviacion) }}{{ absoluto(consumo.desviacion) | number: '1.1-1' }} %
+                      }
+                    </span>
+                    <span class="valor eficiencia">
+                      ef.
+                      @if (consumo.eficiencia !== null) {
+                        {{ consumo.eficiencia | number: '1.1-1' }} %
+                      } @else {
+                        <span
+                          class="nulo"
+                          matTooltip="No se puede calcular: la cantidad real registrada es cero (R-03)"
+                        >—</span>
+                      }
+                    </span>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        }
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+    <tr
+      mat-row
+      *matRowDef="let plan; columns: columnas"
+      class="fila-principal"
+      [class.fila-expandida]="esExpandida(plan.idPlan)"
+      (click)="alternar(plan.idPlan)"
+    ></tr>
+    <tr mat-row *matRowDef="let plan; columns: ['detalle']" class="fila-detalle"></tr>
+  </table>
+</section>

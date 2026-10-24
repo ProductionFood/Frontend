@@ -1,0 +1,98 @@
+<header class="page-header">
+  <div class="header-info">
+    <h1>Eficiencia de producción</h1>
+    <p class="subtitulo">
+      Cumplimiento del plan, rendimiento de materia prima y desviación
+      acumulada del período.
+    </p>
+  </div>
+
+  <mat-form-field appearance="outline" class="filtro-fechas">
+    <mat-label>Período</mat-label>
+    <mat-date-range-input [formGroup]="filtros" [rangePicker]="picker">
+      <input matStartDate formControlName="desde" placeholder="Desde" />
+      <input matEndDate formControlName="hasta" placeholder="Hasta" />
+    </mat-date-range-input>
+    <mat-datepicker-toggle matIconSuffix [for]="picker" />
+    <mat-date-range-picker #picker />
+  </mat-form-field>
+</header>
+
+@if (errorRango()) {
+  <p class="error-rango">
+    <mat-icon>error_outline</mat-icon>
+    La fecha inicial no puede ser posterior a la final.
+  </p>
+}
+
+@if (cargando()) {
+  <mat-progress-bar mode="indeterminate" aria-label="Cargando reporte de eficiencia" />
+}
+
+@if (error(); as mensaje) {
+  <section class="estado estado--error">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ mensaje }}</p>
+    <button mat-stroked-button type="button" (click)="recargar()">Reintentar</button>
+  </section>
+} @else if (reporte(); as r) {
+  <app-metricas-cards [resumen]="r.resumen" />
+
+  @if (r.resumen.registrosSinRendimiento > 0) {
+    <p class="aviso-info">
+      <mat-icon>info</mat-icon>
+      {{ r.resumen.registrosSinRendimiento }}
+      {{ r.resumen.registrosSinRendimiento === 1 ? 'consumo' : 'consumos' }}
+      sin rendimiento calculable (cantidad real en cero),
+      {{ r.resumen.registrosSinRendimiento === 1 ? 'excluido' : 'excluidos' }}
+      del promedio.
+    </p>
+  }
+
+  @if (r.resumen.planesAnalizados > 0 && r.resumen.planesCancelados === r.resumen.planesAnalizados) {
+    <p class="aviso-info">
+      <mat-icon>info</mat-icon>
+      Todos los planes del período están cancelados: el promedio puede no ser
+      representativo.
+    </p>
+  }
+
+  @if (errorDesviacion()) {
+    <section class="panel-error">
+      <mat-icon>cloud_off</mat-icon>
+      <p>No se pudo cargar la desviación por materia prima.</p>
+      <button mat-stroked-button type="button" (click)="recargar()">Reintentar</button>
+    </section>
+  } @else {
+    <app-desviacion-mp-chart [datos]="desviacion()" />
+  }
+
+  @if (r.planes.length === 0) {
+    <section class="estado estado--vacio">
+      <mat-icon>event_busy</mat-icon>
+      <p>No hay planes con consumo registrado en el período</p>
+    </section>
+  } @else {
+    <app-plan-eficiencia-tabla [planes]="r.planes" />
+  }
+
+  @if (r.sinReceta.length > 0) {
+    <section class="sin-receta">
+      <mat-icon>warning_amber</mat-icon>
+      <div class="sin-receta-texto">
+        <h2>Productos sin receta (fuera del análisis)</h2>
+        <ul>
+          @for (producto of r.sinReceta; track producto.producto) {
+            <li>
+              <strong>{{ producto.producto }}</strong> —
+              {{ producto.planes }}
+              {{ producto.planes === 1 ? 'plan' : 'planes' }}.
+              {{ producto.nota }}
+            </li>
+          }
+        </ul>
+      </div>
+      <a mat-stroked-button routerLink="/app/recetas">Crear receta</a>
+    </section>
+  }
+}
