@@ -1,0 +1,5 @@
+@use '../tarjeta-comun';
+
+.tarjeta--alerta {
+  border-left: 4px solid var(--rojo-500);
+}

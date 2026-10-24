@@ -1,0 +1,47 @@
+<mat-card class="tarjeta">
+  <header class="tarjeta-cabecera">
+    <span class="semaforo semaforo--azul" aria-hidden="true"></span>
+    <h2 class="tarjeta-titulo">Pedidos de hoy</h2>
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando" role="status" aria-label="Cargando pedidos de hoy">
+      <mat-progress-spinner diameter="32" mode="indeterminate" />
+    </div>
+  } @else if (error()) {
+    <div class="estado estado--error" role="alert">
+      <mat-icon>cloud_off</mat-icon>
+      <p>No se pudo cargar</p>
+      <button mat-stroked-button type="button" (click)="reintentar.emit()">
+        Reintentar
+      </button>
+    </div>
+  } @else if (datos(); as d) {
+    @if (d.cantidad === 0) {
+      <div class="estado">
+        <mat-icon>receipt_long</mat-icon>
+        <p>Aún no hay pedidos registrados hoy</p>
+      </div>
+    } @else {
+      <p class="cifra">{{ d.cantidad }}</p>
+      <p class="cifra-secundaria">
+        {{ d.total | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+      </p>
+
+      <div class="desglose">
+        @for (estado of estados; track estado.clave) {
+          @if (cantidadEstado(estado.clave) > 0) {
+            <span [class]="'chip chip--' + estado.clase">
+              <span class="punto" aria-hidden="true"></span>
+              {{ cantidadEstado(estado.clave) }} {{ estado.etiqueta }}
+            </span>
+          }
+        }
+      </div>
+    }
+  }
+
+  <footer class="pie">
+    <a mat-button routerLink="/app/pedidos">Ver pedidos</a>
+  </footer>
+</mat-card>

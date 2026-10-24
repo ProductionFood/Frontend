@@ -1,0 +1,57 @@
+<mat-card class="tarjeta tarjeta--alerta">
+  <header class="tarjeta-cabecera">
+    <span class="semaforo semaforo--rojo" aria-hidden="true"></span>
+    <h2 class="tarjeta-titulo">Requiere atención</h2>
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando" role="status" aria-label="Cargando productos por vencer">
+      <mat-progress-spinner diameter="32" mode="indeterminate" />
+    </div>
+  } @else if (error()) {
+    <div class="estado estado--error" role="alert">
+      <mat-icon>cloud_off</mat-icon>
+      <p>No se pudo cargar</p>
+      <button mat-stroked-button type="button" (click)="reintentar.emit()">
+        Reintentar
+      </button>
+    </div>
+  } @else if (datos(); as d) {
+    @if (d.cantidad === 0) {
+      <div class="estado estado--ok">
+        <mat-icon>verified</mat-icon>
+        <p>Sin productos próximos a vencer</p>
+      </div>
+    } @else {
+      <p class="cifra">{{ d.cantidad }}</p>
+      <p class="cifra-texto">
+        productos por vencer
+        @if (d.vencidos > 0) {
+          · {{ d.vencidos }} {{ d.vencidos === 1 ? 'vencido' : 'vencidos' }}
+        }
+      </p>
+
+      <ul class="lista">
+        @for (item of itemsVisibles(); track item.codigoLote) {
+          <li class="fila">
+            <span class="fila-nombre">{{ item.producto }}</span>
+            <span
+              class="fila-detalle"
+              [class.fila-detalle--vencido]="item.diasParaVencer < 0"
+              [class.fila-detalle--aviso]="item.diasParaVencer >= 0"
+            >
+              {{ etiquetaVencimiento(item) }}
+            </span>
+            <span class="fila-detalle">
+              {{ item.disponible | number: '1.0-2' }} u
+            </span>
+          </li>
+        }
+      </ul>
+    }
+  }
+
+  <footer class="pie">
+    <a mat-button routerLink="/app/lotes-producto">Ver lotes</a>
+  </footer>
+</mat-card>

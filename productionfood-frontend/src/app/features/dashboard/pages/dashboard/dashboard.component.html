@@ -1,0 +1,63 @@
+<section class="dashboard">
+  <header class="page-header">
+    <div>
+      <h1>Resumen del día</h1>
+      <p class="fecha">{{ fechaMostrada() | date: 'fullDate' }}</p>
+    </div>
+    <div class="actualizacion">
+      <span class="marca-hora" aria-live="polite">
+        @if (actualizadoEn(); as marca) {
+          Actualizado {{ marca | date: 'HH:mm' }}
+        } @else {
+          Consultando…
+        }
+      </span>
+      <button
+        mat-icon-button
+        type="button"
+        aria-label="Actualizar resumen"
+        (click)="recargar()"
+      >
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+  </header>
+
+  <div class="tarjetas">
+    <app-tarjeta-vencimientos
+      *siRol="['ADMIN', 'VENTAS', 'PRODUCCION', 'CONSULTA']"
+      [datos]="porVencer()"
+      [cargando]="cargandoVencimientos()"
+      [error]="errorVencimientos()"
+      (reintentar)="cargarVencimientos()"
+    />
+    <app-tarjeta-stock
+      *siRol="['ADMIN', 'COMPRAS', 'PRODUCCION', 'CONSULTA']"
+      [datos]="resumen()?.stockBajo ?? null"
+      [cargando]="cargandoResumen()"
+      [error]="errorResumen()"
+      (reintentar)="cargarResumen()"
+    />
+    <app-tarjeta-pedidos
+      *siRol="['ADMIN', 'VENTAS', 'CONSULTA']"
+      [datos]="resumen()?.pedidosHoy ?? null"
+      [cargando]="cargandoResumen()"
+      [error]="errorResumen()"
+      (reintentar)="cargarResumen()"
+    />
+    <app-tarjeta-compras
+      *siRol="['ADMIN', 'COMPRAS', 'CONSULTA']"
+      [datos]="resumen()?.comprasPendientes ?? null"
+      [cargando]="cargandoResumen()"
+      [error]="errorResumen()"
+      (reintentar)="cargarResumen()"
+    />
+    <app-tarjeta-produccion
+      *siRol="['ADMIN', 'PRODUCCION', 'CONSULTA']"
+      [datos]="resumen()?.produccionHoy ?? null"
+      [cargando]="cargandoResumen()"
+      [error]="errorResumen()"
+      (reintentar)="cargarResumen()"
+    />
+  </div>
+</section>

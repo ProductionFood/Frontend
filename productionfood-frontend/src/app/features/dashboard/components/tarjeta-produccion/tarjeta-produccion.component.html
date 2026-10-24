@@ -1,0 +1,53 @@
+<mat-card class="tarjeta">
+  <header class="tarjeta-cabecera">
+    <span class="semaforo semaforo--verde" aria-hidden="true"></span>
+    <h2 class="tarjeta-titulo">Producción hoy</h2>
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando" role="status" aria-label="Cargando producción de hoy">
+      <mat-progress-spinner diameter="32" mode="indeterminate" />
+    </div>
+  } @else if (error()) {
+    <div class="estado estado--error" role="alert">
+      <mat-icon>cloud_off</mat-icon>
+      <p>No se pudo cargar</p>
+      <button mat-stroked-button type="button" (click)="reintentar.emit()">
+        Reintentar
+      </button>
+    </div>
+  } @else if (datos(); as d) {
+    @if (d.cantidad === 0) {
+      <div class="estado">
+        <mat-icon>precision_manufacturing</mat-icon>
+        <p>No hay planes de producción para hoy</p>
+      </div>
+    } @else {
+      <p class="cifra">{{ d.cantidad }}</p>
+      <p class="cifra-texto">
+        {{ d.cantidad === 1 ? 'plan de producción' : 'planes de producción' }}
+      </p>
+
+      <div class="desglose">
+        @for (estado of estados; track estado.clave) {
+          @if (cantidadEstado(estado.clave) > 0) {
+            <span [class]="'chip chip--' + estado.clase">
+              <span class="punto" aria-hidden="true"></span>
+              {{ cantidadEstado(estado.clave) }} {{ estado.etiqueta }}
+            </span>
+          }
+        }
+      </div>
+
+      @if (d.avancePromedio !== null) {
+        <p class="cifra-texto avance">
+          Avance promedio: {{ d.avancePromedio | number: '1.0-1' }}%
+        </p>
+      }
+    }
+  }
+
+  <footer class="pie">
+    <a mat-button routerLink="/app/produccion">Ver producción</a>
+  </footer>
+</mat-card>

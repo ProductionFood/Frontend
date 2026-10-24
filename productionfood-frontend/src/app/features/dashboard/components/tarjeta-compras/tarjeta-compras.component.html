@@ -1,0 +1,44 @@
+<mat-card class="tarjeta">
+  <header class="tarjeta-cabecera">
+    <span class="semaforo semaforo--naranja" aria-hidden="true"></span>
+    <h2 class="tarjeta-titulo">Compras pendientes</h2>
+  </header>
+
+  @if (cargando()) {
+    <div class="cargando" role="status" aria-label="Cargando compras pendientes">
+      <mat-progress-spinner diameter="32" mode="indeterminate" />
+    </div>
+  } @else if (error()) {
+    <div class="estado estado--error" role="alert">
+      <mat-icon>cloud_off</mat-icon>
+      <p>No se pudo cargar</p>
+      <button mat-stroked-button type="button" (click)="reintentar.emit()">
+        Reintentar
+      </button>
+    </div>
+  } @else if (datos(); as d) {
+    @if (d.cantidad === 0) {
+      <div class="estado estado--ok">
+        <mat-icon>verified</mat-icon>
+        <p>No hay compras pendientes</p>
+      </div>
+    } @else {
+      <p class="cifra">{{ d.cantidad }}</p>
+      <p class="cifra-secundaria">
+        {{ d.total | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+      </p>
+
+      @if (d.masAntigua; as antigua) {
+        <p class="alerta-antiguedad">
+          <mat-icon>schedule</mat-icon>
+          La más antigua lleva {{ antigua.diasPendiente }}
+          {{ antigua.diasPendiente === 1 ? 'día' : 'días' }}
+        </p>
+      }
+    }
+  }
+
+  <footer class="pie">
+    <a mat-button routerLink="/app/compras">Ver compras</a>
+  </footer>
+</mat-card>

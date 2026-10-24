@@ -1,0 +1,205 @@
+// Estilos compartidos de las cinco tarjetas del dashboard (HU-24).
+// Cada tarjeta los importa con `@use '../tarjeta-comun';` para no duplicar
+// el andamiaje visual (cabecera, cifra, desglose, pie y estados).
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+.tarjeta {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 18px 20px;
+  border: 1px solid var(--linea);
+  border-radius: 12px;
+  background: var(--blanco);
+  box-shadow: none !important;
+}
+
+.tarjeta-cabecera {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.semaforo {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--tinta-400);
+}
+
+.semaforo--rojo { background: var(--rojo-500); }
+.semaforo--naranja { background: var(--naranja-500); }
+.semaforo--azul { background: var(--azul-500); }
+.semaforo--verde { background: var(--verde-500); }
+
+.tarjeta-titulo {
+  margin: 0;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--tinta-600);
+}
+
+.cifra {
+  margin: 0;
+  font-family: var(--fuente-display);
+  font-size: 38px;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--tinta-900);
+}
+
+.tarjeta--alerta .cifra { color: var(--rojo-500); }
+.tarjeta--aviso .cifra { color: var(--naranja-500); }
+
+.cifra-texto {
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  color: var(--tinta-600);
+}
+
+.cifra-secundaria {
+  margin: 4px 0 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--tinta-900);
+}
+
+.lista {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+}
+
+.fila {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--linea);
+  font-size: 12.5px;
+}
+
+.fila:last-child { border-bottom: none; }
+
+.fila-nombre {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--tinta-900);
+}
+
+.fila-detalle {
+  flex: none;
+  font-weight: 600;
+  color: var(--tinta-600);
+}
+
+.fila-detalle--vencido { color: var(--rojo-500); }
+.fila-detalle--aviso { color: #92610b; }
+
+.desglose {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.chip .punto {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.chip--pendiente,
+.chip--planificado {
+  background: var(--naranja-100);
+  color: #92610b;
+}
+
+.chip--en-preparacion,
+.chip--en-proceso {
+  background: var(--azul-100);
+  color: #1d4ed8;
+}
+
+.chip--entregado,
+.chip--completado {
+  background: var(--verde-100);
+  color: var(--verde-700);
+}
+
+.chip--cancelado {
+  background: #efefef;
+  color: var(--tinta-600);
+}
+
+.alerta-antiguedad {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: #92610b;
+}
+
+.alerta-antiguedad mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.pie {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.estado {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 0;
+  text-align: center;
+}
+
+.estado p {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--tinta-600);
+}
+
+.estado--ok mat-icon { color: var(--verde-500); }
+.estado--error mat-icon { color: var(--rojo-500); }
+
+.cargando {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 0;
+}
