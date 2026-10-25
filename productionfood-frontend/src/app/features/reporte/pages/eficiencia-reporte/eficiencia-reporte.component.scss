@@ -2,6 +2,16 @@
   display: block;
 }
 
+.volver {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-1);
+  padding: 0;
+  margin-bottom: var(--esp-2);
+  color: var(--verde-700);
+  font-size: 12.5px;
+}
+
 .page-header {
   display: flex;
   justify-content: space-between;
