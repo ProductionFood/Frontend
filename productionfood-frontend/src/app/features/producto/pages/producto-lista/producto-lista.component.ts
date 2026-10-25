@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -11,8 +11,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { PageEvent } from '@angular/material/paginator';
-import { Sort } from '@angular/material/sort';
 import { RouterLink } from '@angular/router';
 import { EMPTY, Subject, catchError, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -25,13 +23,13 @@ import { TablaColumnaDirective } from '../../../../shared/components/tabla-pagin
 import { Producto } from '../../models/producto.model';
 import { ProductoService } from '../../services/producto.service';
 import { ProductoFormularioComponent } from '../producto-formulario/producto-formulario.component';
-import { KpisCatalogoComponent } from '../../../../shared/components/kpis-catalogo/kpis-catalogo.component';
+import { KpiCardComponent } from '../../../../shared/components/kpi-card/kpi-card.component';
 import { contarCatalogo } from '../../../../shared/utils/conteo-catalogo';
 
 @Component({
   selector: 'app-producto-lista',
   standalone: true,
-  imports: [ReactiveFormsModule, DecimalPipe, CurrencyPipe, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatCheckboxModule, MatIconModule, MatMenuModule, MatTooltipModule, RouterLink, TablaPaginadaComponent, TablaColumnaDirective, SiRolDirective, KpisCatalogoComponent],
+  imports: [ReactiveFormsModule, DecimalPipe, CurrencyPipe, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatCheckboxModule, MatIconModule, MatMenuModule, MatTooltipModule, RouterLink, TablaPaginadaComponent, TablaColumnaDirective, SiRolDirective, KpiCardComponent],
   templateUrl: './producto-lista.component.html',
   styleUrl: './producto-lista.component.scss'
 })
@@ -43,26 +41,25 @@ export class ProductoListaComponent {
   private readonly destroyRef = inject(DestroyRef);
 
   readonly columnas: ColumnaTabla[] = [
+    { id: 'seleccion', titulo: '', ordenable: false },
     { id: 'nombre', titulo: 'Producto', ordenable: true },
-    { id: 'descripcion', titulo: 'Descripción', ordenable: false },
+    { id: 'stock', titulo: 'Stock', ordenable: true },
     { id: 'precioVenta', titulo: 'Precio', ordenable: true },
-    { id: 'unidad', titulo: 'Unidad', ordenable: false },
-    { id: 'receta', titulo: 'Receta', ordenable: false },
-    { id: 'stockDisponible', titulo: 'Stock', ordenable: true },
     { id: 'estado', titulo: 'Estado', ordenable: false },
     { id: 'acciones', titulo: '', ordenable: false }
   ];
 
   readonly filtros = this.fb.group({
     busqueda: this.fb.nonNullable.control(''),
-    activo: this.fb.control<boolean | null>(true),
-    sinReceta: this.fb.nonNullable.control(false)
+    estado: this.fb.control<'todos' | 'activo' | 'bajo-stock' | 'inactivo'>('activo'),
+    categoria: this.fb.control<'todas' | 'panaderia' | 'lacteos' | 'reposteria' | 'conservas'>('todas')
   });
   readonly productos = signal<Producto[]>([]);
   readonly total = signal(0);
   readonly kpiTotal = signal(0);
   readonly kpiActivos = signal(0);
   readonly kpiInactivos = signal(0);
+  readonly kpiBajoStock = signal(0);
   readonly cargandoKpis = signal(true);
   readonly pagina = signal(0);
   readonly tamano = signal(20);
@@ -71,7 +68,6 @@ export class ProductoListaComponent {
   private readonly ordenCampo = signal('');
   private readonly ordenDireccion = signal<'asc' | 'desc' | ''>('');
   private readonly recargar$ = new Subject<void>();
-  puedeRegistrarPrimero(): boolean { return !this.filtros.controls.busqueda.value.trim() && !this.filtros.controls.sinReceta.value; }
 
   constructor() {
     this.recargar$.pipe(
@@ -90,10 +86,10 @@ export class ProductoListaComponent {
     this.filtros.controls.busqueda.valueChanges.pipe(debounceTime(350), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.pagina.set(0); this.recargar();
     });
-    this.filtros.controls.activo.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+    this.filtros.controls.estado.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.pagina.set(0); this.recargar();
     });
-    this.filtros.controls.sinReceta.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+    this.filtros.controls.categoria.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.pagina.set(0); this.recargar();
     });
     this.recargar();
@@ -109,14 +105,72 @@ export class ProductoListaComponent {
         this.kpiTotal.set(total);
         this.kpiActivos.set(activos);
         this.kpiInactivos.set(inactivos);
-        this.cargandoKpis.set(false);
+        // Calcular bajo stock: productos con stock <= 20
+        this.productoService.listar({ page: 0, size: 1000, activo: true })
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe(res => {
+            const bajoStock = res.content.filter(p => p.stockDisponible > 0 && p.stockDisponible <= 20).length;
+            this.kpiBajoStock.set(bajoStock);
+            this.cargandoKpis.set(false);
+          });
       });
   }
-  onPagina(evento: PageEvent): void { this.pagina.set(evento.pageIndex); this.tamano.set(evento.pageSize); this.recargar(); }
-  onOrden(orden: Sort): void { this.ordenCampo.set(orden.direction ? orden.active : ''); this.ordenDireccion.set(orden.direction); this.pagina.set(0); this.recargar(); }
+
+  readonly kpiTrendTotal = computed(() => '—');
+  readonly kpiTrendActivos = computed(() => '—');
+  readonly kpiTrendInactivos = computed(() => '—');
+  readonly kpiTrendBajoStock = computed(() => '—');
+
+  // TODO: Requiere backend con filtro por fecha (fechaCreacion en Producto + filtro fechaDesde/fechaHasta en listar)
+  // private async cargarTendencias(): Promise<void> {
+  //   const ahora = new Date();
+  //   const mesPasado = new Date(ahora.getFullYear(), ahora.getMonth() - 1, 1);
+  //   const finMesPasado = new Date(ahora.getFullYear(), ahora.getMonth(), 0);
+  //   // const totalMesActual = await this.contarDesde(ahora);
+  //   // const totalMesPasado = await this.contarDesde(mesPasado, finMesPasado);
+  //   // this.calcularTendencia(totalMesActual, totalMesPasado);
+  // }
+
+  categoriaIcono(producto: Producto): string {
+    const nombre = producto.nombre.toLowerCase();
+    if (nombre.includes('pan') || nombre.includes('integral')) return 'pan';
+    if (nombre.includes('galleta') || nombre.includes('torta') || nombre.includes('chocolate')) return 'reposteria';
+    if (nombre.includes('yogur') || nombre.includes('leche') || nombre.includes('queso') || nombre.includes('mozzarella')) return 'lacteos';
+    if (nombre.includes('mermelada') || nombre.includes('salsa') || nombre.includes('conserva')) return 'conservas';
+    return 'pan';
+  }
+
+  categoriaIconoMat(producto: Producto): string {
+    const cat = this.categoriaIcono(producto);
+    switch (cat) {
+      case 'pan': return 'bakery_dining';
+      case 'reposteria': return 'cake';
+      case 'lacteos': return 'local_drink';
+      case 'conservas': return 'jar';
+      default: return 'inventory_2';
+    }
+  }
+
+  stockPorcentaje(producto: Producto): number {
+    // Porcentaje visual basado en stock disponible (simplificado)
+    if (producto.stockDisponible === 0) return 0;
+    if (producto.stockDisponible <= 20) return 30;
+    if (producto.stockDisponible <= 50) return 50;
+    if (producto.stockDisponible <= 100) return 70;
+    return 100;
+  }
+
+  estadoClase(producto: Producto): string {
+    if (!producto.activo) return 'inactivo';
+    if (producto.stockDisponible === 0) return 'agotado';
+    if (producto.stockDisponible <= 20) return 'bajo-stock';
+    return 'activo';
+  }
+
+  onPagina(evento: import('@angular/material/paginator').PageEvent): void { this.pagina.set(evento.pageIndex); this.tamano.set(evento.pageSize); this.recargar(); }
+  onOrden(orden: import('@angular/material/sort').Sort): void { this.ordenCampo.set(orden.direction ? orden.active : ''); this.ordenDireccion.set(orden.direction); this.pagina.set(0); this.recargar(); }
 
   mensajeVacio(): string {
-    if (this.filtros.controls.sinReceta.value) return 'Todos los productos tienen receta.';
     const busqueda = this.filtros.controls.busqueda.value.trim();
     if (busqueda) return `Ningún producto coincide con «${busqueda}».`;
     return 'No hay productos registrados.';
@@ -157,13 +211,17 @@ export class ProductoListaComponent {
   }
 
   private peticion() {
-    const { busqueda, activo, sinReceta } = this.filtros.getRawValue();
+    const { busqueda, estado, categoria } = this.filtros.getRawValue();
     const campo = this.ordenCampo();
     const sort = campo && this.ordenDireccion() ? `${campo},${this.ordenDireccion()}` : undefined;
+    let activo: boolean | undefined;
+    if (estado === 'activo') activo = true;
+    else if (estado === 'inactivo') activo = false;
+    // 'todos' and 'bajo-stock' don't filter by activo
     return this.productoService.listar({
       busqueda: busqueda.trim() || undefined,
-      activo: activo ?? undefined,
-      sinReceta: sinReceta ? true : undefined,
+      activo,
+      sinReceta: undefined,
       page: this.pagina(), size: this.tamano(), sort
     });
   }
