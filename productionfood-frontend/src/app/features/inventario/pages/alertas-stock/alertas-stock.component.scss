@@ -57,7 +57,7 @@ table {
 
 .faltante {
   font-weight: 600;
-  color: #92610b;
+  color: var(--aviso-texto);
 }
 
 .nivel {
@@ -70,7 +70,7 @@ table {
   display: block;
   margin-top: var(--esp-1);
   font-size: 11px;
-  color: #b02a2e;
+  color: var(--peligro-texto);
 }
 
 .pie {

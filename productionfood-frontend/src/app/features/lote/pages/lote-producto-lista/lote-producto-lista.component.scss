@@ -22,7 +22,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--esp-2);
-  color: var(--blanco);
+  color: var(--texto-sobre-marca);
 }
 
 .kpi-grid {
@@ -78,7 +78,7 @@ table {
 }
 
 .fila-vencida {
-  background: #fef2f2;
+  background: var(--peligro-fondo);
 }
 
 .retirar {
@@ -86,14 +86,14 @@ table {
   margin-top: var(--esp-1);
   font-size: 10.5px;
   font-weight: 700;
-  color: #b02a2e;
+  color: var(--peligro-texto);
 }
 
 mat-paginator {
   border-top: 1px solid var(--linea);
 }
 
-@media (max-width: 860px) {
+@media (max-width: 1100px) {
   .kpi-grid {
     grid-template-columns: 1fr;
   }

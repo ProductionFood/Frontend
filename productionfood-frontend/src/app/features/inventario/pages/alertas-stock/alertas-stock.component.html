@@ -46,7 +46,9 @@
       icono="check_circle"
       mensaje="Todas las materias primas están por encima de su stock mínimo"
       [detalle]="'Última verificación: ' + (d.generadoEn | date: 'dd/MM/yyyy HH:mm')"
-    />
+    >
+      <a mat-stroked-button routerLink="/app/inventario">Ver inventario</a>
+    </app-estado-vacio>
   } @else {
     <app-tarjeta-tabla
       titulo="Materias primas en alerta"

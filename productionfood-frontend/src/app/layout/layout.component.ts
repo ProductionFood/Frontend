@@ -18,6 +18,7 @@ import { filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { AuthService } from '../core/auth/auth.service';
+import { TemaService } from '../core/ui/tema.service';
 import {
   MODULOS_REALES,
   NavGrupo,
@@ -45,6 +46,7 @@ import {
 })
 export class LayoutComponent {
   readonly authService = inject(AuthService);
+  readonly tema = inject(TemaService);
   private readonly router = inject(Router);
   private readonly breakpoint = inject(BreakpointObserver);
 

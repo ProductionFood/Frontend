@@ -75,7 +75,15 @@
           ? 'No hay planes de producción. Cree el primero.'
           : 'Ningún plan coincide con los filtros.'
       "
-    />
+    >
+      @if (filtro.dirty) {
+        <button mat-stroked-button type="button" (click)="limpiarFiltros()">
+          Limpiar filtros
+        </button>
+      } @else if (auth.rol() === 'ADMIN' || auth.rol() === 'PRODUCCION') {
+        <a mat-flat-button color="primary" routerLink="nuevo">Nuevo plan</a>
+      }
+    </app-estado-vacio>
   } @else if (!error() && datos().length > 0) {
     <div class="tabla-scroll">
       <table mat-table [dataSource]="datos()" matSort (matSortChange)="ordenar($event)">

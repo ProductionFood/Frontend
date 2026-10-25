@@ -63,7 +63,7 @@ th.mat-mdc-header-cell {
 }
 
 .estado.error {
-  color: #b02a2e;
+  color: var(--peligro-texto);
 }
 
 .estado-chip {
@@ -73,17 +73,17 @@ th.mat-mdc-header-cell {
 
 .estado-chip.vencido {
   --mdc-chip-elevated-container-color: var(--rojo-100);
-  --mdc-chip-label-text-color: #b02a2e;
+  --mdc-chip-label-text-color: var(--peligro-texto);
 }
 
 .estado-chip.urgente {
   --mdc-chip-elevated-container-color: var(--naranja-100);
-  --mdc-chip-label-text-color: #92610b;
+  --mdc-chip-label-text-color: var(--aviso-texto);
 }
 
 .estado-chip.proximo {
   --mdc-chip-elevated-container-color: var(--azul-100);
-  --mdc-chip-label-text-color: #1d4ed8;
+  --mdc-chip-label-text-color: var(--info-texto);
 }
 
 .estado-chip.vigente {
@@ -91,7 +91,7 @@ th.mat-mdc-header-cell {
   --mdc-chip-label-text-color: var(--verde-700);
 }
 
-@media (max-width: 700px) {
+@media (max-width: 720px) {
   .page-header {
     align-items: flex-start;
     flex-direction: column;

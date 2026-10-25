@@ -33,6 +33,7 @@ export class DevolucionListaComponent {
  readonly columnas=['pedido','cliente','producto','cantidad','motivo','fecha','estado','acciones'];
  constructor(){this.cargar();}
  private fecha(d:Date|null):string|undefined {if(!d)return undefined;const yyyy=d.getFullYear();const mm=String(d.getMonth()+1).padStart(2,'0');const dd=String(d.getDate()).padStart(2,'0');return `${yyyy}-${mm}-${dd}`;}
+ limpiarFiltros():void{this.estado.setValue('PENDIENTE');this.desde.setValue(null);this.hasta.setValue(null);this.aplicar();}
  aplicar(){this.pagina.set(0);this.cargar();}
  paginar(event:PageEvent){this.pagina.set(event.pageIndex);this.tamano.set(event.pageSize);this.cargar();}
  ordenar(sort:Sort){this.orden.set(sort.direction?`${sort.active},${sort.direction}`:'fechaRegistro,desc');this.aplicar();}

@@ -22,41 +22,41 @@
 }
 
 .kpi__valor--verde {
-  color: var(--verde-700);
+  color: var(--exito-texto);
 }
 
 .kpi__valor--azul {
-  color: #1d4ed8;
+  color: var(--info-texto);
 }
 
 .kpi__valor--naranja {
-  color: #92610b;
+  color: var(--aviso-texto);
 }
 
 .kpi__valor--rojo {
-  color: #b02a2e;
+  color: var(--peligro-texto);
 }
 
 .kpi__valor--morado {
-  color: var(--morado-500);
+  color: var(--morado-texto);
 }
 
 .kpi__icono {
-  @include ui.kpi-icono;
+  @include ui.kpi-icono(var(--marca-suave), var(--marca));
 }
 
 .kpi__icono--azul {
-  @include ui.kpi-icono(var(--azul-100), #1d4ed8);
+  @include ui.kpi-icono(var(--info-fondo), var(--info-texto));
 }
 
 .kpi__icono--naranja {
-  @include ui.kpi-icono(var(--naranja-100), #92610b);
+  @include ui.kpi-icono(var(--aviso-fondo), var(--aviso-texto));
 }
 
 .kpi__icono--rojo {
-  @include ui.kpi-icono(var(--rojo-100), #b02a2e);
+  @include ui.kpi-icono(var(--peligro-fondo), var(--peligro-texto));
 }
 
 .kpi__icono--morado {
-  @include ui.kpi-icono(var(--morado-100), var(--morado-500));
+  @include ui.kpi-icono(var(--morado-fondo), var(--morado-texto));
 }

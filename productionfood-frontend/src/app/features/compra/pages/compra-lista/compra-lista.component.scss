@@ -51,7 +51,7 @@
   gap: 6px;
   margin: 0 0 var(--esp-3);
   font-size: 12.5px;
-  color: #b02a2e;
+  color: var(--peligro-texto);
 }
 
 .error-rango mat-icon {
@@ -69,7 +69,7 @@
 }
 
 .chip-estado.pendiente {
-  @include ui.badge(var(--naranja-100), #92610b);
+  @include ui.badge(var(--naranja-100), var(--aviso-texto));
 }
 
 .chip-estado.recibida {
@@ -77,5 +77,5 @@
 }
 
 .chip-estado.cancelada {
-  @include ui.badge(var(--rojo-100), #b02a2e);
+  @include ui.badge(var(--rojo-100), var(--peligro-texto));
 }

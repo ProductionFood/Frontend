@@ -31,10 +31,10 @@ mat-card.mat-mdc-card {
 .error {
   margin: 0;
   font-size: 12.5px;
-  color: #b02a2e;
+  color: var(--peligro-texto);
 }
 
-@media (max-width: 600px) {
+@media (max-width: 720px) {
   .fechas {
     grid-template-columns: 1fr;
   }

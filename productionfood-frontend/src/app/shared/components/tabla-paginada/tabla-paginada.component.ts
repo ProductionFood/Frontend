@@ -11,11 +11,12 @@ import { NgTemplateOutlet } from '@angular/common';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
+
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 
+import { SkeletonComponent } from '../skeleton/skeleton.component';
 import { TablaColumnaDirective } from './tabla-columna.directive';
 
 export interface ColumnaTabla {
@@ -44,7 +45,7 @@ export interface ColumnaTabla {
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
-    MatProgressBarModule,
+    SkeletonComponent,
     MatButtonModule,
     MatIconModule
   ],

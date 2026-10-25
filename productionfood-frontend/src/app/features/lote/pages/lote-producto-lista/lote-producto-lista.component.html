@@ -72,7 +72,23 @@
             ? 'No hay lotes registrados. Registrar el primero: sin lotes no se puede vender.'
             : 'Ningún lote coincide con los filtros.'
         "
-      />
+      >
+        @if (filtros.dirty) {
+          <button mat-stroked-button type="button" (click)="limpiarFiltros()">
+            Limpiar filtros
+          </button>
+        } @else {
+          <button
+            *siRol="['ADMIN', 'PRODUCCION']"
+            mat-flat-button
+            color="primary"
+            type="button"
+            (click)="abrirFormulario()"
+          >
+            Registrar el primero
+          </button>
+        }
+      </app-estado-vacio>
     } @else if (lotes().length) {
       <div class="tabla-scroll">
         <table mat-table [dataSource]="lotes()" matSort (matSortChange)="ordenar($event)">

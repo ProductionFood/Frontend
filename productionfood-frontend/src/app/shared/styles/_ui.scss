@@ -9,8 +9,8 @@
 
 // Contenedores (§11, §14): radio 10, borde línea, sombra escala 2.
 @mixin tarjeta {
-  background: var(--blanco);
-  border: 1px solid var(--linea);
+  background: var(--superficie-alta);
+  border: 1px solid var(--borde);
   border-radius: var(--radio-m);
   box-shadow: var(--sombra-2);
 }
@@ -27,19 +27,19 @@
   justify-content: space-between;
   gap: var(--esp-3);
   padding: var(--esp-4) var(--esp-5);
-  border-bottom: 1px solid var(--linea);
+  border-bottom: 1px solid var(--borde);
 
   h2 {
     margin: 0;
     font-family: var(--fuente-display);
     font-size: 16px;
     font-weight: 600;
-    color: var(--verde-900);
+    color: var(--texto-titulo);
   }
 
   > span {
     font-size: 11.5px;
-    color: var(--tinta-600);
+    color: var(--texto-suave);
   }
 }
 
@@ -49,21 +49,21 @@
   border-collapse: collapse;
 
   th.mat-mdc-header-cell {
-    background: var(--fondo);
-    color: var(--tinta-600);
+    background: var(--superficie-suave);
+    color: var(--texto-suave);
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0;
     text-transform: none;
     padding: 11px 14px;
-    border-bottom: 1px solid var(--linea);
+    border-bottom: 1px solid var(--borde);
   }
 
   td.mat-mdc-cell {
-    color: var(--tinta-900);
+    color: var(--texto);
     font-size: 12.5px;
     padding: 12px 14px;
-    border-bottom: 1px solid var(--linea);
+    border-bottom: 1px solid var(--borde);
   }
 
   tr.mat-mdc-row {
@@ -71,7 +71,7 @@
   }
 
   tr.mat-mdc-row:hover {
-    background: #fafdfb;
+    background: var(--superficie-hover);
   }
 }
 
@@ -82,15 +82,15 @@
   align-items: flex-start;
   gap: var(--esp-3);
   padding: 20px;
-  background: var(--blanco);
-  border: 1px solid var(--linea);
+  background: var(--superficie-alta);
+  border: 1px solid var(--borde);
   border-radius: var(--radio-m);
   box-shadow: var(--sombra-2);
 }
 
 @mixin kpi-etiqueta {
   margin: 0 0 var(--esp-2);
-  color: var(--tinta-600);
+  color: var(--texto-suave);
   font-size: 11.5px;
 }
 
@@ -100,7 +100,7 @@
   font-size: 28px;
   font-weight: 600;
   line-height: 1.15;
-  color: var(--tinta-900);
+  color: var(--texto);
 }
 
 @mixin kpi-icono($fondo: var(--verde-100), $color: var(--verde-700)) {
@@ -148,7 +148,7 @@
   font-family: var(--fuente-display);
   font-size: 16px;
   font-weight: 600;
-  color: var(--verde-900);
+  color: var(--texto-titulo);
 }
 
 // Filtros en tarjeta (§12): contenedor con padding 18/20.
@@ -158,9 +158,9 @@
   flex-wrap: wrap;
   gap: var(--esp-4);
   padding: 18px 20px;
-  border: 1px solid var(--linea);
+  border: 1px solid var(--borde);
   border-radius: var(--radio-m);
-  background: var(--blanco);
+  background: var(--superficie-alta);
   box-shadow: var(--sombra-2);
 }
 
@@ -172,13 +172,13 @@
   gap: var(--esp-2);
   padding: 44px 22px;
   text-align: center;
-  color: var(--tinta-600);
+  color: var(--texto-suave);
 
   mat-icon {
     width: 34px;
     height: 34px;
     font-size: 34px;
-    color: var(--tinta-400);
+    color: var(--texto-tenue);
   }
 
   p {
@@ -194,10 +194,10 @@
   flex-wrap: wrap;
   gap: var(--esp-3);
   padding: var(--esp-4) 18px;
-  border: 1px solid #f2c8c8;
+  border: 1px solid var(--peligro-fondo);
   border-radius: var(--radio-m);
-  background: #fff6f5;
-  color: #b02a2e;
+  background: var(--peligro-fondo);
+  color: var(--peligro-texto);
   font-size: 12.5px;
 
   p {
@@ -216,7 +216,7 @@
     flex: 1;
     height: 8px;
     border-radius: 999px;
-    background: var(--fondo);
+    background: var(--superficie-suave);
     overflow: hidden;
   }
 
@@ -231,7 +231,7 @@
   small {
     font-size: 10.5px;
     font-weight: 600;
-    color: var(--tinta-600);
+    color: var(--texto-suave);
   }
 }
 

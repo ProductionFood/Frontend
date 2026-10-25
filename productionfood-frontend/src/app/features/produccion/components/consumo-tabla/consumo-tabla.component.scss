@@ -38,9 +38,9 @@ td {
 
 small {
   display: block;
-  color: #92610b;
+  color: var(--aviso-texto);
 }
 
 .error {
-  color: #b02a2e;
+  color: var(--peligro-texto);
 }

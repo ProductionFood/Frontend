@@ -47,7 +47,7 @@ table {
 }
 
 .superado {
-  color: #1d4ed8;
+  color: var(--info-texto);
 }
 
 .recordatorio {
@@ -59,11 +59,11 @@ table {
   padding: var(--esp-4);
   border: 1px solid var(--verde-300);
   border-radius: var(--radio-m);
-  background: #f1f8f3;
+  background: var(--exito-fondo);
 }
 
 .error {
-  color: #b02a2e;
+  color: var(--peligro-texto);
 }
 
 .vacio {

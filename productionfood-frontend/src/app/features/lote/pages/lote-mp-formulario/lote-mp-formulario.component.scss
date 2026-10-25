@@ -6,5 +6,5 @@
 .impacto small { color: #374151; }
 .advertencia, .error-general { padding: 10px 12px; border-radius: 6px; }
 .advertencia { display: flex; align-items: center; gap: 8px; color: #8a4b08; background: #fff4dc; }
-.error-general { color: #a32121; background: #ffebee; }
-@media (max-width: 560px) { .fechas { grid-template-columns: 1fr; gap: 0; } }
+.error-general { color: var(--peligro-texto); background: #ffebee; }
+@media (max-width: 720px) { .fechas { grid-template-columns: 1fr; gap: 0; } }

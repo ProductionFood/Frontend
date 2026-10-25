@@ -28,10 +28,10 @@
 }
 
 .ayuda {
-  width: 15px;
-  height: 15px;
-  font-size: 15px;
-  color: var(--tinta-400);
+  width: var(--icono-sm);
+  height: var(--icono-sm);
+  font-size: var(--icono-sm);
+  color: var(--texto-tenue);
   cursor: help;
 }
 
@@ -45,7 +45,7 @@
 }
 
 .kpi-number--exceso {
-  color: #b45309;
+  color: var(--aviso-texto);
 }
 
 .kpi-number--ahorro {
@@ -70,9 +70,9 @@
 }
 
 .kpi-icon.blue {
-  @include ui.kpi-icono(var(--azul-100), #1d4ed8);
+  @include ui.kpi-icono(var(--azul-100), var(--info-texto));
 }
 
 .kpi-icon.orange {
-  @include ui.kpi-icono(var(--naranja-100), #92610b);
+  @include ui.kpi-icono(var(--naranja-100), var(--aviso-texto));
 }

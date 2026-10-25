@@ -133,8 +133,8 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
         padding: 8px 14px;
         border-radius: 999px;
         border: 1px solid var(--linea);
-        background: #fff;
-        color: var(--tinta-900);
+        background: var(--superficie-alta);
+        color: var(--texto);
         box-shadow: var(--sombra-1);
         transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
         cursor: pointer;
@@ -155,13 +155,13 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
       }
 
       .alertas-trigger.alerta-baja {
-        border-color: var(--naranja-100);
-        background: var(--blanco);
+        border-color: var(--aviso-fondo);
+        background: var(--superficie-alta);
       }
 
       .alertas-trigger.alerta-alta {
-        border-color: var(--rojo-100);
-        background: var(--blanco);
+        border-color: var(--peligro-fondo);
+        background: var(--superficie-alta);
       }
 
       .icono {
@@ -172,18 +172,18 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
         height: 34px;
         border-radius: 50%;
         background: var(--fondo);
-        color: var(--tinta-900);
+        color: var(--texto);
         flex-shrink: 0;
       }
 
       .alerta-baja .icono {
-        background: var(--naranja-100);
-        color: #92610b;
+        background: var(--aviso-fondo);
+        color: var(--aviso-texto);
       }
 
       .alerta-alta .icono {
-        background: var(--rojo-100);
-        color: #b02a2e;
+        background: var(--peligro-fondo);
+        color: var(--peligro-texto);
       }
 
       .texto {
@@ -200,11 +200,11 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
 
       .texto small {
         font-size: 0.78rem;
-        color: var(--tinta-400);
+        color: var(--texto-tenue);
       }
 
       .chevron {
-        color: var(--tinta-400);
+        color: var(--texto-tenue);
         flex-shrink: 0;
       }
 
@@ -233,12 +233,12 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
         margin: 0 0 4px;
         font-size: 1rem;
         font-weight: 800;
-        color: var(--tinta-900);
+        color: var(--texto);
       }
 
       .menu-header p {
         margin: 0;
-        color: var(--tinta-400);
+        color: var(--texto-tenue);
         font-size: 0.84rem;
       }
 
@@ -248,16 +248,16 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
       }
 
       .menu-header mat-icon.alerta-baja {
-        color: #b97711;
+        color: var(--aviso-texto);
       }
 
       .menu-header mat-icon.alerta-alta {
-        color: #b02a2e;
+        color: var(--peligro-texto);
       }
 
       .menu-estado {
         padding: 18px 16px;
-        color: var(--tinta-600);
+        color: var(--texto-suave);
         font-size: 0.9rem;
       }
 
@@ -272,7 +272,7 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
       }
 
       .menu-estado.vacio mat-icon {
-        color: var(--verde-500);
+        color: var(--exito-icono);
       }
 
       .link-like {
@@ -291,7 +291,7 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
 
       .alerta-item {
         padding: 14px 16px;
-        border-bottom: 1px solid var(--linea);
+        border-bottom: 1px solid var(--borde);
       }
 
       .alerta-item:last-child {
@@ -310,7 +310,7 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
       .alerta-item small {
         display: block;
         margin: 0;
-        color: var(--tinta-600);
+        color: var(--texto-suave);
       }
 
       .alerta-item p {
@@ -329,18 +329,18 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
         min-width: 82px;
         padding: 4px 10px;
         border-radius: 999px;
-        font-size: 0.72rem;
+        font-size: 12px;
         font-weight: 700;
       }
 
       .estado-chip.bajo {
-        background: var(--naranja-100);
-        color: #92610b;
+        background: var(--aviso-fondo);
+        color: var(--aviso-texto);
       }
 
       .estado-chip.agotado {
-        background: var(--rojo-100);
-        color: #b02a2e;
+        background: var(--peligro-fondo);
+        color: var(--peligro-texto);
       }
 
       .menu-actions {

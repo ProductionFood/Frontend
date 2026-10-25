@@ -53,12 +53,18 @@
             tono="exito"
             icono="check_circle"
             mensaje="No hay devoluciones pendientes de revisión."
-          />
+          >
+            <a mat-stroked-button routerLink="/app/pedidos">Ver pedidos</a>
+          </app-estado-vacio>
         } @else {
           <app-estado-vacio
             icono="search_off"
             mensaje="Ninguna devolución coincide con los filtros."
-          />
+          >
+            <button mat-stroked-button type="button" (click)="limpiarFiltros()">
+              Limpiar filtros
+            </button>
+          </app-estado-vacio>
         }
       } @else {
         <div class="tabla-scroll">

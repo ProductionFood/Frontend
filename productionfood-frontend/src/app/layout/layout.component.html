@@ -77,6 +77,16 @@
       @if(['ADMIN','PRODUCCION','COMPRAS'].includes(authService.rol()??'')){<app-indicador-alertas />}
 
       <button
+        mat-icon-button
+        type="button"
+        class="boton-tema"
+        [attr.aria-label]="tema.oscuro() ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'"
+        (click)="tema.alternar()"
+      >
+        <mat-icon>{{ tema.oscuro() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+      </button>
+
+      <button
         class="perfil"
         type="button"
         [matMenuTriggerFor]="userMenu"

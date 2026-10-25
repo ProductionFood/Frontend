@@ -38,7 +38,8 @@ export class LoteProductoListaComponent {
     this.reload$.pipe(tap(()=>{this.cargando.set(true);this.error.set('');}),switchMap(()=>this.service.listar({page:this.pagina(),size:this.tamano(),idProducto:this.filtros.controls.idProducto.value??undefined,soloConStock:this.filtros.controls.soloConStock.value??false,incluirVencidos:this.filtros.controls.incluirVencidos.value??true,proximos:this.filtros.controls.proximos.value??false,sort:this.sort()}).pipe(catchError((e:HttpErrorResponse)=>{this.lotes.set([]);this.total.set(0);this.error.set(e.error?.message??'No fue posible cargar los lotes.');this.cargando.set(false);return EMPTY;}))),takeUntilDestroyed(this.destroyRef)).subscribe(r=>{this.lotes.set(r.content);this.total.set(r.totalElements);this.cargando.set(false);});
     this.filtros.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(()=>{this.pagina.set(0);this.recargar();});this.recargar();}
   dias(l:LoteProducto):number{const h=new Date();h.setHours(0,0,0,0);return Math.round((new Date(`${l.fechaVencimiento}T00:00:00`).getTime()-h.getTime())/86400000);}
-  recargar():void{this.reload$.next();}
+  limpiarFiltros():void{this.filtros.reset({idProducto:null,soloConStock:true,incluirVencidos:true,proximos:false});}
+ recargar():void{this.reload$.next();}
   cambiarPagina(e:PageEvent):void{this.pagina.set(e.pageIndex);this.tamano.set(e.pageSize);this.recargar();}
   ordenar(e:Sort):void{this.sort.set(e.direction?`${e.active},${e.direction}`:'fechaVencimiento,asc');this.recargar();}
   abrirFormulario():void{this.dialog.open(LoteProductoFormularioComponent,{width:'680px',maxWidth:'96vw',disableClose:true}).afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((r:ResultadoLoteProducto|undefined)=>{if(r){const mensaje=r.saldoAnterior!==undefined&&r.saldoPosterior!==undefined?` Stock: ${r.saldoAnterior} → ${r.saldoPosterior}.`:'';this.notify.exito(`Lote registrado correctamente.${mensaje}`);this.recargar();}});}

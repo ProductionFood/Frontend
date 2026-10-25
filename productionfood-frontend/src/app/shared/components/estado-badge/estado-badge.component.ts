@@ -34,8 +34,8 @@ export type TonoBadge =
         gap: 6px;
         padding: 5px 12px;
         border-radius: 999px;
-        background: var(--fondo);
-        color: var(--tinta-600);
+        background: var(--superficie-suave);
+        color: var(--texto-suave);
         font-size: 12px;
         font-weight: 600;
         white-space: nowrap;
@@ -49,23 +49,23 @@ export type TonoBadge =
       }
 
       .badge--pendiente {
-        background: var(--naranja-100);
-        color: #92610b;
+        background: var(--aviso-fondo);
+        color: var(--aviso-texto);
       }
 
       .badge--proceso {
-        background: var(--azul-100);
-        color: #1d4ed8;
+        background: var(--info-fondo);
+        color: var(--info-texto);
       }
 
       .badge--completado {
-        background: var(--verde-100);
-        color: var(--verde-700);
+        background: var(--exito-fondo);
+        color: var(--exito-texto);
       }
 
       .badge--peligro {
-        background: var(--rojo-100);
-        color: #b02a2e;
+        background: var(--peligro-fondo);
+        color: var(--peligro-texto);
       }
     `
   ]

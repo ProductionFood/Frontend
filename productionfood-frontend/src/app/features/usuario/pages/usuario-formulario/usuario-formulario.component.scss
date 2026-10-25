@@ -298,7 +298,7 @@
 
 .form-container {
   width: 100%;
-  max-width: 620px;
+  max-width: 720px;
 
   margin: 0 auto;
 
@@ -751,12 +751,12 @@
    RESPONSIVE
    ========================================================= */
 
-@media (max-width: 950px) {
+@media (max-width: 1100px) {
 
   .registro-card {
     grid-template-columns: 1fr;
 
-    max-width: 680px;
+    max-width: 560px;
   }
 
   .registro-brand {
@@ -790,7 +790,7 @@
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 720px) {
 
   .registro-page {
     padding: 0;
