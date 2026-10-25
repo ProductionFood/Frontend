@@ -22,44 +22,13 @@
   display: inline-flex;
   align-items: center;
   gap: var(--esp-2);
+  color: var(--blanco);
 }
 
 .kpi-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 17px;
-}
-
-.kpi {
-  @include ui.kpi;
-}
-
-.kpi--riesgo {
-  border-color: #f2c8c8;
-}
-
-.kpi-label {
-  @include ui.kpi-etiqueta;
-}
-
-.kpi-number {
-  @include ui.kpi-numero;
-}
-
-.kpi--riesgo .kpi-number {
-  color: #b02a2e;
-}
-
-.kpi-icon {
-  @include ui.kpi-icono;
-}
-
-.kpi-icon.orange {
-  @include ui.kpi-icono(var(--naranja-100), #92610b);
-}
-
-.kpi-icon.red {
-  @include ui.kpi-icono(var(--rojo-100), #b02a2e);
 }
 
 .nota {
@@ -78,14 +47,6 @@
 
 .estado-error {
   @include ui.panel-error;
-}
-
-.tabla-card {
-  @include ui.tarjeta-contenedor;
-}
-
-.tabla-header {
-  @include ui.encabezado-tarjeta;
 }
 
 .tabla-scroll {
@@ -126,10 +87,6 @@ table {
   font-size: 10.5px;
   font-weight: 700;
   color: #b02a2e;
-}
-
-.vacio {
-  @include ui.estado-vacio;
 }
 
 mat-paginator {

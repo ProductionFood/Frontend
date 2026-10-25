@@ -4,16 +4,6 @@
   display: block;
 }
 
-.panel {
-  @include ui.tarjeta;
-  padding: 18px 20px;
-}
-
-h2 {
-  @include ui.titulo-panel;
-  margin-bottom: var(--esp-4);
-}
-
 .vacio {
   margin: 0;
   font-size: 12.5px;

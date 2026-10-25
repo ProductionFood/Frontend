@@ -28,14 +28,6 @@
   margin-bottom: var(--esp-4);
 }
 
-.tabla-card {
-  @include ui.tarjeta-contenedor;
-}
-
-.tabla-header {
-  @include ui.encabezado-tarjeta;
-}
-
 .tabla-scroll {
   overflow: auto;
 }
@@ -67,34 +59,6 @@ table {
 .cantidad {
   font-weight: 700;
   color: var(--tinta-900);
-}
-
-.status {
-  @include ui.badge(var(--tinta-400), var(--tinta-600));
-}
-
-.status .punto {
-  @include ui.badge-punto;
-}
-
-.status.pending {
-  @include ui.badge(var(--naranja-100), #92610b);
-}
-
-.status.completed {
-  @include ui.badge(var(--verde-100), var(--verde-700));
-}
-
-.status.cancelled {
-  @include ui.badge(var(--rojo-100), #b02a2e);
-}
-
-.vacio {
-  @include ui.estado-vacio;
-}
-
-.vacio--ok mat-icon {
-  color: var(--verde-500);
 }
 
 mat-paginator {

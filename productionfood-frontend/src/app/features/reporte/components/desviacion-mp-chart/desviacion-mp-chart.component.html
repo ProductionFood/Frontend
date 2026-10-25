@@ -1,9 +1,7 @@
-<section class="panel">
-  <header class="panel-cabecera">
-    <h2>Desviación por materia prima</h2>
-    <span class="criterio">Acumulado · ordenado por magnitud</span>
-  </header>
-
+<app-panel-card
+  titulo="Desviación por materia prima"
+  criterio="Acumulado · ordenado por magnitud"
+>
   @if (ordenadas().length === 0) {
     <p class="vacio">Sin consumos registrados en el período.</p>
   } @else {
@@ -47,4 +45,4 @@
       }
     </ul>
   }
-</section>
+</app-panel-card>

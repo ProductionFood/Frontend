@@ -1,0 +1,12 @@
+<section class="tarjeta-tabla">
+  <header class="tarjeta-tabla__cabecera">
+    <h2 class="tarjeta-tabla__titulo">{{ titulo() }}</h2>
+    @if (contador() !== null && contador() !== '') {
+      <span class="tarjeta-tabla__contador">{{ contador() }}</span>
+    }
+  </header>
+
+  <ng-content />
+
+  <ng-content select="[pie]" />
+</section>

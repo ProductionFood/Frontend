@@ -1,0 +1,62 @@
+@use '../../styles/ui' as ui;
+
+:host {
+  display: block;
+}
+
+.kpi {
+  @include ui.kpi;
+  height: 100%;
+}
+
+.kpi__texto {
+  min-width: 0;
+}
+
+.kpi__etiqueta {
+  @include ui.kpi-etiqueta;
+}
+
+.kpi__valor {
+  @include ui.kpi-numero;
+}
+
+.kpi__valor--verde {
+  color: var(--verde-700);
+}
+
+.kpi__valor--azul {
+  color: #1d4ed8;
+}
+
+.kpi__valor--naranja {
+  color: #92610b;
+}
+
+.kpi__valor--rojo {
+  color: #b02a2e;
+}
+
+.kpi__valor--morado {
+  color: var(--morado-500);
+}
+
+.kpi__icono {
+  @include ui.kpi-icono;
+}
+
+.kpi__icono--azul {
+  @include ui.kpi-icono(var(--azul-100), #1d4ed8);
+}
+
+.kpi__icono--naranja {
+  @include ui.kpi-icono(var(--naranja-100), #92610b);
+}
+
+.kpi__icono--rojo {
+  @include ui.kpi-icono(var(--rojo-100), #b02a2e);
+}
+
+.kpi__icono--morado {
+  @include ui.kpi-icono(var(--morado-100), var(--morado-500));
+}

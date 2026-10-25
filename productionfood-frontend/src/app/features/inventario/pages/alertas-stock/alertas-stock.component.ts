@@ -5,7 +5,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -18,6 +17,10 @@ import { SiRolDirective } from '../../../../shared/directives/si-rol.directive';
 import { NivelStockBarComponent } from '../../components/nivel-stock-bar/nivel-stock-bar.component';
 import { AlertasStockResponse } from '../../models/alerta.model';
 import { AlertaService } from '../../services/alerta.service';
+import { EstadoBadgeComponent } from '../../../../shared/components/estado-badge/estado-badge.component';
+import { EstadoVacioComponent } from '../../../../shared/components/estado-vacio/estado-vacio.component';
+import { KpiCardComponent } from '../../../../shared/components/kpi-card/kpi-card.component';
+import { TarjetaTablaComponent } from '../../../../shared/components/tarjeta-tabla/tarjeta-tabla.component';
 
 /**
  * Alertas de stock (HU-27). Ordenadas por urgencia: agotadas primero aunque
@@ -34,13 +37,16 @@ import { AlertaService } from '../../services/alerta.service';
     DecimalPipe,
     RouterLink,
     MatButtonModule,
-    MatCardModule,
     MatCheckboxModule,
     MatIconModule,
     MatProgressBarModule,
     MatTableModule,
     SiRolDirective,
-    NivelStockBarComponent
+    NivelStockBarComponent,
+    EstadoBadgeComponent,
+    EstadoVacioComponent,
+    KpiCardComponent,
+    TarjetaTablaComponent
   ],
   templateUrl: './alertas-stock.component.html',
   styleUrl: './alertas-stock.component.scss'

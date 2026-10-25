@@ -11,29 +11,24 @@
   }
 
   <div class="kpi-grid">
-    <article class="kpi">
-      <div>
-        <p class="kpi-label">Lotes vigentes con stock</p>
-        <p class="kpi-number">{{ vigentes() }}</p>
-      </div>
-      <span class="kpi-icon"><mat-icon>inventory_2</mat-icon></span>
-    </article>
-
-    <article class="kpi">
-      <div>
-        <p class="kpi-label">Vencen en ≤ 3 días</p>
-        <p class="kpi-number">{{ proximos() }}</p>
-      </div>
-      <span class="kpi-icon orange"><mat-icon>schedule</mat-icon></span>
-    </article>
-
-    <article class="kpi kpi--riesgo">
-      <div>
-        <p class="kpi-label">Vencidos con stock: retirar del estante</p>
-        <p class="kpi-number">{{ vencidos() }}</p>
-      </div>
-      <span class="kpi-icon red"><mat-icon>error_outline</mat-icon></span>
-    </article>
+    <app-kpi-card
+      etiqueta="Lotes vigentes con stock"
+      [valor]="vigentes()"
+      icono="inventory_2"
+    />
+    <app-kpi-card
+      etiqueta="Vencen en ≤ 3 días"
+      [valor]="proximos()"
+      icono="schedule"
+      tono="naranja"
+    />
+    <app-kpi-card
+      etiqueta="Vencidos con stock: retirar del estante"
+      [valor]="vencidos()"
+      icono="error_outline"
+      tono="rojo"
+      tonoValor="rojo"
+    />
   </div>
 
   <p class="nota">
@@ -65,21 +60,19 @@
     </div>
   }
 
-  <section class="tabla-card">
-    <header class="tabla-header">
-      <h2>Lotes registrados</h2>
-      <span>{{ total() }} {{ total() === 1 ? 'lote' : 'lotes' }}</span>
-    </header>
-
+  <app-tarjeta-tabla
+    titulo="Lotes registrados"
+    [contador]="total() + (total() === 1 ? ' lote' : ' lotes')"
+  >
     @if (!cargando() && !error() && lotes().length === 0) {
-      <div class="vacio">
-        <mat-icon>inventory_2</mat-icon>
-        <p>
-          {{ total() === 0 && !filtros.dirty
+      <app-estado-vacio
+        icono="inventory_2"
+        [mensaje]="
+          total() === 0 && !filtros.dirty
             ? 'No hay lotes registrados. Registrar el primero: sin lotes no se puede vender.'
-            : 'Ningún lote coincide con los filtros.' }}
-        </p>
-      </div>
+            : 'Ningún lote coincide con los filtros.'
+        "
+      />
     } @else if (lotes().length) {
       <div class="tabla-scroll">
         <table mat-table [dataSource]="lotes()" matSort (matSortChange)="ordenar($event)">
@@ -148,5 +141,5 @@
         aria-label="Páginas de lotes"
       />
     }
-  </section>
+  </app-tarjeta-tabla>
 </section>

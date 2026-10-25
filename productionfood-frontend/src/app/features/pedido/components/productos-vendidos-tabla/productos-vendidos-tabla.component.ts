@@ -3,6 +3,7 @@ import { Component, input } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 
 import { ProductoVendido } from '../../models/pedido.model';
+import { PanelCardComponent } from '../../../../shared/components/panel-card/panel-card.component';
 
 /**
  * Ranking de productos más vendidos (HU-25 R-07). Se ordena por unidades,
@@ -11,7 +12,7 @@ import { ProductoVendido } from '../../models/pedido.model';
 @Component({
   selector: 'app-productos-vendidos-tabla',
   standalone: true,
-  imports: [CurrencyPipe, DecimalPipe, MatTableModule],
+  imports: [CurrencyPipe, DecimalPipe, MatTableModule, PanelCardComponent],
   templateUrl: './productos-vendidos-tabla.component.html',
   styleUrl: './productos-vendidos-tabla.component.scss'
 })

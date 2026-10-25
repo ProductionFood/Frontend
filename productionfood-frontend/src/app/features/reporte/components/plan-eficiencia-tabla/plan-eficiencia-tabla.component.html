@@ -1,9 +1,7 @@
-<section class="panel">
-  <header class="panel-cabecera">
-    <h2>Planes del período</h2>
-    <span class="criterio">{{ planes().length }} planes con consumo registrado</span>
-  </header>
-
+<app-panel-card
+  titulo="Planes del período"
+  [criterio]="planes().length + ' planes con consumo registrado'"
+>
   <table
     mat-table
     [dataSource]="planes()"
@@ -185,4 +183,4 @@
     ></tr>
     <tr mat-row *matRowDef="let plan; columns: ['detalle']" class="fila-detalle"></tr>
   </table>
-</section>
+</app-panel-card>
