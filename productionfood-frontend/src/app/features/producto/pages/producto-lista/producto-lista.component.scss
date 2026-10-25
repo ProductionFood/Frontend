@@ -4,11 +4,11 @@
 .page-header p { margin: 0; color: var(--mat-sys-on-surface-variant, #626262); }
 .page-header button { flex-shrink: 0; }
 .filtros { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.15rem; }
-.filtro-busqueda { flex: 1 1 260px; max-width: 420px; }
+.filtro-busqueda { flex: 1 1 260px; max-width: 480px; }
 .filtros mat-form-field { margin-bottom: -1.25em; }
 .filtros mat-checkbox { margin: 0 .5rem .5rem 0; }
 .nombre-producto { font-weight: 600; }
-.descripcion { display: inline-block; max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom; }
+.descripcion { display: inline-block; max-width: 420px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom; }
 .inactivo { opacity: .55; }
 .indicador-receta { display: inline-flex; align-items: center; gap: .3rem; font-size: .83rem; font-weight: 550; text-decoration: none; white-space: nowrap; }
 .indicador-receta mat-icon { width: 19px; height: 19px; font-size: 19px; }
@@ -16,14 +16,14 @@
 .sin-receta { color: #a86600; border-radius: .35rem; }
 .sin-receta:hover { text-decoration: underline; }
 .stock { font-variant-numeric: tabular-nums; font-weight: 600; }
-.stock-bajo { color: #b3261e; }
+.stock-bajo { color: var(--peligro-texto); }
 .chip-estado { display: inline-flex; align-items: center; gap: .4rem; padding: .3rem .6rem; border-radius: 999px; font-size: .8rem; white-space: nowrap; }
 .chip-estado .punto { width: .45rem; height: .45rem; border-radius: 50%; background: currentColor; }
-.chip-estado.activo { color: #247747; background: #e8f5ec; }
+.chip-estado.activo { color: #247747; background: var(--exito-fondo); }
 .chip-estado.inactivo { color: #6d6d6d; background: #efefef; }
 .primer-producto { display: flex; align-items: center; gap: .8rem; margin: .5rem 0 1rem; padding: 1rem 1.2rem; border: 1px dashed var(--mat-sys-outline-variant, #c9c9c9); border-radius: .8rem; color: var(--mat-sys-on-surface-variant, #626262); }
 .primer-producto mat-icon { color: var(--mat-sys-primary, #65558f); }
-@media (max-width: 680px) { .page-header { align-items: flex-start; flex-direction: column; } .filtros { align-items: stretch; flex-direction: column; gap: .4rem; } .filtro-busqueda { max-width: none; } .primer-producto { align-items: flex-start; flex-wrap: wrap; } }
+@media (max-width: 720px) { .page-header { align-items: flex-start; flex-direction: column; } .filtros { align-items: stretch; flex-direction: column; gap: .4rem; } .filtro-busqueda { max-width: none; } .primer-producto { align-items: flex-start; flex-wrap: wrap; } }
 
 .estado-exito { display: flex; align-items: center; gap: .7rem; padding: 1.1rem 1.25rem; border-radius: .75rem; color: #17663b; background: #e9f7ee; font-weight: 550; }
 .estado-exito mat-icon { color: #23834f; }

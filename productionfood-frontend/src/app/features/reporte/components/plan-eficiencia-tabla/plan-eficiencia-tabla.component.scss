@@ -92,7 +92,7 @@ table {
 }
 
 .valor--exceso {
-  color: #b45309;
+  color: var(--aviso-texto);
 }
 
 .valor--ahorro {
@@ -112,11 +112,11 @@ table {
 }
 
 .chip-estado.planificado {
-  @include ui.badge(var(--naranja-100), #92610b);
+  @include ui.badge(var(--naranja-100), var(--aviso-texto));
 }
 
 .chip-estado.en-proceso {
-  @include ui.badge(var(--azul-100), #1d4ed8);
+  @include ui.badge(var(--azul-100), var(--info-texto));
 }
 
 .chip-estado.completado {
@@ -124,10 +124,10 @@ table {
 }
 
 .chip-estado.cancelado {
-  @include ui.badge(var(--rojo-100), #b02a2e);
+  @include ui.badge(var(--rojo-100), var(--peligro-texto));
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
   .linea {
     grid-template-columns: 1fr auto;
     grid-template-areas:

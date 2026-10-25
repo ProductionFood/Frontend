@@ -34,14 +34,14 @@ export type TonoVacio = 'neutro' | 'exito' | 'error';
         gap: 8px;
         padding: 44px 22px;
         text-align: center;
-        color: var(--tinta-600);
+        color: var(--texto-suave);
       }
 
       .vacio mat-icon {
-        width: 34px;
-        height: 34px;
-        font-size: 34px;
-        color: var(--tinta-400);
+        width: 28px;
+        height: 28px;
+        font-size: 28px;
+        color: var(--texto-tenue);
       }
 
       .vacio__mensaje {
@@ -51,20 +51,20 @@ export type TonoVacio = 'neutro' | 'exito' | 'error';
 
       .vacio__detalle {
         font-size: 11.5px;
-        color: var(--tinta-400);
+        color: var(--texto-tenue);
       }
 
       .vacio--exito mat-icon {
-        color: var(--verde-500);
+        color: var(--exito-icono);
       }
 
       .vacio--exito .vacio__mensaje {
-        color: var(--verde-900);
+        color: var(--exito-texto);
         font-weight: 600;
       }
 
       .vacio--error mat-icon {
-        color: var(--rojo-500);
+        color: var(--peligro-icono);
       }
     `
   ]

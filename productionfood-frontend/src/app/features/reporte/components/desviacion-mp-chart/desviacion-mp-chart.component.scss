@@ -86,7 +86,7 @@
 }
 
 .valor--exceso {
-  color: #b45309;
+  color: var(--aviso-texto);
 }
 
 .valor--ahorro {
@@ -113,7 +113,7 @@
   text-align: right;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
   .fila {
     grid-template-columns: 1fr auto;
     grid-template-areas:

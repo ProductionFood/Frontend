@@ -5,6 +5,17 @@
   </button>
 </header>
 
+<app-kpis-catalogo
+  etiquetaTotal="Proveedores"
+  etiquetaActivos="Activos"
+  etiquetaInactivos="Inactivos"
+  icono="local_shipping"
+  [total]="kpiTotal()"
+  [activos]="kpiActivos()"
+  [inactivos]="kpiInactivos()"
+  [cargando]="cargandoKpis()"
+/>
+
 <section class="filtros" aria-label="Filtros de proveedores">
   <mat-form-field appearance="outline" class="filtro-busqueda">
     <mat-icon matPrefix>search</mat-icon>

@@ -46,11 +46,11 @@
 }
 
 .disponible.baja {
-  color: #92610b;
+  color: var(--aviso-texto);
 }
 
 .disponible.agotada {
-  color: #b02a2e;
+  color: var(--peligro-texto);
 }
 
 .chip-estado {

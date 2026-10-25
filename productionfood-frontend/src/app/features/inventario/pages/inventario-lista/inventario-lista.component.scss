@@ -57,7 +57,7 @@
 }
 
 .bajo mat-icon {
-  color: #92610b;
+  color: var(--aviso-texto);
 }
 
 .agotado mat-icon {
@@ -109,7 +109,7 @@ table {
 }
 
 .semaforo.bajo {
-  color: #92610b;
+  color: var(--aviso-texto);
 }
 
 .semaforo.agotado {
@@ -136,7 +136,7 @@ table {
 }
 
 .faltante {
-  color: #b02a2e;
+  color: var(--peligro-texto);
   font-weight: 600;
 }
 
@@ -196,7 +196,7 @@ table {
   to { background-position: -200% 0; }
 }
 
-@media (max-width: 700px) {
+@media (max-width: 720px) {
   .resumen {
     gap: var(--esp-2);
   }

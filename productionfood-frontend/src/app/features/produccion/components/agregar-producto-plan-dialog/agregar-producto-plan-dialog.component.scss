@@ -17,7 +17,7 @@
   padding: var(--esp-4);
   border: 1px solid var(--linea);
   border-radius: var(--radio-m);
-  background: #f5f9f6;
+  background: var(--exito-fondo);
 }
 
 .insumo {
@@ -30,5 +30,5 @@
 }
 
 .error {
-  color: #b02a2e;
+  color: var(--peligro-texto);
 }

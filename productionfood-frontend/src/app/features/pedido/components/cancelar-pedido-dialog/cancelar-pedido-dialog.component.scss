@@ -1,7 +1,7 @@
 @use '../../../../shared/styles/ui' as ui;
 
 .titulo-icono {
-  color: #b02a2e;
+  color: var(--peligro-texto);
 }
 
 .contenido {
@@ -30,7 +30,7 @@ table {
 }
 
 .lote {
-  @include ui.badge(var(--azul-100), #1d4ed8);
+  @include ui.badge(var(--azul-100), var(--info-texto));
   display: inline-block;
   margin: 0 6px 4px 0;
 }
@@ -56,7 +56,7 @@ table {
   padding: var(--esp-2) var(--esp-3);
   border-radius: var(--radio-s);
   background: var(--rojo-100);
-  color: #b02a2e;
+  color: var(--peligro-texto);
   font-size: 12.5px;
 }
 
@@ -76,7 +76,7 @@ table {
   color: #fff;
 }
 
-@media (max-width: 560px) {
+@media (max-width: 720px) {
   .contenido {
     min-width: 0;
   }

@@ -29,17 +29,17 @@ table {
 }
 
 .error {
-  color: #b02a2e;
+  color: var(--peligro-texto);
 }
 
 .PLANIFICADO {
   background: var(--naranja-100) !important;
-  color: #92610b !important;
+  color: var(--aviso-texto) !important;
 }
 
 .EN_PROCESO {
   background: var(--azul-100) !important;
-  color: #1d4ed8 !important;
+  color: var(--info-texto) !important;
 }
 
 .COMPLETADO {
@@ -49,5 +49,5 @@ table {
 
 .CANCELADO {
   background: var(--rojo-100) !important;
-  color: #b02a2e !important;
+  color: var(--peligro-texto) !important;
 }

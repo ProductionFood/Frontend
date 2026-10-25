@@ -408,6 +408,13 @@ mat-sidenav-container.shell {
   background: var(--fondo);
 }
 
+.content > * {
+  display: block;
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+}
+
 .user-info {
   display: flex;
   flex-direction: column;
@@ -443,4 +450,17 @@ mat-sidenav-container.shell {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+}
+.boton-tema {
+  color: var(--texto-suave);
+}
+
+.boton-tema:hover {
+  color: var(--texto);
+}
+
+.boton-tema mat-icon {
+  font-size: var(--icono-lg);
+  width: var(--icono-lg);
+  height: var(--icono-lg);
 }

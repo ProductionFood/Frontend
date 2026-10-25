@@ -25,7 +25,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--esp-2);
-  color: var(--blanco);
+  color: var(--texto-sobre-marca);
 }
 
 .filtros {
@@ -85,11 +85,11 @@ table {
 }
 
 .hoy {
-  color: #92610b;
+  color: var(--aviso-texto);
 }
 
 .destacado {
-  background: #fff8e7;
+  background: var(--aviso-fondo);
 }
 
 .progreso {
@@ -101,13 +101,13 @@ mat-paginator {
   border-top: 1px solid var(--linea);
 }
 
-@media (max-width: 1050px) {
+@media (max-width: 1100px) {
   .filtros {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 650px) {
+@media (max-width: 720px) {
   .filtros {
     grid-template-columns: 1fr;
     padding: 14px;

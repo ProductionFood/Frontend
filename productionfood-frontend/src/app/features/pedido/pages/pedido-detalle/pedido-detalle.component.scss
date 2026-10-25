@@ -51,7 +51,7 @@
 }
 
 .btn-cancelar {
-  color: #b02a2e;
+  color: var(--peligro-texto);
   border-color: var(--linea);
 }
 
@@ -101,11 +101,11 @@
 }
 
 .chip-estado.pendiente {
-  @include ui.badge(var(--naranja-100), #92610b);
+  @include ui.badge(var(--naranja-100), var(--aviso-texto));
 }
 
 .chip-estado.en-preparacion {
-  @include ui.badge(var(--azul-100), #1d4ed8);
+  @include ui.badge(var(--azul-100), var(--info-texto));
 }
 
 .chip-estado.entregado {
@@ -113,10 +113,10 @@
 }
 
 .chip-estado.cancelado {
-  @include ui.badge(var(--rojo-100), #b02a2e);
+  @include ui.badge(var(--rojo-100), var(--peligro-texto));
 }
 
-@media (max-width: 650px) {
+@media (max-width: 720px) {
   .page-header {
     align-items: flex-start;
     flex-direction: column;

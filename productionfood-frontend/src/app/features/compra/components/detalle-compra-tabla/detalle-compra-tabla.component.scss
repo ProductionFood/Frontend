@@ -29,9 +29,9 @@ mat-card-title {
 }
 
 .solo-lectura mat-icon {
-  width: 13px;
-  height: 13px;
-  font-size: 13px;
+  width: var(--icono-sm);
+  height: var(--icono-sm);
+  font-size: var(--icono-sm);
 }
 
 .spacer {
@@ -80,13 +80,13 @@ table {
 }
 
 .ref mat-icon {
-  width: 15px;
-  height: 15px;
-  font-size: 15px;
+  width: var(--icono-sm);
+  height: var(--icono-sm);
+  font-size: var(--icono-sm);
 }
 
 .ref.sube {
-  color: #b02a2e;
+  color: var(--peligro-texto);
 }
 
 .ref.baja {

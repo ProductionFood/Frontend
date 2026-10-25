@@ -24,7 +24,7 @@ h1 {
 
 .subtitulo {
   margin: 4px 0 0;
-  max-width: 680px;
+  max-width: 640px;
   font-size: 13px;
   color: var(--tinta-600);
 }
@@ -54,7 +54,7 @@ mat-progress-bar {
 }
 
 .grupo mat-panel-title mat-icon.sin-proveedor {
-  color: #92610b;
+  color: var(--aviso-texto);
 }
 
 .grupo mat-panel-description {
@@ -70,8 +70,8 @@ mat-progress-bar {
   margin: 0 0 12px;
   padding: 10px 14px;
   border-radius: 10px;
-  background: #fff6e2;
-  color: #92610b;
+  background: var(--aviso-fondo);
+  color: var(--aviso-texto);
   font-size: 12.5px;
 }
 
@@ -170,12 +170,12 @@ mat-progress-bar {
 }
 
 .estado--error mat-icon {
-  color: #b02a2e;
+  color: var(--peligro-texto);
 }
 
 .estado--vacio {
   border-color: var(--verde-300);
-  background: #f6fbf8;
+  background: var(--exito-fondo);
 }
 
 .estado--vacio mat-icon {
@@ -190,7 +190,7 @@ mat-progress-bar {
   font-weight: 600;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 720px) {
   .item {
     grid-template-columns: 1fr auto;
     grid-template-areas:

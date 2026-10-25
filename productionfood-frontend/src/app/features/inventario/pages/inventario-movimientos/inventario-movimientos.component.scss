@@ -99,7 +99,7 @@ table {
 }
 
 .salida-texto {
-  color: #b02a2e;
+  color: var(--peligro-texto);
   font-weight: 600;
 }
 
@@ -120,7 +120,7 @@ table {
   color: var(--rojo-500);
 }
 
-@media (max-width: 650px) {
+@media (max-width: 720px) {
   .page-header {
     align-items: flex-start;
     flex-direction: column;

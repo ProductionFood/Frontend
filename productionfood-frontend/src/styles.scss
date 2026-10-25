@@ -8,17 +8,74 @@
 html {
   height: 100%;
   scroll-behavior: smooth;
+  color-scheme: light;
 
   @include mat.theme(
     (
       color: (
         primary: mat.$green-palette,
         tertiary: mat.$red-palette,
+        theme-type: light,
       ),
-      typography: Roboto,
+      typography: (
+        plain-family: 'Inter',
+        brand-family: 'Zilla Slab',
+        regular-weight: 400,
+        medium-weight: 500,
+        bold-weight: 600,
+      ),
       density: 0,
     )
   );
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$green-palette,
+        tertiary: mat.$red-palette,
+        theme-type: dark,
+      ),
+      typography: (
+        plain-family: 'Inter',
+        brand-family: 'Zilla Slab',
+        regular-weight: 400,
+        medium-weight: 500,
+        bold-weight: 600,
+      ),
+      density: 0,
+    )
+  );
+}
+
+/* La paleta y las fuentes de la guía mandan sobre los tonos M3 por defecto. */
+html,
+html[data-theme='dark'] {
+  --mat-sys-primary: var(--verde-500);
+  --mat-sys-on-primary: #ffffff;
+  --mat-sys-primary-container: var(--verde-100);
+  --mat-sys-on-primary-container: var(--verde-900);
+  --mat-sys-secondary: var(--verde-700);
+  --mat-sys-on-secondary: #ffffff;
+  --mat-sys-tertiary: var(--azul-500);
+  --mat-sys-on-tertiary: #ffffff;
+  --mat-sys-surface: var(--superficie);
+  --mat-sys-surface-container-lowest: var(--superficie-alta);
+  --mat-sys-surface-container-low: var(--superficie-alta);
+  --mat-sys-surface-container: var(--superficie-alta);
+  --mat-sys-surface-container-high: var(--superficie-suave);
+  --mat-sys-surface-container-highest: var(--superficie-suave);
+  --mat-sys-on-surface: var(--texto);
+  --mat-sys-on-surface-variant: var(--texto-suave);
+  --mat-sys-outline: var(--borde);
+  --mat-sys-outline-variant: var(--borde);
+  --mat-sys-error: var(--peligro-icono);
+  --mat-sys-on-error: #ffffff;
+  --mat-sys-error-container: var(--peligro-fondo);
+  --mat-sys-on-error-container: var(--peligro-texto);
 }
 
 body {
@@ -30,8 +87,8 @@ body {
   // Set a default background, font and text colors for the application using
   // Angular Material's system-level CSS variables. Learn more about these
   // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
+  background-color: var(--superficie);
+  color: var(--texto);
   font: var(--mat-sys-body-medium);
 
   // Reset the user agent margin.
@@ -75,9 +132,80 @@ body {
   --esp-1:4px; --esp-2:8px; --esp-3:12px;
   --esp-4:16px; --esp-5:24px; --esp-6:32px;
 
+  /* Iconografía (§11b) */
+  --icono-xs:12px; --icono-sm:14px; --icono-md:16px;
+  --icono-lg:18px; --icono-xl:20px;
+
   /* Movimiento (guía §15) */
   --transicion-rapida:120ms ease-out;
   --transicion-base:200ms ease-out;
+
+  /* Semánticos — tema claro (los componentes solo usan estos) */
+  --superficie:#F5F7F5;
+  --superficie-alta:#FFFFFF;
+  --superficie-suave:#FAFBFB;
+  --superficie-hover:#FAFDFB;
+  --texto:#1F2A24;
+  --texto-suave:#5B6B63;
+  --texto-tenue:#8B978F;
+  --texto-titulo:#0E3B2A;
+  --borde:#E2E8E3;
+  --marca:#14653F;
+  --marca-fuerte:#1FAA70;
+  --marca-suave:#E4F5ED;
+  --texto-sobre-marca:#FFFFFF;
+  --exito-fondo:#E4F5ED; --exito-texto:#14653F; --exito-icono:#1FAA70;
+  --aviso-fondo:#FCEBCB; --aviso-texto:#92610B; --aviso-icono:#F5A524;
+  --peligro-fondo:#FBE1E1; --peligro-texto:#B02A2E; --peligro-icono:#E5484D;
+  --info-fondo:#DCE9FE; --info-texto:#1D4ED8; --info-icono:#3B82F6;
+  --morado-fondo:#EAE1FC; --morado-texto:#6D3FD1;
+}
+
+html[data-theme='dark'] {
+  /* Superficies y texto */
+  --superficie:#0F1512;
+  --superficie-alta:#171F1B;
+  --superficie-suave:#1B241F;
+  --superficie-hover:#1E2823;
+  --texto:#E6ECE8;
+  --texto-suave:#A8B5AD;
+  --texto-tenue:#7C8A82;
+  --texto-titulo:#D8EDE2;
+  --borde:#2A3730;
+
+  /* Marca */
+  --marca:#8FD6B4;
+  --marca-fuerte:#1FAA70;
+  --marca-suave:#16352A;
+  --texto-sobre-marca:#0B1510;
+
+  /* Estados */
+  --exito-fondo:rgba(31,170,112,.16); --exito-texto:#8FD6B4; --exito-icono:#1FAA70;
+  --aviso-fondo:rgba(245,165,36,.18); --aviso-texto:#F5C56B; --aviso-icono:#F5A524;
+  --peligro-fondo:rgba(229,72,77,.18); --peligro-texto:#F2A3A5; --peligro-icono:#E5484D;
+  --info-fondo:rgba(59,130,246,.18); --info-texto:#9CC0FF; --info-icono:#3B82F6;
+  --morado-fondo:rgba(139,92,246,.22); --morado-texto:#C4B5FD;
+
+  /* Primitivos que aún usan algunas pantallas */
+  --blanco:#171F1B;
+  --fondo:#0F1512;
+  --linea:#2A3730;
+  --tinta-900:#E6ECE8;
+  --tinta-600:#A8B5AD;
+  --tinta-400:#7C8A82;
+  --verde-900:#D8EDE2;
+  --verde-700:#8FD6B4;
+  --verde-300:#2F6B4F;
+  --verde-100:#16352A;
+  --azul-100:rgba(59,130,246,.18);
+  --naranja-100:rgba(245,165,36,.18);
+  --rojo-100:rgba(229,72,77,.18);
+  --morado-100:rgba(139,92,246,.22);
+
+  /* Elevación en oscuro */
+  --sombra-1:0 1px 2px rgba(0,0,0,.5);
+  --sombra-2:0 2px 6px rgba(0,0,0,.5), 0 8px 18px rgba(0,0,0,.35);
+  --sombra-3:0 8px 20px rgba(0,0,0,.55);
 }
 
 /* =========================================================
@@ -113,6 +241,92 @@ body {
   font-family: var(--fuente-display);
   font-weight: 600;
   color: var(--verde-900);
+}
+
+/* =========================================================
+   Formularios Material (§05b/§06): radio 6 y anillo de foco
+   ========================================================= */
+.mat-mdc-form-field {
+  --mdc-outlined-text-field-container-shape: var(--radio-s);
+  --mdc-outlined-text-field-focus-outline-color: var(--marca-fuerte);
+}
+
+.mat-mdc-form-field.mat-focused .mat-mdc-text-field-wrapper {
+  border-radius: var(--radio-s);
+  box-shadow: 0 0 0 3px var(--marca-suave);
+}
+
+/* =========================================================
+   Variantes de acción (§05)
+   ========================================================= */
+.mat-mdc-unelevated-button.accion-peligro {
+  --mdc-filled-button-container-color: var(--peligro-icono);
+  --mdc-filled-button-label-text-color: #fff;
+}
+
+.mat-mdc-button.accion-discreta {
+  color: var(--texto-suave);
+}
+
+/* En oscuro, Material usa el tono claro de la paleta; mantenemos la marca. */
+html[data-theme='dark'] .mat-mdc-unelevated-button {
+  --mdc-filled-button-container-color: var(--verde-500);
+  --mdc-filled-button-label-text-color: #ffffff;
+}
+
+html[data-theme='dark'] .mat-mdc-unelevated-button.accion-peligro {
+  --mdc-filled-button-container-color: var(--peligro-icono);
+  --mdc-filled-button-label-text-color: #ffffff;
+}
+
+/* Overlays: el menú y los diálogos siguen la superficie del tema. */
+.mat-mdc-menu-panel {
+  --mat-menu-container-color: var(--superficie-alta);
+  --mat-menu-container-shape: var(--radio-m);
+  --mat-menu-container-elevation-shadow: var(--sombra-3);
+}
+
+html .mat-mdc-menu-panel {
+  background-color: var(--superficie-alta);
+  color: var(--texto);
+}
+
+html .mat-mdc-menu-item {
+  color: var(--texto);
+}
+
+html .mat-mdc-menu-item .mat-icon {
+  color: var(--texto-suave);
+}
+
+html .mat-mdc-dialog-surface {
+  background-color: var(--superficie-alta);
+}
+
+/* =========================================================
+   Toasts (§10): borde izquierdo, superficie neutral
+   ========================================================= */
+.mat-mdc-snack-bar-container.notificacion-exito,
+.mat-mdc-snack-bar-container.notificacion-error,
+.mat-mdc-snack-bar-container.notificacion-advertencia {
+  --mdc-snackbar-container-color: var(--superficie-alta);
+  --mdc-snackbar-supporting-text-color: var(--texto);
+  --mdc-snackbar-action-color: var(--marca);
+  border-left: 4px solid transparent;
+  border-radius: var(--radio-m);
+  box-shadow: var(--sombra-3);
+}
+
+.mat-mdc-snack-bar-container.notificacion-exito {
+  border-left-color: var(--exito-icono);
+}
+
+.mat-mdc-snack-bar-container.notificacion-error {
+  border-left-color: var(--peligro-icono);
+}
+
+.mat-mdc-snack-bar-container.notificacion-advertencia {
+  border-left-color: var(--aviso-icono);
 }
 
 /* =========================================================
@@ -182,9 +396,10 @@ mat-icon {
   min-width: min(340px, calc(100vw - 24px)) !important;
   max-width: min(420px, calc(100vw - 24px)) !important;
   overflow-x: hidden !important;
-  border-radius: 16px !important;
-  box-shadow: 0 18px 48px rgba(16, 27, 39, 0.18) !important;
-  background: #fff !important;
+  border-radius: var(--radio-m) !important;
+  box-shadow: var(--sombra-3) !important;
+  background: var(--superficie-alta) !important;
+  color: var(--texto);
 }
 
 .mat-mdc-menu-panel.menu-alertas .mat-mdc-menu-content {

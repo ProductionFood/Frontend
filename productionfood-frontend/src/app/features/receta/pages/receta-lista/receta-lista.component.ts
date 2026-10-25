@@ -19,12 +19,14 @@ import { TablaColumnaDirective } from '../../../../shared/components/tabla-pagin
 import { ColumnaTabla, TablaPaginadaComponent } from '../../../../shared/components/tabla-paginada/tabla-paginada.component';
 import { Receta } from '../../models/receta.model';
 import { RecetaService } from '../../services/receta.service';
+import { KpisCatalogoComponent } from '../../../../shared/components/kpis-catalogo/kpis-catalogo.component';
+import { contarCatalogo } from '../../../../shared/utils/conteo-catalogo';
 import { NotificacionService } from '../../../../core/ui/notificacion.service';
 import { ConfirmarDialogComponent, ConfirmarDialogData } from '../../../../shared/components/confirmar-dialog/confirmar-dialog.component';
 
 @Component({
   selector: 'app-receta-lista', standalone: true,
-  imports: [ReactiveFormsModule, CurrencyPipe, DecimalPipe, MatButtonModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSelectModule, MatTooltipModule, TablaPaginadaComponent, TablaColumnaDirective, SiRolDirective],
+  imports: [ReactiveFormsModule, CurrencyPipe, DecimalPipe, MatButtonModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSelectModule, MatTooltipModule, TablaPaginadaComponent, TablaColumnaDirective, SiRolDirective, KpisCatalogoComponent],
   templateUrl: './receta-lista.component.html', styleUrl: './receta-lista.component.scss'
 })
 export class RecetaListaComponent {
@@ -46,6 +48,10 @@ export class RecetaListaComponent {
   readonly filtros = this.fb.group({ busqueda: this.fb.nonNullable.control(''), activa: this.fb.control<boolean | null>(true) });
   readonly recetas = signal<Receta[]>([]);
   readonly total = signal(0);
+  readonly kpiTotal = signal(0);
+  readonly kpiActivos = signal(0);
+  readonly kpiInactivos = signal(0);
+  readonly cargandoKpis = signal(true);
   readonly pagina = signal(0);
   readonly tamano = signal(20);
   readonly cargando = signal(false);
@@ -60,7 +66,19 @@ export class RecetaListaComponent {
     this.filtros.controls.activa.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => { this.pagina.set(0); this.recargar(); });
     this.recargar();
   }
-  recargar(): void { this.recargar$.next(); }
+  recargar(): void { this.recargar$.next(); this.cargarKpis(); }
+
+  private cargarKpis(): void {
+    this.cargandoKpis.set(true);
+    contarCatalogo(activa => this.service.listar({ page: 0, size: 1, activa }))
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(({ total, activos, inactivos }) => {
+        this.kpiTotal.set(total);
+        this.kpiActivos.set(activos);
+        this.kpiInactivos.set(inactivos);
+        this.cargandoKpis.set(false);
+      });
+  }
   onPagina(e: PageEvent): void { this.pagina.set(e.pageIndex); this.tamano.set(e.pageSize); this.recargar(); }
   onOrden(e: Sort): void { this.ordenCampo.set(e.direction ? e.active : ''); this.ordenDireccion.set(e.direction); this.pagina.set(0); this.recargar(); }
   abrir(receta: Receta): void { void this.router.navigate(['/app/recetas', receta.idReceta]); }

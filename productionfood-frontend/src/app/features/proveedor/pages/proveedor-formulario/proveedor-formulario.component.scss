@@ -6,4 +6,4 @@
 .error-general { color: var(--mat-sys-error); }
 mat-dialog-actions button { min-width: 100px; }
 mat-spinner { display: inline-block; margin-right: 8px; }
-@media (max-width: 520px) { .campos-dobles { grid-template-columns: 1fr; gap: 0; } }
+@media (max-width: 720px) { .campos-dobles { grid-template-columns: 1fr; gap: 0; } }
