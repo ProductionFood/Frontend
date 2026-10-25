@@ -1,9 +1,4 @@
-<section class="panel">
-  <header class="panel-cabecera">
-    <h2>Productos más vendidos</h2>
-    <span class="criterio">Ordenado por unidades</span>
-  </header>
-
+<app-panel-card titulo="Productos más vendidos" criterio="Ordenado por unidades">
   @if (datos().length === 0) {
     <p class="vacio">Sin ventas registradas en el período.</p>
   } @else {
@@ -36,4 +31,4 @@
       <tr mat-row *matRowDef="let fila; columns: columnas"></tr>
     </table>
   }
-</section>
+</app-panel-card>

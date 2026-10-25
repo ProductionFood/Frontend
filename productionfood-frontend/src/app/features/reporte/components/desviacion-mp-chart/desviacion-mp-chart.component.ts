@@ -3,6 +3,7 @@ import { Component, computed, input } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { DesviacionMateriaPrima } from '../../models/eficiencia.model';
+import { PanelCardComponent } from '../../../../shared/components/panel-card/panel-card.component';
 
 /**
  * Barras divergentes de desviación acumulada por materia prima (HU-26 R-06).
@@ -12,7 +13,7 @@ import { DesviacionMateriaPrima } from '../../models/eficiencia.model';
 @Component({
   selector: 'app-desviacion-mp-chart',
   standalone: true,
-  imports: [DecimalPipe, MatTooltipModule],
+  imports: [DecimalPipe, MatTooltipModule, PanelCardComponent],
   templateUrl: './desviacion-mp-chart.component.html',
   styleUrl: './desviacion-mp-chart.component.scss'
 })

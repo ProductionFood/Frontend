@@ -3,6 +3,7 @@ import { Component, computed, input } from '@angular/core';
 import { CurrencyPipe, DecimalPipe } from '@angular/common';
 
 import { GastoProveedor } from '../../models/compra.model';
+import { PanelCardComponent } from '../../../../shared/components/panel-card/panel-card.component';
 
 /**
  * Barras horizontales del gasto por proveedor (HU-15). Muestra los 5
@@ -12,7 +13,7 @@ import { GastoProveedor } from '../../models/compra.model';
 @Component({
   selector: 'app-gasto-proveedor-chart',
   standalone: true,
-  imports: [CurrencyPipe, DecimalPipe],
+  imports: [CurrencyPipe, DecimalPipe, PanelCardComponent],
   templateUrl: './gasto-proveedor-chart.component.html',
   styleUrl: './gasto-proveedor-chart.component.scss'
 })

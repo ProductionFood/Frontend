@@ -38,74 +38,15 @@ mat-progress-bar {
   margin-bottom: 20px;
 }
 
-.tarjeta {
-  @include ui.tarjeta;
-}
-
-.tarjeta mat-card-content {
-  display: flex;
-  flex-direction: column;
-  gap: var(--esp-1);
-  padding: 20px;
-}
-
-.cifra {
-  @include ui.kpi-numero;
-}
-
-.etiqueta {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11.5px;
-  color: var(--tinta-600);
-}
-
-.tarjeta--agotadas .cifra,
-.tarjeta--agotadas .etiqueta {
-  color: var(--rojo-500);
-}
-
-.tarjeta--agotadas mat-icon {
-  width: 16px;
-  height: 16px;
-  font-size: 16px;
-}
-
-.tarjeta--costo .cifra {
-  color: #92610b;
-}
-
-.estado {
-  @include ui.estado-vacio;
-  @include ui.tarjeta;
-  gap: var(--esp-2);
-  padding: 48px 24px;
-}
-
-.estado--vacio {
-  border-color: var(--verde-300);
-  background: #f6fbf8;
-
-  mat-icon {
-    color: var(--verde-500);
-  }
-
-  p {
-    color: var(--verde-900);
-    font-weight: 600;
-  }
-}
-
-.tabla-panel {
-  @include ui.tarjeta-contenedor;
+.estado-error {
+  @include ui.panel-error;
 }
 
 table {
   @include ui.tabla;
 }
 
-td.principal {
+.principal {
   font-weight: 600;
   color: var(--tinta-900);
 }
@@ -123,18 +64,6 @@ td.principal {
   display: flex;
   align-items: center;
   gap: 10px;
-}
-
-.chip-estado {
-  @include ui.badge(var(--tinta-400), var(--tinta-600));
-}
-
-.chip-estado.agotado {
-  @include ui.badge(var(--rojo-100), #b02a2e);
-}
-
-.chip-estado.bajo {
-  @include ui.badge(var(--naranja-100), #92610b);
 }
 
 .bloquea {

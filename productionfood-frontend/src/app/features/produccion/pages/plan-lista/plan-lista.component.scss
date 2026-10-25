@@ -25,6 +25,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--esp-2);
+  color: var(--blanco);
 }
 
 .filtros {
@@ -64,14 +65,6 @@
   }
 }
 
-.tabla-card {
-  @include ui.tarjeta-contenedor;
-}
-
-.tabla-header {
-  @include ui.encabezado-tarjeta;
-}
-
 .tabla-scroll {
   overflow-x: auto;
 }
@@ -99,37 +92,9 @@ table {
   background: #fff8e7;
 }
 
-.status {
-  @include ui.badge(var(--tinta-400), var(--tinta-600));
-}
-
-.status .punto {
-  @include ui.badge-punto;
-}
-
-.status.pending {
-  @include ui.badge(var(--naranja-100), #92610b);
-}
-
-.status.process {
-  @include ui.badge(var(--azul-100), #1d4ed8);
-}
-
-.status.completed {
-  @include ui.badge(var(--verde-100), var(--verde-700));
-}
-
-.status.cancelled {
-  @include ui.badge(var(--rojo-100), #b02a2e);
-}
-
 .progreso {
   @include ui.barra-progreso;
   min-width: 110px;
-}
-
-.vacio {
-  @include ui.estado-vacio;
 }
 
 mat-paginator {

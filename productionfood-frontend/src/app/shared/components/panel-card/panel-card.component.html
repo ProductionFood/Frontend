@@ -1,0 +1,10 @@
+<section class="panel">
+  <header class="panel__cabecera">
+    <h2 class="panel__titulo">{{ titulo() }}</h2>
+    @if (criterio(); as criterio) {
+      <span class="panel__criterio">{{ criterio }}</span>
+    }
+  </header>
+
+  <ng-content />
+</section>

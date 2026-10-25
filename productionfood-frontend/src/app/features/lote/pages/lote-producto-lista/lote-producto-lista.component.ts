@@ -1,4 +1,4 @@
-﻿import { Component, DestroyRef, inject, signal, computed } from '@angular/core';
+import { Component, DestroyRef, inject, signal, computed } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -22,7 +22,10 @@ import { LoteProducto, ResultadoLoteProducto } from '../../models/lote-producto.
 import { LoteProductoService } from '../../services/lote-producto.service';
 import { SemaforoVencimientoComponent } from '../../components/semaforo-vencimiento/semaforo-vencimiento.component';
 import { LoteProductoFormularioComponent } from '../lote-producto-formulario/lote-producto-formulario.component';
-@Component({selector:'app-lote-producto-lista',standalone:true,imports:[DatePipe,DecimalPipe,ReactiveFormsModule,MatButtonModule,MatCheckboxModule,MatDialogModule,MatFormFieldModule,MatIconModule,MatPaginatorModule,MatProgressBarModule,MatSelectModule,MatTableModule,MatSortModule,RouterLink,SiRolDirective,SemaforoVencimientoComponent],templateUrl:'./lote-producto-lista.component.html',styleUrl:'./lote-producto-lista.component.scss'})
+import { EstadoVacioComponent } from '../../../../shared/components/estado-vacio/estado-vacio.component';
+import { KpiCardComponent } from '../../../../shared/components/kpi-card/kpi-card.component';
+import { TarjetaTablaComponent } from '../../../../shared/components/tarjeta-tabla/tarjeta-tabla.component';
+@Component({selector:'app-lote-producto-lista',standalone:true,imports:[DatePipe,DecimalPipe,ReactiveFormsModule,MatButtonModule,MatCheckboxModule,MatDialogModule,MatFormFieldModule,MatIconModule,MatPaginatorModule,MatProgressBarModule,MatSelectModule,MatTableModule,MatSortModule,RouterLink,SiRolDirective,SemaforoVencimientoComponent,EstadoVacioComponent,KpiCardComponent,TarjetaTablaComponent],templateUrl:'./lote-producto-lista.component.html',styleUrl:'./lote-producto-lista.component.scss'})
 export class LoteProductoListaComponent {
   private readonly fb=inject(FormBuilder);private readonly service=inject(LoteProductoService);private readonly dialog=inject(MatDialog);private readonly notify=inject(NotificacionService);private readonly destroyRef=inject(DestroyRef);
   readonly columnas=['codigoLote','producto','fechaProduccion','fechaVencimiento','cantidadIngresada','cantidadDisponible','estado','acciones'];
