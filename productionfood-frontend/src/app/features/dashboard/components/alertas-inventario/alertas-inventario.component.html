@@ -1,0 +1,28 @@
+<article class="chart-card">
+  <header class="chart-header">
+    <h3>Alertas de inventario</h3>
+  </header>
+  @if (items().length === 0) {
+    <div class="empty-state">
+      <mat-icon>check_circle</mat-icon>
+      <p>Sin alertas de inventario</p>
+    </div>
+  } @else {
+    <div class="alertas-lista">
+      @for (item of items(); track item.nombre) {
+        <div class="alert-row">
+          <div class="alert-icon" [ngClass]="claseIcono(item.nivel)">
+            <mat-icon>{{ iconoNivel(item.nivel) }}</mat-icon>
+          </div>
+          <div class="alert-text">
+            <strong>{{ item.nombre }}</strong>
+            <span>{{ item.nivel === 'CRITICO' ? 'Agotado' : (item.nivel === 'BAJO' ? 'Stock bajo' : 'Stock adecuado') }} ({{ item.disponible }} u)</span>
+          </div>
+          <div class="alert-value" [ngClass]="claseValor(item.nivel)">
+            {{ item.disponible }} u
+          </div>
+        </div>
+      }
+    </div>
+  }
+</article>

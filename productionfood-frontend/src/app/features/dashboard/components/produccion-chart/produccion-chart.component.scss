@@ -1,0 +1,88 @@
+@use '../../../../shared/styles/ui' as ui;
+
+.chart-card {
+  @include ui.tarjeta;
+  padding: 20px 22px;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  h3 {
+    @include ui.titulo-panel;
+  }
+}
+
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 200px;
+  padding: 0 8px;
+  border-left: 1px solid var(--borde);
+  border-bottom: 1px solid var(--borde);
+  position: relative;
+}
+
+.bar-group {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  flex: 1;
+  justify-content: center;
+  position: relative;
+}
+
+.bar {
+  width: 14px;
+  border-radius: 4px 4px 0 0;
+  transition: height var(--transicion-base);
+}
+
+.bar.planificada {
+  background: var(--azul-500);
+}
+
+.bar.producida {
+  background: var(--verde-500);
+}
+
+.bar-label {
+  position: absolute;
+  bottom: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  color: var(--tinta-400);
+  white-space: nowrap;
+}
+
+.chart-legend {
+  display: flex;
+  justify-content: center;
+  gap: 22px;
+  margin-top: 32px;
+  font-size: 11px;
+  color: var(--tinta-600);
+}
+
+.chart-legend span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chart-legend .dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+@media (max-width: 720px) {
+  .bar-chart {
+    height: 160px;
+  }
+}

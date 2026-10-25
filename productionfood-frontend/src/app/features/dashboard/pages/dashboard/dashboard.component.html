@@ -1,25 +1,16 @@
 <section class="dashboard">
-  <header class="page-header">
+  <header class="welcome-banner">
     <div>
+      <h2>Bienvenido,</h2>
       <h1>Resumen del día</h1>
-      <p class="fecha">{{ fechaMostrada() | date: 'fullDate' }}</p>
+      <p>Resumen general de producción y estado de la empresa.</p>
     </div>
-    <div class="actualizacion">
-      <span class="marca-hora" aria-live="polite">
-        @if (actualizadoEn(); as marca) {
-          Actualizado {{ marca | date: 'HH:mm' }}
-        } @else {
-          Consultando…
-        }
-      </span>
-      <button
-        mat-icon-button
-        type="button"
-        aria-label="Actualizar resumen"
-        (click)="recargar()"
-      >
-        <mat-icon>refresh</mat-icon>
-      </button>
+    <div class="date-badge">
+      <mat-icon>calendar_today</mat-icon>
+      <div>
+        <strong>{{ fechaMostrada() | date: 'dd/MM/yyyy' }}</strong>
+        <span>{{ fechaMostrada() | date: 'EEEE' }}</span>
+      </div>
     </div>
   </header>
 
@@ -85,6 +76,16 @@
         <span class="kpi-nota">materias primas</span>
       </app-kpi-card>
     </a>
+  </section>
+
+  <section class="charts-grid">
+    <app-produccion-chart [datos]="produccionChart()" />
+    <app-planes-donut [datos]="planesEstado()" />
+  </section>
+
+  <section class="bottom-grid">
+    <app-planes-tabla [datos]="planesRecientes()" />
+    <app-alertas-inventario [datos]="alertasInventario()" />
   </section>
 
   <div class="tarjetas">
