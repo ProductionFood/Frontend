@@ -116,10 +116,20 @@ export class ProductoListaComponent {
       });
   }
 
-  readonly kpiTrendTotal = computed(() => '↑ +2 este mes');
-  readonly kpiTrendActivos = computed(() => '↑ +1 este mes');
+  readonly kpiTrendTotal = computed(() => '—');
+  readonly kpiTrendActivos = computed(() => '—');
   readonly kpiTrendInactivos = computed(() => '—');
-  readonly kpiTrendBajoStock = computed(() => '⚠ ↑ +2 esta semana');
+  readonly kpiTrendBajoStock = computed(() => '—');
+
+  // TODO: Requiere backend con filtro por fecha (fechaCreacion en Producto + filtro fechaDesde/fechaHasta en listar)
+  // private async cargarTendencias(): Promise<void> {
+  //   const ahora = new Date();
+  //   const mesPasado = new Date(ahora.getFullYear(), ahora.getMonth() - 1, 1);
+  //   const finMesPasado = new Date(ahora.getFullYear(), ahora.getMonth(), 0);
+  //   // const totalMesActual = await this.contarDesde(ahora);
+  //   // const totalMesPasado = await this.contarDesde(mesPasado, finMesPasado);
+  //   // this.calcularTendencia(totalMesActual, totalMesPasado);
+  // }
 
   categoriaIcono(producto: Producto): string {
     const nombre = producto.nombre.toLowerCase();

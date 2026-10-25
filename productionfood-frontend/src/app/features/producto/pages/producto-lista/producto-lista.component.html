@@ -23,7 +23,7 @@
     [tono]="'verde'"
     [tonoValor]="'verde'"
   >
-    <div class="kpi-trend">{{ kpiTrendTotal() }}</div>
+    <div class="kpi-trend" [class.warn]="kpiTrendTotal() === '—'">{{ kpiTrendTotal() }}</div>
   </app-kpi-card>
 
   <app-kpi-card
@@ -33,7 +33,7 @@
     [tono]="'azul'"
     [tonoValor]="'azul'"
   >
-    <div class="kpi-trend">{{ kpiTrendActivos() }}</div>
+    <div class="kpi-trend" [class.warn]="kpiTrendActivos() === '—'">{{ kpiTrendActivos() }}</div>
   </app-kpi-card>
 
   <app-kpi-card
@@ -43,7 +43,7 @@
     [tono]="'naranja'"
     [tonoValor]="'naranja'"
   >
-    <div class="kpi-trend">↑ +1 nueva</div>
+    <div class="kpi-trend" [class.warn]="true">—</div>
   </app-kpi-card>
 
   <app-kpi-card
@@ -53,7 +53,7 @@
     [tono]="'rojo'"
     [tonoValor]="'rojo'"
   >
-    <div class="kpi-trend warn">{{ kpiTrendBajoStock() }}</div>
+    <div class="kpi-trend" [class.warn]="kpiTrendBajoStock() === '—'">{{ kpiTrendBajoStock() }}</div>
   </app-kpi-card>
 </section>
 
