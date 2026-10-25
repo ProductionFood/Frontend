@@ -25,11 +25,13 @@ import { TablaColumnaDirective } from '../../../../shared/components/tabla-pagin
 import { Producto } from '../../models/producto.model';
 import { ProductoService } from '../../services/producto.service';
 import { ProductoFormularioComponent } from '../producto-formulario/producto-formulario.component';
+import { KpisCatalogoComponent } from '../../../../shared/components/kpis-catalogo/kpis-catalogo.component';
+import { contarCatalogo } from '../../../../shared/utils/conteo-catalogo';
 
 @Component({
   selector: 'app-producto-lista',
   standalone: true,
-  imports: [ReactiveFormsModule, DecimalPipe, CurrencyPipe, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatCheckboxModule, MatIconModule, MatMenuModule, MatTooltipModule, RouterLink, TablaPaginadaComponent, TablaColumnaDirective, SiRolDirective],
+  imports: [ReactiveFormsModule, DecimalPipe, CurrencyPipe, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatCheckboxModule, MatIconModule, MatMenuModule, MatTooltipModule, RouterLink, TablaPaginadaComponent, TablaColumnaDirective, SiRolDirective, KpisCatalogoComponent],
   templateUrl: './producto-lista.component.html',
   styleUrl: './producto-lista.component.scss'
 })
@@ -58,6 +60,10 @@ export class ProductoListaComponent {
   });
   readonly productos = signal<Producto[]>([]);
   readonly total = signal(0);
+  readonly kpiTotal = signal(0);
+  readonly kpiActivos = signal(0);
+  readonly kpiInactivos = signal(0);
+  readonly cargandoKpis = signal(true);
   readonly pagina = signal(0);
   readonly tamano = signal(20);
   readonly cargando = signal(false);
@@ -93,7 +99,19 @@ export class ProductoListaComponent {
     this.recargar();
   }
 
-  recargar(): void { this.recargar$.next(); }
+  recargar(): void { this.recargar$.next(); this.cargarKpis(); }
+
+  private cargarKpis(): void {
+    this.cargandoKpis.set(true);
+    contarCatalogo(activo => this.productoService.listar({ page: 0, size: 1, activo }))
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(({ total, activos, inactivos }) => {
+        this.kpiTotal.set(total);
+        this.kpiActivos.set(activos);
+        this.kpiInactivos.set(inactivos);
+        this.cargandoKpis.set(false);
+      });
+  }
   onPagina(evento: PageEvent): void { this.pagina.set(evento.pageIndex); this.tamano.set(evento.pageSize); this.recargar(); }
   onOrden(orden: Sort): void { this.ordenCampo.set(orden.direction ? orden.active : ''); this.ordenDireccion.set(orden.direction); this.pagina.set(0); this.recargar(); }
 

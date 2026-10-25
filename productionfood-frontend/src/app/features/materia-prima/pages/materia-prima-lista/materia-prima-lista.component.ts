@@ -38,6 +38,8 @@ import {
 import { TablaColumnaDirective } from '../../../../shared/components/tabla-paginada/tabla-columna.directive';
 import { MateriaPrima } from '../../models/materia-prima.model';
 import { MateriaPrimaService } from '../../services/materia-prima.service';
+import { KpisCatalogoComponent } from '../../../../shared/components/kpis-catalogo/kpis-catalogo.component';
+import { contarCatalogo } from '../../../../shared/utils/conteo-catalogo';
 import { MateriaPrimaFormularioComponent } from '../materia-prima-formulario/materia-prima-formulario.component';
 
 /**
@@ -60,7 +62,8 @@ import { MateriaPrimaFormularioComponent } from '../materia-prima-formulario/mat
     MatMenuModule,
     TablaPaginadaComponent,
     TablaColumnaDirective,
-    SiRolDirective
+    SiRolDirective,
+    KpisCatalogoComponent
   ],
   templateUrl: './materia-prima-lista.component.html',
   styleUrl: './materia-prima-lista.component.scss'
@@ -89,6 +92,10 @@ export class MateriaPrimaListaComponent {
 
   readonly materias = signal<MateriaPrima[]>([]);
   readonly total = signal(0);
+  readonly kpiTotal = signal(0);
+  readonly kpiActivos = signal(0);
+  readonly kpiInactivos = signal(0);
+  readonly cargandoKpis = signal(true);
   readonly pagina = signal(0);
   readonly tamano = signal(20);
   readonly cargando = signal(false);
@@ -149,6 +156,21 @@ export class MateriaPrimaListaComponent {
 
   recargar(): void {
     this.recargar$.next();
+    this.cargarKpis();
+  }
+
+  private cargarKpis(): void {
+    this.cargandoKpis.set(true);
+    contarCatalogo(activo =>
+      this.materiaPrimaService.listar({ page: 0, size: 1, activo })
+    )
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(({ total, activos, inactivos }) => {
+        this.kpiTotal.set(total);
+        this.kpiActivos.set(activos);
+        this.kpiInactivos.set(inactivos);
+        this.cargandoKpis.set(false);
+      });
   }
 
   onPagina(evento: PageEvent): void {

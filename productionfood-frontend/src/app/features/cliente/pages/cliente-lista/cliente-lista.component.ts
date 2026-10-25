@@ -20,12 +20,14 @@ import { ColumnaTabla, TablaPaginadaComponent } from '../../../../shared/compone
 import { TablaColumnaDirective } from '../../../../shared/components/tabla-paginada/tabla-columna.directive';
 import { Cliente } from '../../models/cliente.model';
 import { ClienteService } from '../../services/cliente.service';
+import { KpisCatalogoComponent } from '../../../../shared/components/kpis-catalogo/kpis-catalogo.component';
+import { contarCatalogo } from '../../../../shared/utils/conteo-catalogo';
 import { ClienteFormularioComponent } from '../cliente-formulario/cliente-formulario.component';
 
 @Component({
   selector: 'app-cliente-lista',
   standalone: true,
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatIconModule, MatMenuModule, TablaPaginadaComponent, TablaColumnaDirective, SiRolDirective],
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatIconModule, MatMenuModule, TablaPaginadaComponent, TablaColumnaDirective, SiRolDirective, KpisCatalogoComponent],
   templateUrl: './cliente-lista.component.html',
   styleUrl: './cliente-lista.component.scss'
 })
@@ -49,6 +51,10 @@ export class ClienteListaComponent {
   });
   readonly clientes = signal<Cliente[]>([]);
   readonly total = signal(0);
+  readonly kpiTotal = signal(0);
+  readonly kpiActivos = signal(0);
+  readonly kpiInactivos = signal(0);
+  readonly cargandoKpis = signal(true);
   readonly pagina = signal(0);
   readonly tamano = signal(20);
   readonly cargando = signal(false);
@@ -88,7 +94,19 @@ export class ClienteListaComponent {
     this.recargar();
   }
 
-  recargar(): void { this.recargar$.next(); }
+  recargar(): void { this.recargar$.next(); this.cargarKpis(); }
+
+  private cargarKpis(): void {
+    this.cargandoKpis.set(true);
+    contarCatalogo(activo => this.clienteService.listar({ page: 0, size: 1, activo }))
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(({ total, activos, inactivos }) => {
+        this.kpiTotal.set(total);
+        this.kpiActivos.set(activos);
+        this.kpiInactivos.set(inactivos);
+        this.cargandoKpis.set(false);
+      });
+  }
 
   onPagina(evento: PageEvent): void {
     this.pagina.set(evento.pageIndex);

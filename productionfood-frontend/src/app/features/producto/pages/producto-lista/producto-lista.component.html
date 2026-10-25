@@ -7,6 +7,17 @@
   </button>
 </header>
 
+<app-kpis-catalogo
+  etiquetaTotal="Productos"
+  etiquetaActivos="Activos"
+  etiquetaInactivos="Inactivos"
+  icono="inventory_2"
+  [total]="kpiTotal()"
+  [activos]="kpiActivos()"
+  [inactivos]="kpiInactivos()"
+  [cargando]="cargandoKpis()"
+/>
+
 <section class="filtros" aria-label="Filtros de productos">
   <mat-form-field appearance="outline" class="filtro-busqueda">
     <mat-icon matPrefix>search</mat-icon>

@@ -70,3 +70,11 @@ export interface DashboardResumen {
   produccionHoy: ResumenProduccionHoy;
   porVencer: ResumenPorVencer;
 }
+
+export interface ConteosDashboard {
+  productos: number | null;
+  materiasPrimas: number | null;
+  recetas: number | null;
+  planes: number | null;
+  inventario: number | null;
+}

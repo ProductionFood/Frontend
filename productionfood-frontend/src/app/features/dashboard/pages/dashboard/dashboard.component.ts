@@ -3,6 +3,7 @@ import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { RouterLink } from '@angular/router';
 import { catchError, filter, finalize, fromEvent, of } from 'rxjs';
 
 import { SiRolDirective } from '../../../../shared/directives/si-rol.directive';
@@ -11,7 +12,8 @@ import { TarjetaPedidosComponent } from '../../components/tarjeta-pedidos/tarjet
 import { TarjetaProduccionComponent } from '../../components/tarjeta-produccion/tarjeta-produccion.component';
 import { TarjetaStockComponent } from '../../components/tarjeta-stock/tarjeta-stock.component';
 import { TarjetaVencimientosComponent } from '../../components/tarjeta-vencimientos/tarjeta-vencimientos.component';
-import { DashboardResumen, ResumenPorVencer } from '../../models/dashboard.model';
+import { KpiCardComponent } from '../../../../shared/components/kpi-card/kpi-card.component';
+import { ConteosDashboard, DashboardResumen, ResumenPorVencer } from '../../models/dashboard.model';
 import { DashboardService } from '../../services/dashboard.service';
 
 /**
@@ -27,6 +29,8 @@ import { DashboardService } from '../../services/dashboard.service';
     DatePipe,
     MatButtonModule,
     MatIconModule,
+    RouterLink,
+    KpiCardComponent,
     SiRolDirective,
     TarjetaComprasComponent,
     TarjetaPedidosComponent,
@@ -50,6 +54,8 @@ export class DashboardComponent {
   readonly errorVencimientos = signal(false);
 
   readonly actualizadoEn = signal<Date | null>(null);
+  readonly conteos = signal<ConteosDashboard | null>(null);
+  readonly cargandoConteos = signal(true);
 
   /** Fecha del servidor (`curdate`, R-01); nunca la del navegador. */
   readonly fechaMostrada = computed(() => {
@@ -71,6 +77,7 @@ export class DashboardComponent {
   constructor() {
     this.cargarResumen();
     this.cargarVencimientos();
+    this.cargarConteos();
 
     fromEvent(document, 'visibilitychange')
       .pipe(
@@ -83,6 +90,23 @@ export class DashboardComponent {
   recargar(): void {
     this.cargarResumen();
     this.cargarVencimientos();
+    this.cargarConteos();
+  }
+
+  private cargarConteos(): void {
+    this.cargandoConteos.set(true);
+    this.dashboardService
+      .conteos()
+      .pipe(
+        catchError(() => of(null)),
+        finalize(() => this.cargandoConteos.set(false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(conteos => {
+        if (conteos) {
+          this.conteos.set(conteos);
+        }
+      });
   }
 
   cargarResumen(): void {

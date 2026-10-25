@@ -13,6 +13,17 @@
   </button>
 </header>
 
+<app-kpis-catalogo
+  etiquetaTotal="Materias primas"
+  etiquetaActivos="Activos"
+  etiquetaInactivos="Inactivos"
+  icono="category"
+  [total]="kpiTotal()"
+  [activos]="kpiActivos()"
+  [inactivos]="kpiInactivos()"
+  [cargando]="cargandoKpis()"
+/>
+
 <section class="filtros">
   <mat-form-field appearance="outline" class="filtro-busqueda">
     <mat-icon matPrefix>search</mat-icon>

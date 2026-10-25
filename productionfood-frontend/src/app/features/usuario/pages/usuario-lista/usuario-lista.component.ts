@@ -28,6 +28,8 @@ import { NotificacionService } from '../../../../core/ui/notificacion.service';
 import { Rol, Usuario } from '../../models/usuario.model';
 import { RolService } from '../../services/rol.service';
 import { UsuarioService } from '../../services/usuario.service';
+import { KpisCatalogoComponent } from '../../../../shared/components/kpis-catalogo/kpis-catalogo.component';
+import { contarCatalogo } from '../../../../shared/utils/conteo-catalogo';
 import {
   ConfirmarDialogComponent,
   ConfirmarDialogData
@@ -57,7 +59,8 @@ import { UsuarioEditorComponent } from '../usuario-editor/usuario-editor.compone
     MatIconModule,
     MatMenuModule,
     TablaPaginadaComponent,
-    TablaColumnaDirective
+    TablaColumnaDirective,
+    KpisCatalogoComponent
   ],
   templateUrl: './usuario-lista.component.html',
   styleUrl: './usuario-lista.component.scss'
@@ -87,6 +90,10 @@ export class UsuarioListaComponent {
 
   readonly usuarios = signal<Usuario[]>([]);
   readonly total = signal(0);
+  readonly kpiTotal = signal(0);
+  readonly kpiActivos = signal(0);
+  readonly kpiInactivos = signal(0);
+  readonly cargandoKpis = signal(true);
   readonly pagina = signal(0);
   readonly tamano = signal(10);
   readonly cargando = signal(false);
@@ -149,6 +156,21 @@ export class UsuarioListaComponent {
 
   recargar(): void {
     this.recargar$.next();
+    this.cargarKpis();
+  }
+
+  private cargarKpis(): void {
+    this.cargandoKpis.set(true);
+    contarCatalogo(activo =>
+      this.usuarioService.listar({ page: 0, size: 1, activo })
+    )
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(({ total, activos, inactivos }) => {
+        this.kpiTotal.set(total);
+        this.kpiActivos.set(activos);
+        this.kpiInactivos.set(inactivos);
+        this.cargandoKpis.set(false);
+      });
   }
 
   onPagina(evento: PageEvent): void {

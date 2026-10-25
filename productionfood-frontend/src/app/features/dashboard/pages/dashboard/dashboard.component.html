@@ -23,6 +23,70 @@
     </div>
   </header>
 
+  <section class="kpis-catalogo" aria-label="Resumen de catálogos">
+    <a
+      *siRol="['ADMIN', 'VENTAS', 'PRODUCCION', 'CONSULTA']"
+      class="kpi-enlace"
+      routerLink="/app/productos"
+    >
+      <app-kpi-card
+        etiqueta="Productos"
+        [valor]="cargandoConteos() ? '—' : (conteos()?.productos ?? '—')"
+        icono="inventory_2"
+      />
+    </a>
+
+    <a
+      *siRol="['ADMIN', 'PRODUCCION', 'COMPRAS', 'CONSULTA']"
+      class="kpi-enlace"
+      routerLink="/app/materias-primas"
+    >
+      <app-kpi-card
+        etiqueta="Materias primas"
+        [valor]="cargandoConteos() ? '—' : (conteos()?.materiasPrimas ?? '—')"
+        icono="category"
+      />
+    </a>
+
+    <a
+      *siRol="['ADMIN', 'PRODUCCION', 'CONSULTA']"
+      class="kpi-enlace"
+      routerLink="/app/recetas"
+    >
+      <app-kpi-card
+        etiqueta="Recetas"
+        [valor]="cargandoConteos() ? '—' : (conteos()?.recetas ?? '—')"
+        icono="menu_book"
+      />
+    </a>
+
+    <a
+      *siRol="['ADMIN', 'PRODUCCION', 'CONSULTA']"
+      class="kpi-enlace"
+      routerLink="/app/produccion"
+    >
+      <app-kpi-card
+        etiqueta="Planes de producción"
+        [valor]="cargandoConteos() ? '—' : (conteos()?.planes ?? '—')"
+        icono="precision_manufacturing"
+      />
+    </a>
+
+    <a
+      *siRol="['ADMIN', 'PRODUCCION', 'COMPRAS', 'CONSULTA']"
+      class="kpi-enlace"
+      routerLink="/app/inventario"
+    >
+      <app-kpi-card
+        etiqueta="Inventario"
+        [valor]="cargandoConteos() ? '—' : (conteos()?.inventario ?? '—')"
+        icono="warehouse"
+      >
+        <span class="kpi-nota">materias primas</span>
+      </app-kpi-card>
+    </a>
+  </section>
+
   <div class="tarjetas">
     <app-tarjeta-vencimientos
       *siRol="['ADMIN', 'VENTAS', 'PRODUCCION', 'CONSULTA']"
