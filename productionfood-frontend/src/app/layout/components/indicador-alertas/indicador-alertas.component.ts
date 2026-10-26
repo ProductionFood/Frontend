@@ -47,13 +47,6 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
       >
         <mat-icon>{{ hayAgotados() ? 'notifications_active' : 'notifications' }}</mat-icon>
       </span>
-
-      <span class="texto">
-        <strong>{{ tituloBoton() }}</strong>
-        <small>{{ subtituloBoton() }}</small>
-      </span>
-
-      <mat-icon class="chevron">expand_more</mat-icon>
     </button>
 
     <mat-menu #menuAlertas="matMenu" xPosition="before" class="menu-alertas">
@@ -128,10 +121,11 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
       .alertas-trigger {
         display: inline-flex;
         align-items: center;
-        gap: 12px;
-        min-height: 46px;
-        padding: 8px 14px;
-        border-radius: 999px;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        border-radius: 50%;
         border: 1px solid var(--linea);
         background: var(--superficie-alta);
         color: var(--texto);
@@ -176,6 +170,12 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
         flex-shrink: 0;
       }
 
+      .icono mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+
       .alerta-baja .icono {
         background: var(--aviso-fondo);
         color: var(--aviso-texto);
@@ -184,28 +184,6 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
       .alerta-alta .icono {
         background: var(--peligro-fondo);
         color: var(--peligro-texto);
-      }
-
-      .texto {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        line-height: 1.05;
-      }
-
-      .texto strong {
-        font-size: 0.95rem;
-        font-weight: 700;
-      }
-
-      .texto small {
-        font-size: 0.78rem;
-        color: var(--texto-tenue);
-      }
-
-      .chevron {
-        color: var(--texto-tenue);
-        flex-shrink: 0;
       }
 
       .menu-panel {
@@ -369,12 +347,8 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
         }
 
         .alertas-trigger {
-          padding: 8px 12px;
-          gap: 10px;
-        }
-
-        .texto small {
-          display: none;
+          width: 40px;
+          height: 40px;
         }
 
         .menu-actions {
@@ -398,25 +372,11 @@ export class IndicadorAlertasComponent {
 
   readonly tituloBoton = computed(() => {
     if (this.cargando()) return 'Consultando…';
-    if (this.error()) return 'Alertas no disponibles';
     const cantidad = this.cantidad();
     if (cantidad === 0) {
       return 'Sin alertas';
     }
     return cantidad === 1 ? '1 alerta' : `${cantidad} alertas`;
-  });
-
-  readonly subtituloBoton = computed(() => {
-    if (this.cargando()) {
-      return 'Consultando inventario';
-    }
-    if (this.error()) {
-      return 'No disponible';
-    }
-    if (this.cantidad() === 0) {
-      return 'Inventario en control';
-    }
-    return this.hayAgotados() ? 'Requieren atención inmediata' : 'Revise stock bajo';
   });
 
   readonly ariaLabel = computed(() => {

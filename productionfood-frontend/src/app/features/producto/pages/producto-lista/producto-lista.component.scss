@@ -5,30 +5,6 @@
   color: var(--tinta-900);
 }
 
-.breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 11px;
-  color: var(--tinta-400);
-  margin-bottom: 8px;
-
-  a {
-    color: var(--tinta-400);
-    text-decoration: none;
-    transition: color var(--transicion-rapida);
-
-    &:hover {
-      color: var(--marca);
-    }
-  }
-
-  strong {
-    color: var(--tinta-600);
-    font-weight: 700;
-  }
-}
-
 .page-header {
   display: flex;
   justify-content: space-between;

@@ -11,7 +11,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { RouterLink } from '@angular/router';
 import { EMPTY, Subject, catchError, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -29,7 +28,7 @@ import { contarCatalogo } from '../../../../shared/utils/conteo-catalogo';
 @Component({
   selector: 'app-producto-lista',
   standalone: true,
-  imports: [ReactiveFormsModule, DecimalPipe, CurrencyPipe, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatCheckboxModule, MatIconModule, MatMenuModule, MatTooltipModule, RouterLink, TablaPaginadaComponent, TablaColumnaDirective, SiRolDirective, KpiCardComponent],
+  imports: [ReactiveFormsModule, DecimalPipe, CurrencyPipe, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatCheckboxModule, MatIconModule, MatMenuModule, MatTooltipModule, TablaPaginadaComponent, TablaColumnaDirective, SiRolDirective, KpiCardComponent],
   templateUrl: './producto-lista.component.html',
   styleUrl: './producto-lista.component.scss'
 })

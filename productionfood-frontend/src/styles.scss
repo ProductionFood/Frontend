@@ -23,6 +23,7 @@ html {
         regular-weight: 400,
         medium-weight: 500,
         bold-weight: 600,
+        use-system-variables: true,
       ),
       density: 0,
     )
@@ -45,10 +46,110 @@ html[data-theme='dark'] {
         regular-weight: 400,
         medium-weight: 500,
         bold-weight: 600,
+        use-system-variables: true,
       ),
       density: 0,
     )
   );
+}
+
+/* =========================================================
+   Escala tipográfica de la guía (11–13px de base)
+   Material trae body-medium 14px y controles de 16px; aquí se
+   reducen para que los componentes coincidan con la plantilla.
+   ========================================================= */
+html,
+html[data-theme='dark'] {
+  /* Cuerpo de texto y controles */
+  --mat-sys-body-large: 400 13px/1.45 var(--fuente-texto);
+  --mat-sys-body-large-font: var(--fuente-texto);
+  --mat-sys-body-large-line-height: 1.45;
+  --mat-sys-body-large-size: 13px;
+  --mat-sys-body-large-tracking: 0;
+  --mat-sys-body-large-weight: 400;
+
+  --mat-sys-body-medium: 400 12.5px/1.55 var(--fuente-texto);
+  --mat-sys-body-medium-font: var(--fuente-texto);
+  --mat-sys-body-medium-line-height: 1.55;
+  --mat-sys-body-medium-size: 12.5px;
+  --mat-sys-body-medium-tracking: 0;
+  --mat-sys-body-medium-weight: 400;
+
+  --mat-sys-body-small: 400 11px/1.4 var(--fuente-texto);
+  --mat-sys-body-small-font: var(--fuente-texto);
+  --mat-sys-body-small-line-height: 1.4;
+  --mat-sys-body-small-size: 11px;
+  --mat-sys-body-small-tracking: 0;
+  --mat-sys-body-small-weight: 400;
+
+  /* Botones, chips y etiquetas */
+  --mat-sys-label-large: 600 12px/1.2 var(--fuente-texto);
+  --mat-sys-label-large-font: var(--fuente-texto);
+  --mat-sys-label-large-line-height: 1.2;
+  --mat-sys-label-large-size: 12px;
+  --mat-sys-label-large-tracking: 0;
+  --mat-sys-label-large-weight: 600;
+  --mat-sys-label-large-weight-prominent: 600;
+
+  --mat-sys-label-medium: 600 11.5px/1.2 var(--fuente-texto);
+  --mat-sys-label-medium-font: var(--fuente-texto);
+  --mat-sys-label-medium-line-height: 1.2;
+  --mat-sys-label-medium-size: 11.5px;
+  --mat-sys-label-medium-tracking: 0;
+  --mat-sys-label-medium-weight: 600;
+  --mat-sys-label-medium-weight-prominent: 600;
+
+  --mat-sys-label-small: 600 11px/1.2 var(--fuente-texto);
+  --mat-sys-label-small-font: var(--fuente-texto);
+  --mat-sys-label-small-line-height: 1.2;
+  --mat-sys-label-small-size: 11px;
+  --mat-sys-label-small-tracking: 0;
+  --mat-sys-label-small-weight: 600;
+  --mat-sys-label-small-weight-prominent: 600;
+
+  /* Títulos de tarjetas, diálogos y paneles */
+  --mat-sys-title-large: 600 18px/1.3 var(--fuente-display);
+  --mat-sys-title-large-font: var(--fuente-display);
+  --mat-sys-title-large-line-height: 1.3;
+  --mat-sys-title-large-size: 18px;
+  --mat-sys-title-large-tracking: 0;
+  --mat-sys-title-large-weight: 600;
+
+  --mat-sys-title-medium: 600 16px/1.3 var(--fuente-display);
+  --mat-sys-title-medium-font: var(--fuente-display);
+  --mat-sys-title-medium-line-height: 1.3;
+  --mat-sys-title-medium-size: 16px;
+  --mat-sys-title-medium-tracking: 0;
+  --mat-sys-title-medium-weight: 600;
+
+  --mat-sys-title-small: 600 14px/1.3 var(--fuente-display);
+  --mat-sys-title-small-font: var(--fuente-display);
+  --mat-sys-title-small-line-height: 1.3;
+  --mat-sys-title-small-size: 14px;
+  --mat-sys-title-small-tracking: 0;
+  --mat-sys-title-small-weight: 600;
+
+  /* Encabezados de pantalla */
+  --mat-sys-headline-small: 600 22px/1.25 var(--fuente-display);
+  --mat-sys-headline-small-font: var(--fuente-display);
+  --mat-sys-headline-small-line-height: 1.25;
+  --mat-sys-headline-small-size: 22px;
+  --mat-sys-headline-small-tracking: 0;
+  --mat-sys-headline-small-weight: 600;
+
+  --mat-sys-headline-medium: 600 26px/1.2 var(--fuente-display);
+  --mat-sys-headline-medium-font: var(--fuente-display);
+  --mat-sys-headline-medium-line-height: 1.2;
+  --mat-sys-headline-medium-size: 26px;
+  --mat-sys-headline-medium-tracking: 0;
+  --mat-sys-headline-medium-weight: 600;
+
+  --mat-sys-headline-large: 600 30px/1.2 var(--fuente-display);
+  --mat-sys-headline-large-font: var(--fuente-display);
+  --mat-sys-headline-large-line-height: 1.2;
+  --mat-sys-headline-large-size: 30px;
+  --mat-sys-headline-large-tracking: 0;
+  --mat-sys-headline-large-weight: 600;
 }
 
 /* La paleta y las fuentes de la guía mandan sobre los tonos M3 por defecto. */

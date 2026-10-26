@@ -4,32 +4,6 @@
   display: block;
 }
 
-.breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: var(--esp-2);
-  font-size: 11px;
-  color: var(--texto-suave);
-  margin-bottom: var(--esp-3);
-
-  a {
-    color: var(--texto-suave);
-    transition: color var(--transicion-rapida);
-
-    &:hover {
-      color: var(--marca);
-    }
-  }
-
-  span {
-    color: var(--texto-tenue);
-  }
-
-  strong {
-    color: var(--texto);
-    font-weight: 600;
-  }
-}
 
 .page-header {
   display: flex;
