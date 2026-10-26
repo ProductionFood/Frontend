@@ -1,85 +1,190 @@
+@use '../../../../shared/styles/ui' as ui;
+
 :host {
   display: block;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  font-size: 11px;
+  color: var(--texto-suave);
+  margin-bottom: var(--esp-3);
+
+  a {
+    color: var(--texto-suave);
+    transition: color var(--transicion-rapida);
+
+    &:hover {
+      color: var(--marca);
+    }
+  }
+
+  span {
+    color: var(--texto-tenue);
+  }
+
+  strong {
+    color: var(--texto);
+    font-weight: 600;
+  }
 }
 
 .page-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 16px;
+  gap: var(--esp-4);
   flex-wrap: wrap;
-  margin-bottom: 20px;
+  margin-bottom: var(--esp-5);
+
+  h1 {
+    @include ui.titulo-panel;
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: -0.4px;
+    color: var(--texto-titulo);
+  }
+
+  p {
+    margin: var(--esp-1) 0 0;
+    max-width: 520px;
+    font-size: 13px;
+    color: var(--texto-suave);
+  }
 }
 
-.page-header h1 {
-  margin: 0;
-  font-family: var(--fuente-display);
-  font-size: 30px;
-  font-weight: 600;
-  letter-spacing: -0.4px;
-  color: var(--verde-900);
+.btn-primary {
+  @include ui.boton-primario;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+  background: var(--marca);
+  color: var(--blanco);
+  border: none;
+
+  &:hover {
+    background: var(--marca-hover);
+  }
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
 }
 
-.page-header p {
-  margin: 5px 0 0;
-  max-width: 520px;
-  font-size: 13px;
-  color: var(--tinta-600);
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--esp-4);
+  margin-bottom: var(--esp-5);
+
+  @media (max-width: 1100px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 720px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .filtros {
+  @include ui.filtros-tarjeta;
+  margin-bottom: var(--esp-5);
+
+  .filtro-busqueda {
+    flex: 1;
+    min-width: 240px;
+  }
+
+  mat-form-field {
+    width: 180px;
+  }
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--esp-2);
+    height: 40px;
+  }
+}
+
+.cargando-tabla {
+  padding: var(--esp-4);
+
+  mat-progress-bar {
+    width: 100%;
+  }
+}
+
+.usuario-celda {
   display: flex;
   align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 16px;
+  gap: var(--esp-3);
+
+  .usuario-nombre {
+    display: block;
+    font-weight: 600;
+    color: var(--texto);
+  }
+
+  .usuario-correo {
+    display: block;
+    font-size: 12.5px;
+    color: var(--texto-suave);
+  }
 }
 
-.filtro-busqueda {
-  flex: 1;
-  min-width: 240px;
-}
-
-.chip-rol {
-  display: inline-flex;
-  padding: 5px 12px;
-  border-radius: 999px;
-  background: var(--verde-100);
-  color: var(--verde-700);
-  font-size: 10.5px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.chip-estado {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 12px;
-  border-radius: 999px;
-  font-size: 10.5px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.chip-estado .punto {
-  width: 6px;
-  height: 6px;
+.user-avatar {
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  background: currentColor;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12.5px;
+  font-weight: 700;
+  flex-shrink: 0;
+  color: var(--blanco);
+
+  &.v1 { background: var(--verde-500); }
+  &.v2 { background: var(--azul-500); }
+  &.v3 { background: var(--morado-500); }
+  &.v4 { background: var(--naranja-500); }
+  &.v5 { background: var(--rojo-500); }
+  &.v6 { background: var(--navy-700); }
 }
 
-.chip-estado.activo {
-  background: var(--verde-100);
-  color: var(--verde-700);
-}
-
-.chip-estado.inactivo {
-  background: var(--linea);
-  color: var(--tinta-600);
+.ultimo-acceso {
+  font-size: 12.5px;
+  color: var(--texto-suave);
 }
 
 .acciones-fila {
   display: flex;
-  gap: 4px;
+  gap: var(--esp-1);
+}
+
+@media (max-width: 900px) {
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filtros {
+    flex-direction: column;
+    align-items: stretch;
+
+    mat-form-field,
+    button {
+      width: 100%;
+    }
+  }
 }
