@@ -464,3 +464,45 @@ mat-sidenav-container.shell {
   width: var(--icono-lg);
   height: var(--icono-lg);
 }
+
+/* El icono acompaña el cambio de tema con una rotación y un pequeño rebote. */
+.boton-tema mat-icon {
+  transform: rotate(0deg) scale(1);
+  transition: transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    color 380ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.boton-tema.tema-oscuro mat-icon {
+  transform: rotate(180deg) scale(1.12);
+}
+
+.boton-tema {
+  position: relative;
+  isolation: isolate;
+}
+
+.boton-tema::after {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border-radius: 50%;
+  background: var(--verde-300, #8fd6b4);
+  opacity: 0;
+  transform: scale(0.55);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.boton-tema.tema-oscuro::after {
+  animation: halo-cambio-tema 520ms ease-out;
+}
+
+@keyframes halo-cambio-tema {
+  0% { opacity: 0.28; transform: scale(0.55); }
+  100% { opacity: 0; transform: scale(1.8); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boton-tema mat-icon { transition: none; }
+  .boton-tema.tema-oscuro::after { animation: none; }
+}
