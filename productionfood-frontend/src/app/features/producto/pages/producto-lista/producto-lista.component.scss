@@ -353,3 +353,13 @@
     min-width: 0;
   }
 }
+
+/* Mantiene la tarjeta de bienvenida legible en modo oscuro. */
+:host-context(html[data-theme='dark']) .primer-producto {
+  background: linear-gradient(100deg, #17251e 0%, #1a3025 55%, #29291f 100%);
+
+  span { color: var(--texto-suave); }
+
+  mat-icon { color: var(--verde-700); }
+}
+
