@@ -76,7 +76,7 @@
 }
 
 .kpi {
-  background: white;
+  background: var(--superficie-alta);
   border: 1px solid var(--linea);
   border-radius: var(--radio-m);
   padding: 20px;
@@ -132,7 +132,7 @@
 }
 
 .filters {
-  background: white;
+  background: var(--superficie-alta);
   border: 1px solid var(--linea);
   border-radius: var(--radio-m);
   padding: 14px 16px;
@@ -162,7 +162,7 @@
   padding: 10px 12px 10px 38px;
   border: 1px solid var(--linea);
   border-radius: var(--radio-s);
-  background: #fafbfc;
+  background: var(--superficie-suave);
   outline: none;
   font-family: inherit;
   font-size: 11.5px;
@@ -171,7 +171,7 @@
 
 .filter-search input:focus {
   border-color: var(--verde-500);
-  background: white;
+  background: var(--superficie-alta);
 }
 
 .filter-checkbox {
@@ -196,7 +196,7 @@
 }
 
 .table-card {
-  background: white;
+  background: var(--superficie-alta);
   border: 1px solid var(--linea);
   border-radius: var(--radio-m);
   overflow: hidden;
@@ -234,7 +234,7 @@ table {
 
 th {
   padding: 12px 20px;
-  background: #fafbfb;
+  background: var(--superficie-suave);
   color: var(--tinta-600);
   text-align: left;
   font-size: 10px;
@@ -256,7 +256,7 @@ tbody tr {
 }
 
 tbody tr:hover {
-  background: #fafdfb;
+  background: var(--superficie-hover);
 }
 
 .category {

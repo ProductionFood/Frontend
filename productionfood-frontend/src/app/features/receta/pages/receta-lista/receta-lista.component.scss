@@ -76,7 +76,7 @@
 }
 
 .kpi {
-  background: white;
+  background: var(--superficie-alta);
   border: 1px solid var(--linea);
   border-radius: var(--radio-m);
   padding: 20px;
@@ -132,7 +132,7 @@
 }
 
 .filters {
-  background: white;
+  background: var(--superficie-alta);
   border: 1px solid var(--linea);
   border-radius: var(--radio-m);
   padding: 14px 16px;
@@ -162,7 +162,7 @@
   padding: 10px 12px 10px 38px;
   border: 1px solid var(--linea);
   border-radius: var(--radio-s);
-  background: #fafbfc;
+  background: var(--superficie-suave);
   outline: none;
   font-family: inherit;
   font-size: 11.5px;
@@ -171,7 +171,7 @@
 
 .filter-search input:focus {
   border-color: var(--verde-500);
-  background: white;
+  background: var(--superficie-alta);
 }
 
 .filter-select {
@@ -184,7 +184,7 @@
   background-position: right 12px center;
   border: 1px solid var(--linea);
   border-radius: var(--radio-s);
-  background-color: #fafbfc;
+  background-color: var(--superficie-suave);
   font-family: inherit;
   font-size: 11.5px;
   color: var(--tinta-900);
@@ -193,11 +193,11 @@
 
 .filter-select:focus {
   border-color: var(--verde-500);
-  background: white;
+  background: var(--superficie-alta);
 }
 
 .table-card {
-  background: white;
+  background: var(--superficie-alta);
   border: 1px solid var(--linea);
   border-radius: var(--radio-m);
   overflow: hidden;
@@ -235,7 +235,7 @@ table {
 
 th {
   padding: 12px 20px;
-  background: #fafbfb;
+  background: var(--superficie-suave);
   color: var(--tinta-600);
   text-align: left;
   font-size: 10px;
@@ -257,7 +257,7 @@ tbody tr {
 }
 
 tbody tr:hover {
-  background: #fafdfb;
+  background: var(--superficie-hover);
 }
 
 .item-cell {
@@ -347,7 +347,7 @@ tbody tr:hover {
   width: 30px;
   height: 30px;
   border: 1px solid var(--linea);
-  background: white;
+  background: var(--superficie-alta);
   border-radius: var(--radio-s);
   color: var(--tinta-600);
   cursor: pointer;
@@ -395,7 +395,7 @@ tbody tr:hover {
   align-items: center;
   justify-content: center;
   border: 1px solid var(--linea);
-  background: white;
+  background: var(--superficie-alta);
   border-radius: var(--radio-s);
   font-family: inherit;
   font-size: 11.5px;

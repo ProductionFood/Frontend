@@ -1,28 +1,24 @@
+:host { display: block; }
+h2[mat-dialog-title] {
+  margin: 0; padding: 24px 24px 8px; color: var(--verde-900);
+  font-family: var(--fuente-display); font-size: 24px; font-weight: 600; line-height: 1.25;
+}
 .contenido {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding-top: 8px;
-  min-width: 360px;
+  display: flex; flex-direction: column; gap: 8px;
+  padding: 12px 24px 16px; min-width: min(360px, calc(100vw - 48px)); box-sizing: border-box;
 }
-
-.full-width {
-  width: 100%;
-}
-
+.full-width { width: 100%; }
 .error-general {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 12px;
-  border-radius: var(--radio-s);
-  background: var(--rojo-100);
-  color: var(--peligro-texto);
-  font-size: 12.5px;
+  display: flex; align-items: center; gap: 10px; padding: 12px 14px;
+  border-radius: var(--radio-m, 10px); background: var(--peligro-fondo); color: var(--peligro-texto);
+  border: 1px solid color-mix(in srgb, var(--peligro-texto) 16%, transparent); font-size: 12.5px; line-height: 1.45;
 }
-
-.error-general mat-icon {
-  width: 18px;
-  height: 18px;
-  font-size: 18px;
+.error-general mat-icon { flex: 0 0 auto; width: 20px; height: 20px; font-size: 20px; }
+mat-dialog-actions { gap: 10px; padding: 14px 24px 22px; border-top: 1px solid var(--borde, #E2E8E3); }
+mat-dialog-actions button { min-height: 40px; border-radius: var(--radio-m, 10px); }
+@media (max-width: 600px) {
+  h2[mat-dialog-title] { padding: 20px 20px 8px; font-size: 21px; }
+  .contenido { min-width: 0; padding: 12px 20px 16px; }
+  mat-dialog-actions { padding: 12px 20px 18px; flex-wrap: wrap; }
+  mat-dialog-actions button { flex: 1 1 auto; }
 }

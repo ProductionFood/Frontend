@@ -35,3 +35,10 @@ mat-dialog-content p {
 .confirmar.peligro {
   background: var(--rojo-500);
 }
+
+/* Fase 4: refinamiento visual del diálogo */
+.dialogo-icono { flex-shrink: 0; box-shadow: 0 2px 6px rgba(15, 40, 25, .08); }
+mat-dialog-content { padding-top: var(--esp-2); }
+mat-dialog-actions { gap: var(--esp-2); padding-top: var(--esp-2); }
+.confirmar { border-radius: var(--radio-s); font-weight: 600; }
+

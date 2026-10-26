@@ -32,3 +32,11 @@
 .error {
   color: var(--peligro-texto);
 }
+
+/* Fase 4: refinamiento visual del diálogo */
+mat-dialog-content { padding-top: var(--esp-2); }
+.aviso { line-height: 1.5; box-shadow: 0 1px 2px rgba(15, 40, 25, .04); }
+.campos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+mat-dialog-actions { gap: var(--esp-2); padding-top: var(--esp-2); }
+@media (max-width: 560px) { .campos { grid-template-columns: minmax(0, 1fr); } }
+
