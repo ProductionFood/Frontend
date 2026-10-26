@@ -860,3 +860,24 @@
     transition-duration: 0.01ms !important;
   }
 }
+/* Evita superficies blancas persistentes cuando se activa el tema oscuro. */
+:host-context(html[data-theme='dark']) {
+  .registro-card,
+  .registro-form {
+    background: var(--superficie-alta);
+    color: var(--texto);
+  }
+
+  ::ng-deep .mat-mdc-text-field-wrapper {
+    background: var(--superficie-suave);
+  }
+
+  .btn-cancel {
+    background: var(--superficie-alta);
+    color: var(--texto);
+  }
+
+  .btn-cancel:hover:not(:disabled) {
+    background: var(--superficie-hover);
+  }
+}

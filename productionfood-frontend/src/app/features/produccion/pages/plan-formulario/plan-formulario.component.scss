@@ -78,3 +78,8 @@ mat-card-content { padding: 1.5rem; }
   .actions { flex-direction: column-reverse; }
   .actions button { width: 100%; }
 }
+
+:host-context(html[data-theme='dark']) mat-card-header {
+  background: linear-gradient(115deg, #17251e 0%, #1b241f 100%);
+}
+

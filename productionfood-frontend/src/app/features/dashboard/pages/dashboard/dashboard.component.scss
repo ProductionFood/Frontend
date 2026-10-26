@@ -184,3 +184,13 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* El banner usa una superficie adaptada al tema activo. */
+:host-context(html[data-theme='dark']) .welcome-banner {
+  background: linear-gradient(100deg, #17251e 0%, #1a3025 55%, #29291f 100%);
+
+  h2, p { color: var(--texto-suave); }
+
+  h1 { color: var(--texto-titulo); }
+}
+

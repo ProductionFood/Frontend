@@ -140,3 +140,8 @@ table {
   .dato { grid-area: dato; }
   .valor { grid-area: valor; }
 }
+
+:host-context(html[data-theme='dark']) .fila-expandida {
+  background: var(--superficie-suave);
+}
+

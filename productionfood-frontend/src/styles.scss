@@ -202,6 +202,24 @@ html[data-theme='dark'] body {
   color-scheme: dark;
 }
 
+/* Transición global del tema: suaviza las superficies sin recrear componentes. */
+body,
+body * {
+  transition-property: color, background-color, border-color, box-shadow;
+  transition-duration: 380ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body,
+  body * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* =========================================================
    ProductionFood — Guía de diseño (tokens globales)
    ========================================================= */

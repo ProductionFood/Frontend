@@ -167,3 +167,45 @@ td small { display: block; max-width: 720px; margin-top: .25rem; color: var(--fo
   .acciones-finales { flex-direction: column-reverse; }
   .acciones-finales button { width: 100%; }
 }
+
+/* Superficies auxiliares con colores suaves también respetan el tema oscuro. */
+:host-context(html[data-theme='dark']) {
+  .estado {
+    border-color: var(--borde);
+    background: var(--exito-fondo);
+    color: var(--exito-texto);
+  }
+
+  .estado.inactiva {
+    border-color: var(--borde);
+    background: var(--superficie-suave);
+    color: var(--texto-suave);
+  }
+
+  .ayuda-rendimiento {
+    border-color: var(--borde);
+    background: var(--info-fondo);
+    color: var(--info-texto);
+  }
+
+  .aviso {
+    border-color: var(--borde);
+    background: var(--exito-fondo);
+    color: var(--exito-texto);
+  }
+
+  .error-general {
+    border-color: var(--borde);
+    background: var(--peligro-fondo);
+    color: var(--peligro-texto);
+  }
+
+  th { background: var(--superficie-suave); }
+  tbody tr:hover { background: var(--superficie-hover); }
+
+  .resumen-linea.margen {
+    background: var(--exito-fondo);
+    color: var(--exito-texto);
+  }
+}
+

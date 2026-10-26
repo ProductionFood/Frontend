@@ -189,3 +189,8 @@ table {
   .linea .precio { grid-area: precio; }
   .linea .subtotal { grid-area: subtotal; }
 }
+
+:host-context(html[data-theme='dark']) .fila-expandida {
+  background: var(--superficie-suave);
+}
+

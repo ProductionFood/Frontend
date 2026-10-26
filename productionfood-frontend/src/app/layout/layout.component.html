@@ -80,6 +80,7 @@
         mat-icon-button
         type="button"
         class="boton-tema"
+        [class.tema-oscuro]="tema.oscuro()"
         [attr.aria-label]="tema.oscuro() ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'"
         (click)="tema.alternar()"
       >
