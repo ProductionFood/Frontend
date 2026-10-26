@@ -78,7 +78,7 @@
 }
 
 .kpi {
-  background: white;
+  background: var(--superficie-alta);
   border: 1px solid var(--linea);
   border-radius: var(--radio-m);
   padding: 20px;
@@ -159,7 +159,7 @@
 }
 
 .report-card {
-  background: white;
+  background: var(--superficie-alta);
   border: 1px solid var(--linea);
   border-radius: var(--radio-m);
   padding: 22px;
@@ -252,7 +252,7 @@
 }
 
 .table-card {
-  background: white;
+  background: var(--superficie-alta);
   border: 1px solid var(--linea);
   border-radius: var(--radio-m);
   overflow: hidden;

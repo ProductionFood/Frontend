@@ -197,6 +197,11 @@ body {
   height: 100%;
 }
 
+/* Mantiene controles nativos y widgets del navegador en el tema activo. */
+html[data-theme='dark'] body {
+  color-scheme: dark;
+}
+
 /* =========================================================
    ProductionFood — Guía de diseño (tokens globales)
    ========================================================= */
