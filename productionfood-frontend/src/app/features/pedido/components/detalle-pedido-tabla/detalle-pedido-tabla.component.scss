@@ -1,0 +1,13 @@
+@use '../../../../shared/styles/ui' as ui;
+
+:host {
+  display: block;
+}
+
+.tabla-scroll {
+  overflow-x: auto;
+}
+
+table {
+  @include ui.tabla;
+}

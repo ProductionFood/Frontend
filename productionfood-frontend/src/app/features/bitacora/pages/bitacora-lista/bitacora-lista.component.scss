@@ -39,7 +39,7 @@
   align-items: center;
   gap: 6px;
   margin: 0 0 16px;
-  color: #b02a2e;
+  color: var(--peligro-texto);
   font-size: 12.5px;
 }
 
@@ -79,17 +79,17 @@
 
 .chip-accion.accion-editar {
   background: var(--azul-100);
-  color: #1d4ed8;
+  color: var(--info-texto);
 }
 
 .chip-accion.accion-estado {
   background: var(--naranja-100);
-  color: #92610b;
+  color: var(--aviso-texto);
 }
 
 .chip-accion.accion-peligro {
   background: var(--rojo-100);
-  color: #b02a2e;
+  color: var(--peligro-texto);
 }
 
 .chip-accion.accion-neutro {
@@ -99,7 +99,7 @@
 
 .detalle {
   display: block;
-  max-width: 340px;
+  max-width: 420px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

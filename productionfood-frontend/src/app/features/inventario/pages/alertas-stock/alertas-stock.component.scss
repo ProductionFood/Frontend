@@ -1,3 +1,5 @@
+@use '../../../../shared/styles/ui' as ui;
+
 :host {
   display: block;
 }
@@ -6,146 +8,45 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 16px;
+  gap: var(--esp-4);
   flex-wrap: wrap;
   margin-bottom: 20px;
 }
 
 h1 {
   margin: 0;
-  font-size: 26px;
-  color: var(--tinta-900);
+  font-family: var(--fuente-display);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--verde-900);
 }
 
 .subtitulo {
-  margin: 4px 0 0;
+  margin: var(--esp-1) 0 0;
   font-size: 13px;
   color: var(--tinta-600);
 }
 
 mat-progress-bar {
-  margin-bottom: 16px;
+  margin-bottom: var(--esp-4);
 }
 
 .resumen {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
+  gap: 17px;
   margin-bottom: 20px;
 }
 
-.tarjeta {
-  border: 1px solid var(--linea);
-  box-shadow: none !important;
-}
-
-.tarjeta mat-card-content {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 18px 20px;
-}
-
-.cifra {
-  font-family: var(--fuente-display);
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--tinta-900);
-}
-
-.etiqueta {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: var(--tinta-600);
-}
-
-.tarjeta--agotadas .cifra,
-.tarjeta--agotadas .etiqueta {
-  color: var(--rojo-500);
-}
-
-.tarjeta--agotadas mat-icon {
-  width: 16px;
-  height: 16px;
-  font-size: 16px;
-}
-
-.tarjeta--costo .cifra {
-  color: #92610b;
-}
-
-.estado {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 48px 24px;
-  text-align: center;
-  color: var(--tinta-600);
-  background: var(--blanco);
-  border: 1px solid var(--linea);
-  border-radius: 12px;
-}
-
-.estado p {
-  margin: 0;
-  font-size: 13px;
-}
-
-.estado small {
-  font-size: 12px;
-  color: var(--tinta-400);
-}
-
-.estado--error mat-icon {
-  color: #b02a2e;
-}
-
-.estado--vacio {
-  border-color: var(--verde-300);
-  background: #f6fbf8;
-}
-
-.estado--vacio mat-icon {
-  width: 40px;
-  height: 40px;
-  font-size: 40px;
-  color: var(--verde-500);
-}
-
-.estado--vacio p {
-  color: var(--verde-900);
-  font-weight: 600;
-}
-
-.tabla-panel {
-  background: var(--blanco);
-  border: 1px solid var(--linea);
-  border-radius: 12px;
-  overflow: hidden;
+.estado-error {
+  @include ui.panel-error;
 }
 
 table {
-  width: 100%;
+  @include ui.tabla;
 }
 
-th.mat-mdc-header-cell {
-  background: #fafbfb;
-  color: var(--tinta-600);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-
-td.mat-mdc-cell {
-  color: var(--tinta-600);
-  font-size: 11.5px;
-}
-
-td.principal {
+.principal {
   font-weight: 600;
   color: var(--tinta-900);
 }
@@ -156,7 +57,7 @@ td.principal {
 
 .faltante {
   font-weight: 600;
-  color: #92610b;
+  color: var(--aviso-texto);
 }
 
 .nivel {
@@ -165,38 +66,18 @@ td.principal {
   gap: 10px;
 }
 
-.chip-estado {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 10.5px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.chip-estado.agotado {
-  background: var(--rojo-100);
-  color: #b02a2e;
-}
-
-.chip-estado.bajo {
-  background: var(--naranja-100);
-  color: #92610b;
-}
-
 .bloquea {
   display: block;
-  margin-top: 4px;
+  margin-top: var(--esp-1);
   font-size: 11px;
-  color: #b02a2e;
+  color: var(--peligro-texto);
 }
 
 .pie {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: var(--esp-4);
   flex-wrap: wrap;
   padding: 14px 20px;
   border-top: 1px solid var(--linea);

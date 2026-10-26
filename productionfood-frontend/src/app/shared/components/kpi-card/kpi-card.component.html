@@ -1,0 +1,15 @@
+<article class="kpi">
+  <div class="kpi__texto">
+    <p class="kpi__etiqueta">{{ etiqueta() }}</p>
+    <p [class]="'kpi__valor' + (tonoValor() ? ' kpi__valor--' + tonoValor() : '')">
+      {{ valor() }}
+    </p>
+    <ng-content />
+  </div>
+
+  @if (icono(); as icono) {
+    <span [class]="'kpi__icono kpi__icono--' + tono()">
+      <mat-icon aria-hidden="true">{{ icono }}</mat-icon>
+    </span>
+  }
+</article>

@@ -1,1 +1,23 @@
-.pagina{padding:24px;display:grid;gap:15px}.tabla{overflow:auto}.tabla table{width:100%}.entrada{color:#15803d}.error{color:#b91c1c}
+@use '../../../../shared/styles/ui' as ui;
+
+.pagina {
+  display: grid;
+  gap: var(--esp-4);
+}
+
+.tabla {
+  @include ui.tarjeta-contenedor;
+  overflow: auto;
+}
+
+table {
+  @include ui.tabla;
+}
+
+.entrada {
+  color: var(--verde-700);
+}
+
+.error {
+  color: var(--peligro-texto);
+}

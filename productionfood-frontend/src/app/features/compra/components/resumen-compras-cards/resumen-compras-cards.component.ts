@@ -3,6 +3,7 @@ import { Component, input } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 
 import { ResumenCompras } from '../../models/compra.model';
+import { KpiCardComponent } from '../../../../shared/components/kpi-card/kpi-card.component';
 
 /**
  * Tarjetas de resumen del período (HU-15). El gasto ejecutado (recibidas) y
@@ -12,7 +13,7 @@ import { ResumenCompras } from '../../models/compra.model';
 @Component({
   selector: 'app-resumen-compras-cards',
   standalone: true,
-  imports: [CurrencyPipe],
+  imports: [CurrencyPipe, KpiCardComponent],
   templateUrl: './resumen-compras-cards.component.html',
   styleUrl: './resumen-compras-cards.component.scss'
 })

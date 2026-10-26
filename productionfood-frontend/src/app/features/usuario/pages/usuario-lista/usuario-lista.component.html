@@ -7,6 +7,17 @@
   </a>
 </header>
 
+<app-kpis-catalogo
+  etiquetaTotal="Usuarios"
+  etiquetaActivos="Activos"
+  etiquetaInactivos="Inactivos"
+  icono="group"
+  [total]="kpiTotal()"
+  [activos]="kpiActivos()"
+  [inactivos]="kpiInactivos()"
+  [cargando]="cargandoKpis()"
+/>
+
 <section class="filtros">
   <mat-form-field appearance="outline" class="filtro-busqueda">
     <mat-icon matPrefix>search</mat-icon>

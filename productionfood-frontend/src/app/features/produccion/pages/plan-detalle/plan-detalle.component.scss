@@ -1,1 +1,53 @@
-:host{display:grid;gap:18px}.acciones{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:12px}.tabla{overflow-x:auto}table{width:100%}.error{color:#b3261e}.PLANIFICADO{background:#e8e8e8!important}.EN_PROCESO{background:#d5e8ff!important}.COMPLETADO{background:#d8f2df!important}.CANCELADO{background:#ffe0e0!important}
+@use '../../../../shared/styles/ui' as ui;
+
+:host {
+  display: grid;
+  gap: var(--esp-4);
+}
+
+:host > a[mat-button] {
+  justify-self: start;
+}
+
+mat-card.mat-mdc-card {
+  @include ui.tarjeta;
+}
+
+.acciones {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+}
+
+.tabla {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+}
+
+.error {
+  color: var(--peligro-texto);
+}
+
+.PLANIFICADO {
+  background: var(--naranja-100) !important;
+  color: var(--aviso-texto) !important;
+}
+
+.EN_PROCESO {
+  background: var(--azul-100) !important;
+  color: var(--info-texto) !important;
+}
+
+.COMPLETADO {
+  background: var(--verde-100) !important;
+  color: var(--verde-700) !important;
+}
+
+.CANCELADO {
+  background: var(--rojo-100) !important;
+  color: var(--peligro-texto) !important;
+}

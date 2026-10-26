@@ -1,0 +1,25 @@
+<article class="chart-card">
+  <header class="chart-header">
+    <h3>Estado de los planes de producción</h3>
+  </header>
+  <div class="donut-wrap">
+    <div class="donut" [style.background]="conicGradient()">
+      <div class="donut-center">
+        <strong>{{ total() }}</strong>
+        <span>planes</span>
+      </div>
+    </div>
+    <div class="donut-legend">
+      @for (seg of segmentos(); track seg.label) {
+        <div class="row">
+          <span class="dot" [style.background]="seg.color"></span>
+          <span class="txt">{{ seg.label }}</span>
+          <span class="num">{{ seg.value }}</span>
+          <span class="pct">{{ seg.pct }}%</span>
+        </div>
+      } @empty {
+        <div class="empty">Sin planes registrados</div>
+      }
+    </div>
+  </div>
+</article>

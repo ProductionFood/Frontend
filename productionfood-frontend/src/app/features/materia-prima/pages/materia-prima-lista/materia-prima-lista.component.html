@@ -11,45 +11,6 @@
   </button>
 </header>
 
-<div class="kpi-grid">
-  <div class="kpi">
-    <div>
-      <div class="kpi-label">Total materias primas</div>
-      <div class="kpi-number">{{ kpiTotal() }}</div>
-    </div>
-    <div class="kpi-icon">
-      <svg class="ic" viewBox="0 0 24 24"><path d="M12 8c3 3 3 9 0 13-3-4-3-10 0-13Z"/><path d="M9 5c1 1 2 2 3 3 1-1 2-2 3-3"/><path d="M12 2v4"/></svg>
-    </div>
-  </div>
-  <div class="kpi">
-    <div>
-      <div class="kpi-label">Activas</div>
-      <div class="kpi-number">{{ kpiActivas() }}</div>
-    </div>
-    <div class="kpi-icon blue">
-      <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg>
-    </div>
-  </div>
-  <div class="kpi">
-    <div>
-      <div class="kpi-label">Proveedores</div>
-      <div class="kpi-number">{{ kpiProveedores() || '—' }}</div>
-    </div>
-    <div class="kpi-icon purple">
-      <svg class="ic" viewBox="0 0 24 24"><rect x="1" y="6" width="15" height="12" rx="1"/><path d="M16 10h4l3 3v5h-7z"/><circle cx="6" cy="19" r="2"/><circle cx="17.5" cy="19" r="2"/></svg>
-    </div>
-  </div>
-  <div class="kpi">
-    <div>
-      <div class="kpi-label">Con bajo stock</div>
-      <div class="kpi-number">{{ kpiBajoStock() }}</div>
-    </div>
-    <div class="kpi-icon red">
-      <svg class="ic" viewBox="0 0 24 24"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-    </div>
-  </div>
-</div>
-
 <div class="filters">
   <div class="filter-search">
     <svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>

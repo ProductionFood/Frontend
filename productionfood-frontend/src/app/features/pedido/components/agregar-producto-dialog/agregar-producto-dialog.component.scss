@@ -1,1 +1,26 @@
-mat-form-field{display:block;width:100%;margin-top:12px}.fefo{padding:14px;background:#f4f6f8;border-radius:8px}.fefo p{display:flex;align-items:center;gap:8px}.alerta{color:#a75b00}mat-dialog-content{min-width:min(450px,85vw)}
+mat-form-field {
+  display: block;
+  width: 100%;
+  margin-top: var(--esp-3);
+}
+
+.fefo {
+  padding: var(--esp-4);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio-m);
+  background: var(--fondo);
+}
+
+.fefo p {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+}
+
+.alerta {
+  color: var(--aviso-texto);
+}
+
+mat-dialog-content {
+  min-width: min(450px, 85vw);
+}

@@ -1,95 +1,34 @@
+@use '../../../../shared/styles/ui' as ui;
+
 :host {
   display: block;
 }
 
 .pagina {
   display: grid;
-  gap: 16px;
+  gap: var(--esp-4);
 }
 
 .cabecera {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 12px;
+  gap: var(--esp-3);
   flex-wrap: wrap;
 }
 
-.cabecera a[mat-flat-button],
 .cabecera button[mat-flat-button] {
-  border-radius: var(--radio-s);
-  padding: 0 20px;
-  min-height: 44px;
-  font-weight: 650;
-  box-shadow: 0 5px 15px rgba(31, 170, 112, 0.22);
+  @include ui.boton-primario;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+  color: var(--texto-sobre-marca);
 }
 
 .kpi-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 17px;
-}
-
-.kpi {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 20px;
-  border: 1px solid var(--linea);
-  border-radius: var(--radio-m);
-  background: var(--blanco);
-  box-shadow: var(--sombra);
-}
-
-.kpi--riesgo {
-  border-color: #f2c8c8;
-}
-
-.kpi-label {
-  margin: 0 0 8px;
-  font-size: 11.5px;
-  color: var(--tinta-600);
-}
-
-.kpi-number {
-  margin: 0;
-  font-family: var(--fuente-display);
-  font-size: 28px;
-  font-weight: 600;
-  color: var(--tinta-900);
-}
-
-.kpi--riesgo .kpi-number {
-  color: #b02a2e;
-}
-
-.kpi-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radio-m);
-  background: var(--verde-100);
-  color: var(--verde-700);
-  flex: none;
-}
-
-.kpi-icon.orange {
-  background: var(--naranja-100);
-  color: #92610b;
-}
-
-.kpi-icon.red {
-  background: var(--rojo-100);
-  color: #b02a2e;
-}
-
-.kpi-icon mat-icon {
-  font-size: 20px;
-  width: 20px;
-  height: 20px;
 }
 
 .nota {
@@ -99,15 +38,7 @@
 }
 
 .filtros-card {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
-  padding: 18px 20px;
-  border: 1px solid var(--linea);
-  border-radius: var(--radio-m);
-  background: var(--blanco);
-  box-shadow: var(--sombra);
+  @include ui.filtros-tarjeta;
 }
 
 .filtros-card mat-form-field {
@@ -115,51 +46,7 @@
 }
 
 .estado-error {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  padding: 14px 18px;
-  border: 1px solid #f2c8c8;
-  border-radius: var(--radio-m);
-  background: #fff6f5;
-  color: #b91c1c;
-  font-size: 12.5px;
-}
-
-.estado-error p {
-  margin: 0;
-  flex: 1;
-}
-
-.tabla-card {
-  background: var(--blanco);
-  border: 1px solid var(--linea);
-  border-radius: var(--radio-m);
-  overflow: hidden;
-  box-shadow: var(--sombra);
-}
-
-.tabla-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 18px 22px;
-  border-bottom: 1px solid var(--linea);
-}
-
-.tabla-header h2 {
-  margin: 0;
-  font-family: var(--fuente-display);
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--verde-900);
-}
-
-.tabla-header span {
-  font-size: 11.5px;
-  color: var(--tinta-600);
+  @include ui.panel-error;
 }
 
 .tabla-scroll {
@@ -167,28 +54,8 @@
 }
 
 table {
-  width: 100%;
+  @include ui.tabla;
   min-width: 900px;
-}
-
-th.mat-mdc-header-cell {
-  background: #fafbfb;
-  color: var(--tinta-600);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  padding: 12px 20px;
-}
-
-td.mat-mdc-cell {
-  color: var(--tinta-600);
-  font-size: 11.5px;
-  padding: 14px 20px;
-}
-
-tr.mat-mdc-row:hover {
-  background: #fafdfb;
 }
 
 .codigo {
@@ -211,44 +78,22 @@ tr.mat-mdc-row:hover {
 }
 
 .fila-vencida {
-  background: #fef2f2;
+  background: var(--peligro-fondo);
 }
 
 .retirar {
   display: block;
-  margin-top: 4px;
+  margin-top: var(--esp-1);
   font-size: 10.5px;
   font-weight: 700;
-  color: #b91c1c;
-}
-
-.vacio {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 48px 24px;
-  text-align: center;
-  color: var(--tinta-600);
-}
-
-.vacio mat-icon {
-  width: 36px;
-  height: 36px;
-  font-size: 36px;
-  color: var(--tinta-400);
-}
-
-.vacio p {
-  margin: 0;
-  font-size: 13px;
+  color: var(--peligro-texto);
 }
 
 mat-paginator {
   border-top: 1px solid var(--linea);
 }
 
-@media (max-width: 860px) {
+@media (max-width: 1100px) {
   .kpi-grid {
     grid-template-columns: 1fr;
   }

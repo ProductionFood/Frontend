@@ -1,52 +1,11 @@
+@use '../../../../shared/styles/ui' as ui;
+
 :host {
   display: block;
 }
 
-.panel {
-  padding: 18px 20px;
-  border: 1px solid var(--linea);
-  border-radius: var(--radio-m);
-  background: var(--blanco);
-  box-shadow: var(--sombra);
-}
-
-.panel-cabecera {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-
-h2 {
-  margin: 0;
-  font-family: var(--fuente-display);
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--verde-900);
-}
-
-.criterio {
-  font-size: 11px;
-  color: var(--tinta-400);
-}
-
 table {
-  width: 100%;
-}
-
-th.mat-mdc-header-cell {
-  background: #fafbfb;
-  color: var(--tinta-600);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-
-td.mat-mdc-cell {
-  color: var(--tinta-600);
-  font-size: 12px;
+  @include ui.tabla;
 }
 
 td.producto {

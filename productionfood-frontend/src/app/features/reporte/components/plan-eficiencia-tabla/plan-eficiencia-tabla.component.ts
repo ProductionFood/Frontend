@@ -6,6 +6,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { EstadoPlan } from '../../../produccion/models/plan-produccion.model';
 import { PlanEficiencia } from '../../models/eficiencia.model';
+import { PanelCardComponent } from '../../../../shared/components/panel-card/panel-card.component';
 
 /**
  * Tabla de planes del período (HU-26). Muestra las tres métricas por separado
@@ -16,7 +17,7 @@ import { PlanEficiencia } from '../../models/eficiencia.model';
 @Component({
   selector: 'app-plan-eficiencia-tabla',
   standalone: true,
-  imports: [DatePipe, DecimalPipe, MatIconModule, MatTableModule, MatTooltipModule],
+  imports: [DatePipe, DecimalPipe, MatIconModule, MatTableModule, MatTooltipModule, PanelCardComponent],
   templateUrl: './plan-eficiencia-tabla.component.html',
   styleUrl: './plan-eficiencia-tabla.component.scss'
 })

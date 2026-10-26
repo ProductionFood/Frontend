@@ -5,6 +5,17 @@
   </button>
 </header>
 
+<app-kpis-catalogo
+  etiquetaTotal="Clientes"
+  etiquetaActivos="Activos"
+  etiquetaInactivos="Inactivos"
+  icono="groups"
+  [total]="kpiTotal()"
+  [activos]="kpiActivos()"
+  [inactivos]="kpiInactivos()"
+  [cargando]="cargandoKpis()"
+/>
+
 <section class="filtros" aria-label="Filtros de clientes">
   <mat-form-field appearance="outline" class="filtro-busqueda">
     <mat-icon matPrefix>search</mat-icon>

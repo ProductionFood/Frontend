@@ -8,7 +8,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { catchError, finalize, forkJoin, of } from 'rxjs';
 
@@ -49,6 +49,7 @@ export class EficienciaReporteComponent {
   private readonly fb = inject(FormBuilder);
   private readonly eficienciaService = inject(EficienciaService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly route = inject(ActivatedRoute);
 
   readonly mesPorDefecto = this.rangoMesActual();
   readonly filtros = this.crearFiltros();
@@ -160,8 +161,29 @@ export class EficienciaReporteComponent {
 
   private crearFiltros() {
     return this.fb.group({
-      desde: this.fb.control<Date | null>(this.mesPorDefecto.desde),
-      hasta: this.fb.control<Date | null>(this.mesPorDefecto.hasta)
+      desde: this.fb.control<Date | null>(
+        this.fechaDeQuery('fechaInicio', this.mesPorDefecto.desde)
+      ),
+      hasta: this.fb.control<Date | null>(
+        this.fechaDeQuery('fechaFin', this.mesPorDefecto.hasta)
+      )
     });
+  }
+
+  /** Período enviado por el hub de reportes (`?fechaInicio=&fechaFin=`). */
+  private fechaDeQuery(nombre: string, porDefecto: Date): Date {
+    const valor = this.route.snapshot.queryParamMap.get(nombre);
+
+    if (!valor) {
+      return porDefecto;
+    }
+
+    const [anio, mes, dia] = valor.split('-').map(Number);
+
+    if (!anio || !mes || !dia) {
+      return porDefecto;
+    }
+
+    return new Date(anio, mes - 1, dia);
   }
 }

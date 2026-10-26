@@ -2,6 +2,7 @@ import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
 
 import { ResumenPedidos } from '../../models/pedido.model';
+import { KpiCardComponent } from '../../../../shared/components/kpi-card/kpi-card.component';
 
 /**
  * Tarjetas del resumen de ventas (HU-25). Muestra bruto, devoluciones y neto
@@ -11,7 +12,7 @@ import { ResumenPedidos } from '../../models/pedido.model';
 @Component({
   selector: 'app-resumen-ventas-cards',
   standalone: true,
-  imports: [CurrencyPipe, DecimalPipe],
+  imports: [CurrencyPipe, DecimalPipe, KpiCardComponent],
   templateUrl: './resumen-ventas-cards.component.html',
   styleUrl: './resumen-ventas-cards.component.scss'
 })

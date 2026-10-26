@@ -2,6 +2,7 @@ import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
 
 import { VentaCliente } from '../../models/pedido.model';
+import { PanelCardComponent } from '../../../../shared/components/panel-card/panel-card.component';
 
 /**
  * Barras horizontales de ventas por cliente (HU-25). Muestra los 5 mayores;
@@ -10,7 +11,7 @@ import { VentaCliente } from '../../models/pedido.model';
 @Component({
   selector: 'app-ventas-cliente-chart',
   standalone: true,
-  imports: [CurrencyPipe, DecimalPipe],
+  imports: [CurrencyPipe, DecimalPipe, PanelCardComponent],
   templateUrl: './ventas-cliente-chart.component.html',
   styleUrl: './ventas-cliente-chart.component.scss'
 })

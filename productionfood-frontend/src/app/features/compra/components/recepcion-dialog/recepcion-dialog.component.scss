@@ -1,7 +1,9 @@
+@use '../../../../shared/styles/ui' as ui;
+
 .contenido {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--esp-3);
   min-width: 480px;
 }
 
@@ -11,7 +13,7 @@
 }
 
 .titulo-icono.peligro {
-  color: #92610b;
+  color: var(--aviso-texto);
 }
 
 .titulo-icono.exito {
@@ -27,39 +29,27 @@
 .tabla-scroll {
   overflow-x: auto;
   border: 1px solid var(--linea);
-  border-radius: var(--radio-s);
+  border-radius: var(--radio-m);
 }
 
 table {
-  width: 100%;
+  @include ui.tabla;
   min-width: 420px;
-}
-
-.mat-mdc-header-cell {
-  font-size: 0.72rem;
-  font-weight: 750;
-  letter-spacing: 0.035em;
-  color: var(--tinta-600);
-}
-
-.mat-mdc-cell,
-.mat-mdc-header-cell {
-  padding: 0.7rem 0.75rem;
 }
 
 .entrada {
   color: var(--verde-700);
-  font-weight: 650;
+  font-weight: 600;
 }
 
 .aviso-irreversible {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  padding: 12px;
+  padding: var(--esp-3);
   border-radius: var(--radio-s);
   background: var(--naranja-100);
-  color: #92610b;
+  color: var(--aviso-texto);
   font-size: 12.5px;
   line-height: 1.45;
 }
@@ -73,28 +63,15 @@ table {
 }
 
 .error-general {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 12px;
-  border-radius: var(--radio-s);
-  background: var(--rojo-100);
-  color: #b02a2e;
-  font-size: 12.5px;
-}
-
-.error-general mat-icon {
-  width: 18px;
-  height: 18px;
-  font-size: 18px;
+  @include ui.panel-error;
 }
 
 .btn-confirmar {
-  background: #b02a2e !important;
+  background: var(--peligro-texto) !important;
   color: #fff !important;
 }
 
-@media (max-width: 560px) {
+@media (max-width: 720px) {
   .contenido {
     min-width: 0;
   }

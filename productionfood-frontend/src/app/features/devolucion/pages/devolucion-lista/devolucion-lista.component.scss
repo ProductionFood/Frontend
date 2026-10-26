@@ -1,9 +1,11 @@
+@use '../../../../shared/styles/ui' as ui;
+
 :host {
   display: block;
 }
 
 .cabecera {
-  margin-bottom: 16px;
+  margin-bottom: var(--esp-4);
 }
 
 .cabecera p {
@@ -13,16 +15,8 @@
 }
 
 .filtros-card {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
-  padding: 18px 20px;
-  margin-bottom: 16px;
-  border: 1px solid var(--linea);
-  border-radius: var(--radio-m);
-  background: var(--blanco);
-  box-shadow: var(--sombra);
+  @include ui.filtros-tarjeta;
+  margin-bottom: var(--esp-4);
 }
 
 .filtros-card mat-form-field {
@@ -30,52 +24,8 @@
 }
 
 .estado-error {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  padding: 14px 18px;
-  margin-bottom: 16px;
-  border: 1px solid #f2c8c8;
-  border-radius: var(--radio-m);
-  background: #fff6f5;
-  color: #b91c1c;
-  font-size: 12.5px;
-}
-
-.estado-error p {
-  margin: 0;
-  flex: 1;
-}
-
-.tabla-card {
-  background: var(--blanco);
-  border: 1px solid var(--linea);
-  border-radius: var(--radio-m);
-  overflow: hidden;
-  box-shadow: var(--sombra);
-}
-
-.tabla-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 18px 22px;
-  border-bottom: 1px solid var(--linea);
-}
-
-.tabla-header h2 {
-  margin: 0;
-  font-family: var(--fuente-display);
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--verde-900);
-}
-
-.tabla-header span {
-  font-size: 11.5px;
-  color: var(--tinta-600);
+  @include ui.panel-error;
+  margin-bottom: var(--esp-4);
 }
 
 .tabla-scroll {
@@ -83,28 +33,8 @@
 }
 
 table {
-  width: 100%;
+  @include ui.tabla;
   min-width: 860px;
-}
-
-th.mat-mdc-header-cell {
-  background: #fafbfb;
-  color: var(--tinta-600);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  padding: 12px 20px;
-}
-
-td.mat-mdc-cell {
-  color: var(--tinta-600);
-  font-size: 11.5px;
-  padding: 14px 20px;
-}
-
-tr.mat-mdc-row:hover {
-  background: #fafdfb;
 }
 
 .enlace {
@@ -129,65 +59,6 @@ tr.mat-mdc-row:hover {
 .cantidad {
   font-weight: 700;
   color: var(--tinta-900);
-}
-
-.status {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 12px;
-  border-radius: 999px;
-  font-size: 10.5px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.status .punto {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: currentColor;
-}
-
-.status.pending {
-  background: var(--naranja-100);
-  color: #92610b;
-}
-
-.status.completed {
-  background: var(--verde-100);
-  color: var(--verde-700);
-}
-
-.status.cancelled {
-  background: var(--rojo-100);
-  color: #b02a2e;
-}
-
-.vacio {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 48px 24px;
-  text-align: center;
-  color: var(--tinta-600);
-}
-
-.vacio mat-icon {
-  width: 36px;
-  height: 36px;
-  font-size: 36px;
-  color: var(--tinta-400);
-}
-
-.vacio--ok mat-icon {
-  color: var(--verde-500);
-}
-
-.vacio p {
-  margin: 0;
-  font-size: 13px;
 }
 
 mat-paginator {

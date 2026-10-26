@@ -1,9 +1,7 @@
 <div class="tabla-contenedor">
   @if (cargando()) {
-    <mat-progress-bar mode="indeterminate" aria-label="Cargando" />
-  }
-
-  @if (error()) {
+    <app-skeleton [lineas]="6" alto="18px" />
+  } @else if (error()) {
     <div class="estado">
       <mat-icon>error_outline</mat-icon>
       <p>{{ error() }}</p>
@@ -11,7 +9,7 @@
         Reintentar
       </button>
     </div>
-  } @else if (!cargando() && datos().length === 0) {
+  } @else if (datos().length === 0) {
     <div class="estado">
       <mat-icon>inbox</mat-icon>
       <p>{{ mensajeVacio() }}</p>

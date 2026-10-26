@@ -1,6 +1,7 @@
 // Estilos compartidos de las cinco tarjetas del dashboard (HU-24).
-// Cada tarjeta los importa con `@use '../tarjeta-comun';` para no duplicar
-// el andamiaje visual (cabecera, cifra, desglose, pie y estados).
+// Cada tarjeta los importa con `@use '../tarjeta-comun';`.
+// Valores estandarizados con la guía de diseño vía `shared/styles/ui`.
+@use '../../../shared/styles/ui' as ui;
 
 :host {
   display: block;
@@ -8,27 +9,24 @@
 }
 
 .tarjeta {
+  @include ui.tarjeta;
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 18px 20px;
-  border: 1px solid var(--linea);
-  border-radius: 12px;
-  background: var(--blanco);
-  box-shadow: none !important;
+  padding: 20px;
 }
 
 .tarjeta-cabecera {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
+  gap: var(--esp-2);
+  margin-bottom: var(--esp-3);
 }
 
 .semaforo {
   flex: none;
-  width: 9px;
-  height: 9px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: var(--tinta-400);
 }
@@ -40,41 +38,37 @@
 
 .tarjeta-titulo {
   margin: 0;
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--tinta-600);
 }
 
 .cifra {
-  margin: 0;
-  font-family: var(--fuente-display);
-  font-size: 38px;
-  font-weight: 600;
-  line-height: 1.1;
-  color: var(--tinta-900);
+  @include ui.kpi-numero;
+  font-size: 32px;
 }
 
 .tarjeta--alerta .cifra { color: var(--rojo-500); }
 .tarjeta--aviso .cifra { color: var(--naranja-500); }
 
 .cifra-texto {
-  margin: 2px 0 0;
+  margin: var(--esp-1) 0 0;
   font-size: 12.5px;
   color: var(--tinta-600);
 }
 
 .cifra-secundaria {
-  margin: 4px 0 0;
-  font-size: 15px;
+  margin: var(--esp-1) 0 0;
+  font-size: 16px;
   font-weight: 600;
   color: var(--tinta-900);
 }
 
 .lista {
   list-style: none;
-  margin: 12px 0 0;
+  margin: var(--esp-3) 0 0;
   padding: 0;
 }
 
@@ -82,8 +76,8 @@
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 10px;
-  padding: 5px 0;
+  gap: var(--esp-2);
+  padding: var(--esp-1) 0;
   border-bottom: 1px solid var(--linea);
   font-size: 12.5px;
 }
@@ -105,53 +99,40 @@
 }
 
 .fila-detalle--vencido { color: var(--rojo-500); }
-.fila-detalle--aviso { color: #92610b; }
+.fila-detalle--aviso { color: var(--aviso-texto); }
 
 .desglose {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 12px;
+  gap: var(--esp-2);
+  margin-top: var(--esp-3);
 }
 
 .chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 3px 9px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 600;
+  @include ui.badge(var(--tinta-400), var(--tinta-600));
 }
 
 .chip .punto {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: currentColor;
+  @include ui.badge-punto;
 }
 
 .chip--pendiente,
 .chip--planificado {
-  background: var(--naranja-100);
-  color: #92610b;
+  @include ui.badge(var(--naranja-100), var(--aviso-texto));
 }
 
 .chip--en-preparacion,
 .chip--en-proceso {
-  background: var(--azul-100);
-  color: #1d4ed8;
+  @include ui.badge(var(--azul-100), var(--info-texto));
 }
 
 .chip--entregado,
 .chip--completado {
-  background: var(--verde-100);
-  color: var(--verde-700);
+  @include ui.badge(var(--verde-100), var(--verde-700));
 }
 
 .chip--cancelado {
-  background: #efefef;
-  color: var(--tinta-600);
+  @include ui.badge(var(--fondo), var(--tinta-600));
 }
 
 .alerta-antiguedad {
@@ -160,7 +141,7 @@
   gap: 6px;
   margin: 10px 0 0;
   font-size: 12px;
-  color: #92610b;
+  color: var(--aviso-texto);
 }
 
 .alerta-antiguedad mat-icon {
@@ -173,24 +154,25 @@
   display: flex;
   justify-content: flex-end;
   margin-top: auto;
-  padding-top: 12px;
+  padding-top: var(--esp-3);
+}
+
+.pie a {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--verde-700);
 }
 
 .estado {
+  @include ui.estado-vacio;
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 16px 0;
-  text-align: center;
+  padding: var(--esp-4) 0;
 }
 
-.estado p {
-  margin: 0;
-  font-size: 12.5px;
-  color: var(--tinta-600);
+.estado mat-icon {
+  width: 32px;
+  height: 32px;
+  font-size: 32px;
 }
 
 .estado--ok mat-icon { color: var(--verde-500); }
@@ -201,5 +183,5 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px 0;
+  padding: var(--esp-4) 0;
 }

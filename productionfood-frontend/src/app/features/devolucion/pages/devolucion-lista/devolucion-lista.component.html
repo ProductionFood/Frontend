@@ -43,26 +43,29 @@
   }
 
   @if (!cargando() && !error()) {
-    <section class="tabla-card">
-      <header class="tabla-header">
-        <h2>Solicitudes de devolución</h2>
-        <span>{{ total() }} {{ total() === 1 ? 'registro' : 'registros' }}</span>
-      </header>
-
+    <app-tarjeta-tabla
+      titulo="Solicitudes de devolución"
+      [contador]="total() + (total() === 1 ? ' registro' : ' registros')"
+    >
       @if (!devoluciones().length) {
-        <div
-          class="vacio"
-          [class.vacio--ok]="estado.value === 'PENDIENTE' && !desde.value && !hasta.value"
-          role="status"
-        >
-          @if (estado.value === 'PENDIENTE' && !desde.value && !hasta.value) {
-            <mat-icon>check_circle</mat-icon>
-            <p>No hay devoluciones pendientes de revisión.</p>
-          } @else {
-            <mat-icon>search_off</mat-icon>
-            <p>Ninguna devolución coincide con los filtros.</p>
-          }
-        </div>
+        @if (estado.value === 'PENDIENTE' && !desde.value && !hasta.value) {
+          <app-estado-vacio
+            tono="exito"
+            icono="check_circle"
+            mensaje="No hay devoluciones pendientes de revisión."
+          >
+            <a mat-stroked-button routerLink="/app/pedidos">Ver pedidos</a>
+          </app-estado-vacio>
+        } @else {
+          <app-estado-vacio
+            icono="search_off"
+            mensaje="Ninguna devolución coincide con los filtros."
+          >
+            <button mat-stroked-button type="button" (click)="limpiarFiltros()">
+              Limpiar filtros
+            </button>
+          </app-estado-vacio>
+        }
       } @else {
         <div class="tabla-scroll">
           <table
@@ -108,15 +111,7 @@
             <ng-container matColumnDef="estado">
               <th mat-header-cell *matHeaderCellDef>Estado</th>
               <td mat-cell *matCellDef="let d">
-                <span
-                  class="status"
-                  [class.pending]="d.estado === 'PENDIENTE'"
-                  [class.completed]="d.estado === 'APROBADA'"
-                  [class.cancelled]="d.estado === 'RECHAZADA'"
-                >
-                  <span class="punto"></span>
-                  {{ d.estado === 'PENDIENTE' ? 'Pendiente' : (d.estado === 'APROBADA' ? 'Aprobada' : 'Rechazada') }}
-                </span>
+                <app-estado-badge [texto]="textoEstado(d.estado)" [tono]="tonoEstado(d.estado)" />
               </td>
             </ng-container>
 
@@ -167,6 +162,6 @@
           aria-label="Páginas de devoluciones"
         />
       }
-    </section>
+    </app-tarjeta-tabla>
   }
 </section>

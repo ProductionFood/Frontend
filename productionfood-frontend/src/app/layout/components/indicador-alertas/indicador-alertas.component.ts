@@ -1,4 +1,4 @@
-﻿import { DecimalPipe } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
@@ -132,36 +132,36 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
         min-height: 46px;
         padding: 8px 14px;
         border-radius: 999px;
-        border: 1px solid rgba(14, 31, 53, 0.12);
-        background: #fff;
-        color: #1d2939;
-        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+        border: 1px solid var(--linea);
+        background: var(--superficie-alta);
+        color: var(--texto);
+        box-shadow: var(--sombra-1);
         transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
         cursor: pointer;
       }
 
       .alertas-trigger:hover {
         transform: translateY(-1px);
-        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+        box-shadow: var(--sombra-2);
       }
 
       .alertas-trigger:focus-visible {
-        outline: 2px solid #1faa70;
+        outline: 2px solid var(--verde-500);
         outline-offset: 2px;
       }
 
       .alertas-trigger.sin-alertas {
-        border-color: rgba(22, 76, 53, 0.16);
+        border-color: var(--linea);
       }
 
       .alertas-trigger.alerta-baja {
-        border-color: rgba(185, 119, 17, 0.32);
-        background: linear-gradient(180deg, #fffaf0 0%, #fff6e2 100%);
+        border-color: var(--aviso-fondo);
+        background: var(--superficie-alta);
       }
 
       .alertas-trigger.alerta-alta {
-        border-color: rgba(190, 24, 93, 0.28);
-        background: linear-gradient(180deg, #fff5f5 0%, #fff1f2 100%);
+        border-color: var(--peligro-fondo);
+        background: var(--superficie-alta);
       }
 
       .icono {
@@ -171,19 +171,19 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
         width: 34px;
         height: 34px;
         border-radius: 50%;
-        background: rgba(14, 31, 53, 0.06);
-        color: #0f172a;
+        background: var(--fondo);
+        color: var(--texto);
         flex-shrink: 0;
       }
 
       .alerta-baja .icono {
-        background: rgba(185, 119, 17, 0.12);
-        color: #9a6700;
+        background: var(--aviso-fondo);
+        color: var(--aviso-texto);
       }
 
       .alerta-alta .icono {
-        background: rgba(190, 24, 93, 0.12);
-        color: #be185d;
+        background: var(--peligro-fondo);
+        color: var(--peligro-texto);
       }
 
       .texto {
@@ -200,11 +200,11 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
 
       .texto small {
         font-size: 0.78rem;
-        color: #667085;
+        color: var(--texto-tenue);
       }
 
       .chevron {
-        color: #667085;
+        color: var(--texto-tenue);
         flex-shrink: 0;
       }
 
@@ -233,31 +233,31 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
         margin: 0 0 4px;
         font-size: 1rem;
         font-weight: 800;
-        color: #101828;
+        color: var(--texto);
       }
 
       .menu-header p {
         margin: 0;
-        color: #667085;
+        color: var(--texto-tenue);
         font-size: 0.84rem;
       }
 
       .menu-header mat-icon {
         margin-top: 2px;
-        color: #164c35;
+        color: var(--verde-700);
       }
 
       .menu-header mat-icon.alerta-baja {
-        color: #b97711;
+        color: var(--aviso-texto);
       }
 
       .menu-header mat-icon.alerta-alta {
-        color: #be185d;
+        color: var(--peligro-texto);
       }
 
       .menu-estado {
         padding: 18px 16px;
-        color: #475467;
+        color: var(--texto-suave);
         font-size: 0.9rem;
       }
 
@@ -272,13 +272,13 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
       }
 
       .menu-estado.vacio mat-icon {
-        color: #1faa70;
+        color: var(--exito-icono);
       }
 
       .link-like {
         border: 0;
         background: transparent;
-        color: #164c35;
+        color: var(--verde-700);
         font-weight: 700;
         cursor: pointer;
         padding: 0;
@@ -291,7 +291,7 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
 
       .alerta-item {
         padding: 14px 16px;
-        border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+        border-bottom: 1px solid var(--borde);
       }
 
       .alerta-item:last-child {
@@ -310,7 +310,7 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
       .alerta-item small {
         display: block;
         margin: 0;
-        color: #475467;
+        color: var(--texto-suave);
       }
 
       .alerta-item p {
@@ -329,18 +329,18 @@ import { AlertaService } from '../../../features/inventario/services/alerta.serv
         min-width: 82px;
         padding: 4px 10px;
         border-radius: 999px;
-        font-size: 0.72rem;
+        font-size: 12px;
         font-weight: 700;
       }
 
       .estado-chip.bajo {
-        background: #fff6e2;
-        color: #9a6700;
+        background: var(--aviso-fondo);
+        color: var(--aviso-texto);
       }
 
       .estado-chip.agotado {
-        background: #fff1f2;
-        color: #be185d;
+        background: var(--peligro-fondo);
+        color: var(--peligro-texto);
       }
 
       .menu-actions {

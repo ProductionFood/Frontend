@@ -16,48 +16,44 @@
 }
 
 @if (error(); as mensaje) {
-  <section class="estado estado--error">
+  <section class="estado-error">
     <mat-icon>error_outline</mat-icon>
     <p>{{ mensaje }}</p>
     <button mat-stroked-button type="button" (click)="recargar()">Reintentar</button>
   </section>
 } @else if (datos(); as d) {
   <section class="resumen" aria-label="Resumen de alertas">
-    <mat-card class="tarjeta">
-      <mat-card-content>
-        <span class="cifra">{{ d.resumen.total }}</span>
-        <span class="etiqueta">en alerta</span>
-      </mat-card-content>
-    </mat-card>
-
-    <mat-card class="tarjeta tarjeta--agotadas">
-      <mat-card-content>
-        <span class="cifra">{{ d.resumen.agotadas }}</span>
-        <span class="etiqueta">
-          agotada{{ d.resumen.agotadas === 1 ? '' : 's' }}
-          <mat-icon aria-hidden="true">error</mat-icon>
-        </span>
-      </mat-card-content>
-    </mat-card>
-
-    <mat-card class="tarjeta tarjeta--costo">
-      <mat-card-content>
-        <span class="cifra">
-          {{ d.costoReposicionTotal | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
-        </span>
-        <span class="etiqueta">costo de reposición estimado</span>
-      </mat-card-content>
-    </mat-card>
+    <app-kpi-card etiqueta="En alerta" [valor]="d.resumen.total" />
+    <app-kpi-card
+      [etiqueta]="'Agotada' + (d.resumen.agotadas === 1 ? '' : 's')"
+      [valor]="d.resumen.agotadas"
+      icono="error_outline"
+      tono="rojo"
+      tonoValor="rojo"
+    />
+    <app-kpi-card
+      etiqueta="Costo de reposición estimado"
+      [valor]="(d.costoReposicionTotal | currency: 'COP' : 'symbol-narrow' : '1.0-0') ?? ''"
+      icono="payments"
+      tono="naranja"
+      tonoValor="naranja"
+    />
   </section>
 
   @if (d.items.length === 0) {
-    <section class="estado estado--vacio">
-      <mat-icon>check_circle</mat-icon>
-      <p>Todas las materias primas están por encima de su stock mínimo</p>
-      <small>Última verificación: {{ d.generadoEn | date: 'dd/MM/yyyy HH:mm' }}</small>
-    </section>
+    <app-estado-vacio
+      tono="exito"
+      icono="check_circle"
+      mensaje="Todas las materias primas están por encima de su stock mínimo"
+      [detalle]="'Última verificación: ' + (d.generadoEn | date: 'dd/MM/yyyy HH:mm')"
+    >
+      <a mat-stroked-button routerLink="/app/inventario">Ver inventario</a>
+    </app-estado-vacio>
   } @else {
-    <section class="tabla-panel">
+    <app-tarjeta-tabla
+      titulo="Materias primas en alerta"
+      [contador]="d.items.length + (d.items.length === 1 ? ' registro' : ' registros')"
+    >
       <table mat-table [dataSource]="d.items" aria-label="Materias primas en alerta">
         <ng-container matColumnDef="materiaPrima">
           <th mat-header-cell *matHeaderCellDef>Materia prima</th>
@@ -89,13 +85,10 @@
                 [minimo]="item.stockMinimo"
                 [nivel]="item.nivel"
               />
-              <span
-                class="chip-estado"
-                [class.agotado]="item.nivel === 'AGOTADO'"
-                [class.bajo]="item.nivel === 'BAJO'"
-              >
-                {{ item.nivel === 'AGOTADO' ? 'Agotada' : 'Baja' }}
-              </span>
+              <app-estado-badge
+                [texto]="item.nivel === 'AGOTADO' ? 'Agotada' : 'Baja'"
+                [tono]="item.nivel === 'AGOTADO' ? 'peligro' : 'pendiente'"
+              />
             </div>
             @if (item.nivel === 'AGOTADO') {
               <small class="bloquea">Bloquea la producción</small>
@@ -121,7 +114,7 @@
         <tr mat-row *matRowDef="let item; columns: columnas"></tr>
       </table>
 
-      <footer class="pie">
+      <footer class="pie" pie>
         <small class="nota-costo">
           El costo de reposición es una referencia, no una cotización.
         </small>
@@ -136,6 +129,6 @@
           <mat-icon iconPositionEnd>arrow_forward</mat-icon>
         </a>
       </footer>
-    </section>
+    </app-tarjeta-tabla>
   }
 }

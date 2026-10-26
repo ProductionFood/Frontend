@@ -34,7 +34,13 @@ import {
 } from '../../../../shared/components/confirmar-dialog/confirmar-dialog.component';
 import { MateriaPrima } from '../../models/materia-prima.model';
 import { MateriaPrimaService } from '../../services/materia-prima.service';
+import { contarCatalogo } from '../../../../shared/utils/conteo-catalogo';
 import { MateriaPrimaFormularioComponent } from '../materia-prima-formulario/materia-prima-formulario.component';
+
+// Descomenta si tu plantilla usa los componentes compartidos:
+// import { KpisCatalogoComponent } from '../../../../shared/components/kpis-catalogo/kpis-catalogo.component';
+// import { TablaPaginadaComponent } from '../../../../shared/components/tabla-paginada/tabla-paginada.component';
+// import { TablaColumnaDirective } from '../../../../shared/directives/tabla-columna.directive';
 
 @Component({
   selector: 'app-materia-prima-lista',
@@ -51,6 +57,9 @@ import { MateriaPrimaFormularioComponent } from '../materia-prima-formulario/mat
     MatProgressBarModule,
     SiRolDirective,
     MateriaPrimaFormularioComponent
+    // KpisCatalogoComponent,
+    // TablaPaginadaComponent,
+    // TablaColumnaDirective
   ],
   templateUrl: './materia-prima-lista.component.html',
   styleUrl: './materia-prima-lista.component.scss'
@@ -79,17 +88,20 @@ export class MateriaPrimaListaComponent {
 
   readonly materias = signal<MateriaPrima[]>([]);
   readonly total = signal(0);
+
   readonly kpiTotal = signal(0);
   readonly kpiActivas = signal(0);
-  readonly kpiProveedores = signal(0);
   readonly kpiBajoStock = signal(0);
+
   readonly cargandoKpis = signal(true);
   readonly pagina = signal(0);
   readonly tamano = signal(20);
   readonly cargando = signal(false);
   readonly error = signal<string | null>(null);
 
-  readonly totalPaginas = computed(() => Math.ceil(this.total() / this.tamano()) || 1);
+  readonly totalPaginas = computed(
+    () => Math.ceil(this.total() / this.tamano()) || 1
+  );
 
   private readonly ordenCampo = signal('');
   private readonly ordenDireccion = signal<'asc' | 'desc' | ''>('');
@@ -121,7 +133,6 @@ export class MateriaPrimaListaComponent {
         this.total.set(respuesta.totalElements);
         this.cargando.set(false);
         this.error.set(null);
-        this.actualizarKpisDerivados(respuesta.content);
       });
 
     this.filtros.controls.busqueda.valueChanges
@@ -159,20 +170,45 @@ export class MateriaPrimaListaComponent {
 
   private cargarKpis(): void {
     this.cargandoKpis.set(true);
-    this.materiaPrimaService.listar({ page: 0, size: 1000 })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(respuesta => {
-        const items = respuesta.content;
-        this.kpiTotal.set(items.length);
-        this.kpiActivas.set(items.filter(m => m.activo).length);
-        this.kpiProveedores.set(0); // TODO: backend - contar proveedores únicos
-        this.kpiBajoStock.set(items.filter(m => m.stockMinimo > 0 && m.cantidadDisponible < m.stockMinimo).length);
-        this.cargandoKpis.set(false);
-      });
-  }
 
-  private actualizarKpisDerivados(items: MateriaPrima[]): void {
-    this.kpiBajoStock.set(items.filter(m => m.stockMinimo > 0 && m.cantidadDisponible < m.stockMinimo).length);
+    // Conteos de total y activas vía contarCatalogo (peticiones size: 1, solo lee totalElements)
+    contarCatalogo((activo) =>
+      this.materiaPrimaService.listar({ page: 0, size: 1, activo })
+    )
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: ({ total, activos }) => {
+          this.kpiTotal.set(total);
+          this.kpiActivas.set(activos);
+
+          // Bajo stock requiere cantidades reales: se pide un lote amplio
+          this.materiaPrimaService
+            .listar({ page: 0, size: 1000 })
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({
+              next: (respuesta) => {
+                this.kpiBajoStock.set(
+                  respuesta.content.filter(
+                    (m) =>
+                      m.stockMinimo > 0 &&
+                      m.cantidadDisponible < m.stockMinimo
+                  ).length
+                );
+                this.cargandoKpis.set(false);
+              },
+              error: () => {
+                this.kpiBajoStock.set(0);
+                this.cargandoKpis.set(false);
+              }
+            });
+        },
+        error: () => {
+          this.kpiTotal.set(0);
+          this.kpiActivas.set(0);
+          this.kpiBajoStock.set(0);
+          this.cargandoKpis.set(false);
+        }
+      });
   }
 
   onPagina(evento: PageEvent): void {
@@ -199,7 +235,7 @@ export class MateriaPrimaListaComponent {
       })
       .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(resultado => {
+      .subscribe((resultado) => {
         if (resultado === true) {
           this.notificacion.exito(
             materia
@@ -231,7 +267,7 @@ export class MateriaPrimaListaComponent {
       })
       .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(confirmado => {
+      .subscribe((confirmado) => {
         if (!confirmado) {
           return;
         }
@@ -264,6 +300,8 @@ export class MateriaPrimaListaComponent {
     const campo = this.ordenCampo();
     const direccion = this.ordenDireccion();
 
+    // Nota: `categoria` se captura pero el servicio aún no lo usa.
+    // Cuando el backend lo soporte, añádelo al payload de listar().
     return this.materiaPrimaService.listar({
       page: this.pagina(),
       size: this.tamano(),

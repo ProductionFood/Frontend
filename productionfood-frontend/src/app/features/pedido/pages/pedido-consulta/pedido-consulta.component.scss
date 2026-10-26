@@ -1,3 +1,5 @@
+@use '../../../../shared/styles/ui' as ui;
+
 :host {
   display: block;
 }
@@ -6,7 +8,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 16px;
+  gap: var(--esp-4);
   flex-wrap: wrap;
   margin-bottom: 20px;
 }
@@ -14,7 +16,7 @@
 .volver {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--esp-1);
   padding: 0;
   margin-bottom: 6px;
   color: var(--verde-700);
@@ -23,12 +25,14 @@
 
 h1 {
   margin: 0;
-  font-size: 26px;
-  color: var(--tinta-900);
+  font-family: var(--fuente-display);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--verde-900);
 }
 
 .subtitulo {
-  margin: 4px 0 0;
+  margin: var(--esp-1) 0 0;
   font-size: 13px;
   color: var(--tinta-600);
 }
@@ -36,9 +40,9 @@ h1 {
 .filtros {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--esp-3);
   flex-wrap: wrap;
-  margin-bottom: 16px;
+  margin-bottom: var(--esp-4);
 }
 
 .filtro-fechas {
@@ -49,9 +53,9 @@ h1 {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin: 0 0 12px;
+  margin: 0 0 var(--esp-3);
   font-size: 12.5px;
-  color: #b02a2e;
+  color: var(--peligro-texto);
 }
 
 .error-rango mat-icon {
@@ -61,99 +65,57 @@ h1 {
 }
 
 mat-progress-bar {
-  margin-bottom: 16px;
+  margin-bottom: var(--esp-4);
 }
 
 .paneles {
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-  gap: 16px;
+  gap: var(--esp-4);
   margin-bottom: 20px;
   align-items: start;
 }
 
 .cargando-bloque {
-  margin: 0 0 16px;
+  margin: 0 0 var(--esp-4);
   font-size: 12.5px;
   color: var(--tinta-400);
 }
 
 .panel-error {
-  display: flex;
+  @include ui.panel-error;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  text-align: center;
   padding: 28px 16px;
   margin-bottom: 20px;
-  text-align: center;
-  background: var(--blanco);
-  border: 1px solid var(--linea);
-  border-radius: 12px;
-}
 
-.panel-error p {
-  margin: 0;
-  font-size: 12.5px;
-  color: var(--tinta-600);
-}
-
-.panel-error mat-icon {
-  color: #b02a2e;
+  mat-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 34px;
+  }
 }
 
 .estado {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
+  @include ui.estado-vacio;
+  @include ui.tarjeta;
+  gap: var(--esp-2);
   padding: 48px 24px;
-  text-align: center;
-  color: var(--tinta-600);
-  background: var(--blanco);
-  border: 1px solid var(--linea);
-  border-radius: var(--radio-m, 12px);
 }
 
 .estado mat-icon {
   width: 34px;
   height: 34px;
   font-size: 34px;
-  color: var(--tinta-400);
-}
-
-.estado p {
-  margin: 0;
-  font-size: 13px;
-}
-
-.estado--error mat-icon {
-  color: #b02a2e;
 }
 
 .tabla-panel {
-  background: var(--blanco);
-  border: 1px solid var(--linea);
-  border-radius: var(--radio-m, 12px);
-  overflow: hidden;
-  box-shadow: var(--sombra, none);
+  @include ui.tarjeta-contenedor;
 }
 
 table {
-  width: 100%;
-}
-
-th.mat-mdc-header-cell {
-  background: #fafbfb;
-  color: var(--tinta-600);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-
-td.mat-mdc-cell {
-  color: var(--tinta-600);
-  font-size: 11.5px;
+  @include ui.tabla;
 }
 
 .numerica {
@@ -166,7 +128,7 @@ td.mat-mdc-cell {
 }
 
 .devolucion {
-  color: #92610b;
+  color: var(--aviso-texto);
   font-weight: 600;
 }
 
@@ -176,10 +138,6 @@ td.mat-mdc-cell {
 
 .fila-principal {
   cursor: pointer;
-}
-
-.fila-principal:hover {
-  background: #fafdfb;
 }
 
 .fila-expandida {
@@ -192,7 +150,7 @@ td.mat-mdc-cell {
 }
 
 .detalle-contenido {
-  padding: 4px 24px 16px 56px;
+  padding: var(--esp-1) var(--esp-5) var(--esp-4) 56px;
 }
 
 .detalle-estado {
@@ -202,7 +160,7 @@ td.mat-mdc-cell {
 }
 
 .detalle-estado--error {
-  color: #b02a2e;
+  color: var(--peligro-texto);
 }
 
 .detalle-lineas {
@@ -214,9 +172,9 @@ td.mat-mdc-cell {
 .linea {
   display: grid;
   grid-template-columns: minmax(140px, 1fr) 110px 130px 150px;
-  gap: 12px;
+  gap: var(--esp-3);
   align-items: center;
-  padding: 8px 0;
+  padding: var(--esp-2) 0;
   border-bottom: 1px dashed var(--linea);
 }
 
@@ -245,56 +203,42 @@ td.mat-mdc-cell {
 }
 
 .chip-estado {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 12px;
-  border-radius: 999px;
-  font-size: 10.5px;
-  font-weight: 600;
-  white-space: nowrap;
+  @include ui.badge(var(--tinta-400), var(--tinta-600));
 }
 
 .chip-estado .punto {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: currentColor;
+  @include ui.badge-punto;
 }
 
 .chip-estado.pendiente {
-  background: var(--naranja-100);
-  color: #92610b;
+  @include ui.badge(var(--naranja-100), var(--aviso-texto));
 }
 
 .chip-estado.en-preparacion {
-  background: var(--azul-100);
-  color: #1d4ed8;
+  @include ui.badge(var(--azul-100), var(--info-texto));
 }
 
 .chip-estado.entregado {
-  background: var(--verde-100);
-  color: var(--verde-700);
+  @include ui.badge(var(--verde-100), var(--verde-700));
 }
 
 .chip-estado.cancelado {
-  background: var(--linea);
-  color: var(--tinta-600);
+  @include ui.badge(var(--rojo-100), var(--peligro-texto));
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 1100px) {
   .paneles {
     grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
   .linea {
     grid-template-columns: 1fr auto;
     grid-template-areas:
       'producto subtotal'
       'cantidad precio';
-    gap: 4px 12px;
+    gap: var(--esp-1) var(--esp-3);
   }
 
   .linea .producto { grid-area: producto; }

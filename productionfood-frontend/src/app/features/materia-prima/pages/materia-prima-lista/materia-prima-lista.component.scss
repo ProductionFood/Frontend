@@ -341,14 +341,6 @@ tbody tr:hover {
   font-size: 16px;
 }
 
-.quantity.warn mat-icon {
-  color: var(--naranja-500);
-}
-
-.quantity.danger mat-icon {
-  color: var(--rojo-500);
-}
-
 .status {
   display: inline-flex;
   align-items: center;
