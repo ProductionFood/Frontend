@@ -1,23 +1,159 @@
-<header class="page-header"><div><p>Administra las fórmulas de producción y consulta sus costos estimados de referencia.</p></div><button *siRol="['ADMIN','PRODUCCION']" mat-flat-button type="button" (click)="nueva()"><mat-icon>add</mat-icon> Nueva receta</button></header>
+<div class="breadcrumb">Inicio / <b>Recetas</b></div>
 
-<app-kpis-catalogo
-  etiquetaTotal="Recetas"
-  etiquetaActivos="Activos"
-  etiquetaInactivos="Inactivos"
-  icono="menu_book"
-  [total]="kpiTotal()"
-  [activos]="kpiActivos()"
-  [inactivos]="kpiInactivos()"
-  [cargando]="cargandoKpis()"
-/>
-<section class="filtros" aria-label="Filtros de recetas"><mat-form-field appearance="outline" class="busqueda"><mat-icon matPrefix>search</mat-icon><mat-label>Buscar producto o receta</mat-label><input matInput [formControl]="filtros.controls.busqueda" autocomplete="off" /></mat-form-field><mat-form-field appearance="outline"><mat-label>Estado</mat-label><mat-select [formControl]="filtros.controls.activa"><mat-option [value]="null">Todas</mat-option><mat-option [value]="true">Activas</mat-option><mat-option [value]="false">Inactivas</mat-option></mat-select></mat-form-field></section>
-@if (!cargando() && !error() && total() === 0 && !filtros.controls.busqueda.value.trim()) { <div class="vacio"><mat-icon>menu_book</mat-icon><div><strong>No hay recetas registradas.</strong><p>Una receta define los ingredientes y el rendimiento de una tanda completa.</p></div><button *siRol="['ADMIN','PRODUCCION']" mat-stroked-button type="button" (click)="nueva()">Crear la primera receta</button></div> } @else {
-<app-tabla-paginada [columnas]="columnas" [datos]="recetas()" [total]="total()" [page]="pagina()" [size]="tamano()" [cargando]="cargando()" [error]="error()" [mensajeVacio]="mensajeVacio()" (cambiarPagina)="onPagina($event)" (cambiarOrden)="onOrden($event)" (reintentar)="recargar()">
-  <ng-template appTablaColumna="producto" let-receta><span class="principal">{{ receta.producto?.nombre || 'Producto sin nombre' }}</span></ng-template>
-  <ng-template appTablaColumna="nombre" let-receta><button class="enlace" mat-button type="button" (click)="abrir(receta)">{{ receta.nombre }}</button></ng-template>
-  <ng-template appTablaColumna="rendimiento" let-receta>{{ receta.cantidadProducir | number:'1.0-3' }} {{ receta.unidad?.abreviatura }}</ng-template>
-  <ng-template appTablaColumna="ingredientes" let-receta>@if (esIncompleta(receta)) { <span class="incompleta" matTooltip="No se podrá usar para planificar producción"><mat-icon>warning</mat-icon> Incompleta</span> } @else { {{ receta.ingredientes.length }} ingrediente(s) }</ng-template>
-  <ng-template appTablaColumna="costo" let-receta>{{ costoTanda(receta) | currency:'COP':'symbol-narrow':'1.2-2' }} @if (esIncompleta(receta)) { <span class="nota">(referencia)</span> }</ng-template>
-  <ng-template appTablaColumna="estado" let-receta><span class="estado" [class.inactiva]="!(receta.activa ?? receta.activo ?? true)">{{ (receta.activa ?? receta.activo ?? true) ? 'Activa' : 'Inactiva' }}</span></ng-template>
-  <ng-template appTablaColumna="acciones" let-receta><button *siRol="['ADMIN','PRODUCCION']" mat-icon-button type="button" (click)="abrir(receta)" [attr.aria-label]="'Editar receta ' + receta.nombre"><mat-icon>edit</mat-icon></button></ng-template>
-</app-tabla-paginada>}
+<header class="page-header">
+  <div>
+    <h1>Recetas</h1>
+    <p>Define los ingredientes, el tiempo de preparación y el rendimiento de cada producto.</p>
+  </div>
+  <button class="btn-primary" type="button" *siRol="['ADMIN','PRODUCCION']" (click)="nueva()">
+    <svg class="ic" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Nueva receta
+  </button>
+</header>
+
+<div class="kpi-grid">
+  <div class="kpi">
+    <div>
+      <div class="kpi-label">Total recetas</div>
+      <div class="kpi-number">{{ kpiTotal() }}</div>
+    </div>
+    <div class="kpi-icon purple">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M9 4h6a1 1 0 0 1 1 1v1H8V5a1 1 0 0 1 1-1Z"/><rect x="5" y="4" width="14" height="18" rx="2"/><line x1="9" y1="11" x2="15" y2="11"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+    </div>
+  </div>
+  <div class="kpi">
+    <div>
+      <div class="kpi-label">Activas</div>
+      <div class="kpi-number">{{ kpiActivas() }}</div>
+    </div>
+    <div class="kpi-icon">
+      <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg>
+    </div>
+  </div>
+  <div class="kpi">
+    <div>
+      <div class="kpi-label">Ingredientes promedio</div>
+      <div class="kpi-number">{{ kpiIngredientesPromedio() }}</div>
+    </div>
+    <div class="kpi-icon blue">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M4 15a8 8 0 0 0 16 0"/><path d="M2 15h20"/><path d="M15 3 9 12"/><circle cx="16" cy="2.5" r="1.2" fill="currentColor" stroke="none"/></svg>
+    </div>
+  </div>
+  <div class="kpi">
+    <div>
+      <div class="kpi-label">Tiempo prom. preparación</div>
+      <div class="kpi-number">{{ kpiTiempoPromedio() || '—' }}</div>
+    </div>
+    <div class="kpi-icon orange">
+      <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    </div>
+  </div>
+</div>
+
+<div class="filters">
+  <div class="filter-search">
+    <svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" placeholder="Buscar por nombre, producto o ingrediente..." [formControl]="filtros.controls.busqueda" autocomplete="off">
+  </div>
+  <select class="filter-select" [formControl]="filtros.controls.estado">
+    <option value="">Todos los estados</option>
+    <option value="true">Activas</option>
+    <option value="false">Inactivas</option>
+  </select>
+</div>
+
+<div class="table-card">
+  <div class="table-header">
+    <h3>Recetas registradas</h3>
+    <span>{{ total() }} recetas</span>
+  </div>
+  @if (cargando()) {
+    <div class="cargando-tabla">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+  } @else if (error()) {
+    <div class="error-tabla">
+      <mat-icon>cloud_off</mat-icon>
+      <p>{{ error() }}</p>
+      <button mat-stroked-button type="button" (click)="recargar()">Reintentar</button>
+    </div>
+  } @else if (recetas().length === 0) {
+    <div class="vacio-tabla">
+      <mat-icon>menu_book</mat-icon>
+      <p>{{ total() === 0 ? 'No hay recetas registradas.' : 'Ninguna receta coincide con los filtros.' }}</p>
+      @if (total() === 0) {
+        <button class="btn-primary" type="button" *siRol="['ADMIN','PRODUCCION']" (click)="nueva()">Crear la primera receta</button>
+      }
+    </div>
+  } @else {
+    <div class="tabla-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Receta</th>
+            <th>Producto asociado</th>
+            <th>Ingredientes</th>
+            <th>Tiempo</th>
+            <th>Rendimiento</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (receta of recetas(); track receta.idReceta) {
+            <tr>
+              <td>
+                <div class="item-cell">
+                  <div class="item-thumb" style="width:36px;height:36px;font-size:18px">
+                    {{ getRecetaIcon(receta.nombre) }}
+                  </div>
+                  <div>
+                    <div class="item-name">{{ receta.nombre }}</div>
+                    <div class="item-sub">{{ receta.ingredientes?.length || 0 }} ingredientes</div>
+                  </div>
+                </div>
+              </td>
+              <td class="product-name">{{ getProductoNombre(receta) }}</td>
+              <td>{{ receta.ingredientes?.length || 0 }}</td>
+              <td>—</td>
+              <td class="quantity">{{ receta.cantidadProducir | number:'1.0-3' }} {{ receta.unidad?.abreviatura }}</td>
+              <td>
+                <span [class]="getEstadoClass(receta.activa)">
+                  <span class="punto"></span>
+                  {{ getEstadoText(receta.activa) }}
+                </span>
+              </td>
+              <td>
+                <div class="actions">
+                  <button class="action-btn" type="button" *siRol="['ADMIN','PRODUCCION']" (click)="abrir(receta)" aria-label="Ver receta {{ receta.nombre }}">
+                    <svg class="ic" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <div class="info">Página {{ pagina() + 1 }} de {{ totalPaginas() }}</div>
+      <div class="pages">
+        <button class="page-btn icon" type="button" [disabled]="pagina() === 0" (click)="pagina.set(pagina() - 1); recargar()" aria-label="Primera">
+          <svg class="ic" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="page-btn icon" type="button" [disabled]="pagina() === 0" (click)="pagina.set(pagina() - 1); recargar()" aria-label="Anterior">
+          <svg class="ic" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        @for (p of [0,1,2,3,4].slice(0, totalPaginas()).filter(i => i >= pagina() - 2 && i <= pagina() + 2); track p) {
+          <button class="page-btn" type="button" [class.active]="p === pagina()" (click)="pagina.set(p); recargar()">{{ p + 1 }}</button>
+        }
+        <button class="page-btn icon" type="button" [disabled]="pagina() >= totalPaginas() - 1" (click)="pagina.set(pagina() + 1); recargar()" aria-label="Siguiente">
+          <svg class="ic" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <button class="page-btn icon" type="button" [disabled]="pagina() >= totalPaginas() - 1" (click)="pagina.set(totalPaginas() - 1); recargar()" aria-label="Última">
+          <svg class="ic" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+  }
+</div>
