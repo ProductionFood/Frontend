@@ -1,38 +1,58 @@
-<header class="page-header">
-  <p>Administra los usuarios que tienen acceso al sistema, sus roles y estado.</p>
+<nav class="breadcrumb" aria-label="Ruta de navegación">
+  <a routerLink="/app/dashboard">Inicio</a>
+  <span aria-hidden="true">/</span>
+  <strong>Usuarios</strong>
+</nav>
 
-  <a mat-flat-button color="primary" routerLink="/app/usuarios/nuevo">
+<header class="page-header">
+  <div>
+    <h1>Usuarios</h1>
+    <p>Administra los usuarios que tienen acceso al sistema, sus roles y permisos.</p>
+  </div>
+  <button class="btn-primary" type="button" *siRol="['ADMIN']" routerLink="/app/usuarios/nuevo">
     <mat-icon>add</mat-icon>
     Agregar usuario
-  </a>
+  </button>
 </header>
 
-<app-kpis-catalogo
-  etiquetaTotal="Usuarios"
-  etiquetaActivos="Activos"
-  etiquetaInactivos="Inactivos"
-  icono="group"
-  [total]="kpiTotal()"
-  [activos]="kpiActivos()"
-  [inactivos]="kpiInactivos()"
-  [cargando]="cargandoKpis()"
-/>
+<div class="kpi-grid" aria-label="Resumen de usuarios">
+  <app-kpi-card
+    etiqueta="Total usuarios"
+    [valor]="kpiTotal()"
+    icono="group"
+    tono="morado"
+  />
+  <app-kpi-card
+    etiqueta="Activos ahora"
+    [valor]="kpiActivosAhora() || '—'"
+    icono="wifi"
+    tono="azul"
+  />
+  <app-kpi-card
+    etiqueta="Administradores"
+    [valor]="kpiAdministradores()"
+    icono="admin_panel_settings"
+    tono="naranja"
+  />
+  <app-kpi-card
+    etiqueta="Últimos accesos"
+    [valor]="kpiUltimosAccesos() || '—'"
+    icono="schedule"
+    tono="verde"
+  />
+</div>
 
-<section class="filtros">
+<div class="filtros" aria-label="Filtros de usuarios">
   <mat-form-field appearance="outline" class="filtro-busqueda">
     <mat-icon matPrefix>search</mat-icon>
-    <mat-label>Buscar por nombre o correo</mat-label>
-    <input
-      matInput
-      [formControl]="filtros.controls.busqueda"
-      autocomplete="off"
-    />
+    <mat-label>Buscar por nombre, correo o rol</mat-label>
+    <input matInput [formControl]="filtros.controls.busqueda" autocomplete="off">
   </mat-form-field>
 
   <mat-form-field appearance="outline">
     <mat-label>Rol</mat-label>
-    <mat-select [formControl]="filtros.controls.idRol">
-      <mat-option [value]="null">Todos los roles</mat-option>
+    <mat-select [formControl]="filtros.controls.rol">
+      <mat-option value="">Todos los roles</mat-option>
       @for (rol of roles(); track rol.idRol) {
         <mat-option [value]="rol.idRol">{{ rol.nombre }}</mat-option>
       }
@@ -41,73 +61,93 @@
 
   <mat-form-field appearance="outline">
     <mat-label>Estado</mat-label>
-    <mat-select [formControl]="filtros.controls.activo">
-      <mat-option [value]="null">Todos</mat-option>
-      <mat-option [value]="true">Activos</mat-option>
-      <mat-option [value]="false">Inactivos</mat-option>
+    <mat-select [formControl]="filtros.controls.estado">
+      <mat-option value="">Todos los estados</mat-option>
+      <mat-option value="true">En línea</mat-option>
+      <mat-option value="false">Desconectado</mat-option>
     </mat-select>
   </mat-form-field>
-</section>
 
-<app-tabla-paginada
-  [columnas]="columnas"
-  [datos]="usuarios()"
-  [total]="total()"
-  [page]="pagina()"
-  [size]="tamano()"
-  [cargando]="cargando()"
-  [error]="error()"
-  mensajeVacio="No hay usuarios para los filtros seleccionados."
-  (cambiarPagina)="onPagina($event)"
-  (cambiarOrden)="onOrden($event)"
-  (reintentar)="recargar()"
->
-  <ng-template appTablaColumna="id" let-usuario>
-    {{ usuario.idUsuario }}
-  </ng-template>
+  <button mat-stroked-button type="button" (click)="recargar()">
+    <mat-icon>tune</mat-icon>
+    Filtros
+  </button>
+</div>
 
-  <ng-template appTablaColumna="nombre" let-usuario>
-    {{ usuario.nombre }}
-  </ng-template>
-
-  <ng-template appTablaColumna="correo" let-usuario>
-    {{ usuario.correo }}
-  </ng-template>
-
-  <ng-template appTablaColumna="rol" let-usuario>
-    <span class="chip-rol">{{ usuario.rol.nombre }}</span>
-  </ng-template>
-
-  <ng-template appTablaColumna="estado" let-usuario>
-    <span
-      class="chip-estado"
-      [class.activo]="usuario.activo"
-      [class.inactivo]="!usuario.activo"
+<app-tarjeta-tabla titulo="Usuarios registrados" [contador]="total() + ' usuarios'">
+  @if (cargando()) {
+    <div class="cargando-tabla">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+  } @else if (error()) {
+    <app-estado-vacio
+      tono="error"
+      icono="cloud_off"
+      mensaje="{{ error() }}"
     >
-      <span class="punto"></span>
-      {{ usuario.activo ? 'Activo' : 'Inactivo' }}
-    </span>
-  </ng-template>
-
-  <ng-template appTablaColumna="acciones" let-usuario>
-    <button
-      mat-icon-button
-      type="button"
-      [matMenuTriggerFor]="menuUsuario"
-      [attr.aria-label]="'Acciones para ' + usuario.nombre"
+      <button mat-stroked-button type="button" (click)="recargar()">Reintentar</button>
+    </app-estado-vacio>
+  } @else if (usuarios().length === 0) {
+    <app-estado-vacio
+      [tono]="total() === 0 ? 'neutro' : 'neutro'"
+      icono="group"
+      [mensaje]="total() === 0 ? 'No hay usuarios registrados.' : 'Ningún usuario coincide con los filtros.'"
+    />
+  } @else {
+    <app-tabla-paginada
+      [columnas]="columnas"
+      [datos]="usuarios()"
+      [total]="total()"
+      [page]="pagina()"
+      [size]="tamano()"
+      [cargando]="cargando()"
+      [error]="error()"
+      [mensajeVacio]="'No hay usuarios para los filtros seleccionados.'"
+      (cambiarPagina)="onPagina($event)"
+      (cambiarOrden)="onOrden($event)"
+      (reintentar)="recargar()"
     >
-      <mat-icon>more_vert</mat-icon>
-    </button>
+      <ng-template appTablaColumna="usuario" let-usuario let-i="index">
+        <div class="usuario-celda">
+          <div class="user-avatar" [class]="getAvatarClass(i)">
+            {{ getIniciales(usuario.nombre) }}
+          </div>
+          <div>
+            <span class="usuario-nombre">{{ usuario.nombre }}</span>
+            <span class="usuario-correo">{{ usuario.correo }}</span>
+          </div>
+        </div>
+      </ng-template>
 
-    <mat-menu #menuUsuario="matMenu">
-      <button mat-menu-item type="button" (click)="editar(usuario)">
-        <mat-icon>edit</mat-icon>
-        <span>Editar</span>
-      </button>
-      <button mat-menu-item type="button" (click)="cambiarEstado(usuario)">
-        <mat-icon>{{ usuario.activo ? 'toggle_off' : 'toggle_on' }}</mat-icon>
-        <span>{{ usuario.activo ? 'Desactivar' : 'Activar' }}</span>
-      </button>
-    </mat-menu>
-  </ng-template>
-</app-tabla-paginada>
+      <ng-template appTablaColumna="rol" let-usuario>
+        <app-estado-badge
+          [texto]="usuario.rol?.nombre ?? '—'"
+          [tono]="getBadgeTono(usuario.rol?.nombre ?? '')"
+          [punto]="false"
+        />
+      </ng-template>
+
+      <ng-template appTablaColumna="estado" let-usuario>
+        <app-estado-badge
+          [texto]="getEstadoText(usuario.activo)"
+          [tono]="getEstadoBadgeTono(usuario.activo)"
+        />
+      </ng-template>
+
+      <ng-template appTablaColumna="ultimoAcceso" let-usuario>
+        <span class="ultimo-acceso">—</span>
+      </ng-template>
+
+      <ng-template appTablaColumna="acciones" let-usuario>
+        <div class="acciones-fila">
+          <button mat-icon-button type="button" *siRol="['ADMIN']" (click)="editar(usuario)" [attr.aria-label]="'Editar ' + usuario.nombre" matTooltip="Editar">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button type="button" *siRol="['ADMIN']" (click)="cambiarEstado(usuario)" [attr.aria-label]="(usuario.activo ? 'Desactivar ' : 'Activar ') + usuario.nombre" matTooltip="{{ usuario.activo ? 'Desactivar' : 'Activar' }}">
+            <mat-icon>{{ usuario.activo ? 'toggle_off' : 'toggle_on' }}</mat-icon>
+          </button>
+        </div>
+      </ng-template>
+    </app-tabla-paginada>
+  }
+</app-tarjeta-tabla>
