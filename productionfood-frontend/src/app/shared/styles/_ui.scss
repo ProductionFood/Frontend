@@ -13,6 +13,7 @@
   border: 1px solid var(--borde);
   border-radius: var(--radio-m);
   box-shadow: var(--sombra-2);
+  transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
 }
 
 @mixin tarjeta-contenedor {
@@ -67,7 +68,7 @@
   }
 
   tr.mat-mdc-row {
-    transition: background var(--transicion-rapida);
+    transition: background-color 160ms ease;
   }
 
   tr.mat-mdc-row:hover {

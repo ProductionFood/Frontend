@@ -19,7 +19,7 @@
       </div>
     </div>
 
-    <mat-nav-list class="nav">
+    <mat-nav-list class="nav" aria-label="Navegación principal">
       <a
         mat-list-item
         routerLink="/app/dashboard"
@@ -32,7 +32,7 @@
       </a>
 
       @for (grupo of gruposVisibles(); track grupo.titulo) {
-        <div class="grupo-titulo">{{ grupo.titulo }}</div>
+        <div class="grupo-titulo" role="heading" aria-level="2">{{ grupo.titulo }}</div>
 
         @for (item of grupo.items; track item.ruta) {
           <a
@@ -80,7 +80,6 @@
         mat-icon-button
         type="button"
         class="boton-tema"
-        [class.tema-oscuro]="tema.oscuro()"
         [attr.aria-label]="tema.oscuro() ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'"
         (click)="tema.alternar()"
       >
