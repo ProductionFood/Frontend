@@ -1,6 +1,6 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal, computed } from '@angular/core';
 
-import { CurrencyPipe, DecimalPipe } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -10,6 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
@@ -31,36 +32,25 @@ import {
   ConfirmarDialogComponent,
   ConfirmarDialogData
 } from '../../../../shared/components/confirmar-dialog/confirmar-dialog.component';
-import {
-  ColumnaTabla,
-  TablaPaginadaComponent
-} from '../../../../shared/components/tabla-paginada/tabla-paginada.component';
-import { TablaColumnaDirective } from '../../../../shared/components/tabla-paginada/tabla-columna.directive';
 import { MateriaPrima } from '../../models/materia-prima.model';
 import { MateriaPrimaService } from '../../services/materia-prima.service';
 import { MateriaPrimaFormularioComponent } from '../materia-prima-formulario/materia-prima-formulario.component';
 
-/**
- * Listado de materias primas (HU-08). Columnas reales de la tabla
- * `materias_primas` + `cantidadDisponible` del inventario. Lectura para
- * ADMIN/PRODUCCION/COMPRAS/CONSULTA; escritura solo ADMIN.
- */
 @Component({
   selector: 'app-materia-prima-lista',
   standalone: true,
   imports: [
     ReactiveFormsModule,
     DecimalPipe,
-    CurrencyPipe,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
-    TablaPaginadaComponent,
-    TablaColumnaDirective,
-    SiRolDirective
+    MatProgressBarModule,
+    SiRolDirective,
+    MateriaPrimaFormularioComponent
   ],
   templateUrl: './materia-prima-lista.component.html',
   styleUrl: './materia-prima-lista.component.scss'
@@ -72,27 +62,34 @@ export class MateriaPrimaListaComponent {
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly columnas: ColumnaTabla[] = [
-    { id: 'nombre', titulo: 'Nombre', ordenable: true },
-    { id: 'unidad', titulo: 'Unidad', ordenable: false },
-    { id: 'stockMinimo', titulo: 'Stock mín.', ordenable: true },
-    { id: 'disponible', titulo: 'Disponible', ordenable: false },
-    { id: 'costoUnitario', titulo: 'Costo unit.', ordenable: true },
-    { id: 'estado', titulo: 'Estado', ordenable: false },
-    { id: 'acciones', titulo: '', ordenable: false }
+  readonly columnas = [
+    'materiaPrima',
+    'categoria',
+    'proveedor',
+    'stock',
+    'estado',
+    'acciones'
   ];
 
   readonly filtros = this.fb.group({
-    nombre: this.fb.nonNullable.control(''),
-    activo: this.fb.control<boolean | null>(true)
+    busqueda: this.fb.nonNullable.control(''),
+    categoria: this.fb.control<string | null>(null),
+    estado: this.fb.control<boolean | null>(null)
   });
 
   readonly materias = signal<MateriaPrima[]>([]);
   readonly total = signal(0);
+  readonly kpiTotal = signal(0);
+  readonly kpiActivas = signal(0);
+  readonly kpiProveedores = signal(0);
+  readonly kpiBajoStock = signal(0);
+  readonly cargandoKpis = signal(true);
   readonly pagina = signal(0);
   readonly tamano = signal(20);
   readonly cargando = signal(false);
   readonly error = signal<string | null>(null);
+
+  readonly totalPaginas = computed(() => Math.ceil(this.total() / this.tamano()) || 1);
 
   private readonly ordenCampo = signal('');
   private readonly ordenDireccion = signal<'asc' | 'desc' | ''>('');
@@ -124,9 +121,10 @@ export class MateriaPrimaListaComponent {
         this.total.set(respuesta.totalElements);
         this.cargando.set(false);
         this.error.set(null);
+        this.actualizarKpisDerivados(respuesta.content);
       });
 
-    this.filtros.controls.nombre.valueChanges
+    this.filtros.controls.busqueda.valueChanges
       .pipe(
         debounceTime(350),
         distinctUntilChanged(),
@@ -137,7 +135,14 @@ export class MateriaPrimaListaComponent {
         this.recargar();
       });
 
-    this.filtros.controls.activo.valueChanges
+    this.filtros.controls.categoria.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.pagina.set(0);
+        this.recargar();
+      });
+
+    this.filtros.controls.estado.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.pagina.set(0);
@@ -149,6 +154,25 @@ export class MateriaPrimaListaComponent {
 
   recargar(): void {
     this.recargar$.next();
+    this.cargarKpis();
+  }
+
+  private cargarKpis(): void {
+    this.cargandoKpis.set(true);
+    this.materiaPrimaService.listar({ page: 0, size: 1000 })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(respuesta => {
+        const items = respuesta.content;
+        this.kpiTotal.set(items.length);
+        this.kpiActivas.set(items.filter(m => m.activo).length);
+        this.kpiProveedores.set(0); // TODO: backend - contar proveedores únicos
+        this.kpiBajoStock.set(items.filter(m => m.stockMinimo > 0 && m.cantidadDisponible < m.stockMinimo).length);
+        this.cargandoKpis.set(false);
+      });
+  }
+
+  private actualizarKpisDerivados(items: MateriaPrima[]): void {
+    this.kpiBajoStock.set(items.filter(m => m.stockMinimo > 0 && m.cantidadDisponible < m.stockMinimo).length);
   }
 
   onPagina(evento: PageEvent): void {
@@ -236,15 +260,15 @@ export class MateriaPrimaListaComponent {
   }
 
   private peticion() {
-    const { nombre, activo } = this.filtros.getRawValue();
+    const { busqueda, categoria, estado } = this.filtros.getRawValue();
     const campo = this.ordenCampo();
     const direccion = this.ordenDireccion();
 
     return this.materiaPrimaService.listar({
       page: this.pagina(),
       size: this.tamano(),
-      nombre: nombre.trim() || undefined,
-      activo: activo ?? undefined,
+      nombre: busqueda.trim() || undefined,
+      activo: estado ?? undefined,
       sort:
         campo && (direccion === 'asc' || direccion === 'desc')
           ? `${campo},${direccion}`
@@ -260,5 +284,57 @@ export class MateriaPrimaListaComponent {
     }
 
     return 'No se pudo cargar el listado de materias primas.';
+  }
+
+  getIconoCategoria(nombre: string): string {
+    const n = nombre.toLowerCase();
+    if (n.includes('harina') || n.includes('pan') || n.includes('trigo')) return '🌾';
+    if (n.includes('leche') || n.includes('lacteo') || n.includes('yogur') || n.includes('mantequilla') || n.includes('queso')) return '🥛';
+    if (n.includes('azucar') || n.includes('dulce') || n.includes('miel') || n.includes('chocolate')) return '🍬';
+    if (n.includes('huevo')) return '🥚';
+    if (n.includes('sal')) return '🧂';
+    if (n.includes('aceite') || n.includes('grasa') || n.includes('manteca')) return '🫒';
+    return '📦';
+  }
+
+  getCategoriaBadge(nombre: string): string {
+    const n = nombre.toLowerCase();
+    if (n.includes('harina') || n.includes('pan') || n.includes('trigo')) return 'Panadería';
+    if (n.includes('leche') || n.includes('lacteo') || n.includes('yogur') || n.includes('mantequilla') || n.includes('queso')) return 'Lácteos';
+    if (n.includes('azucar') || n.includes('dulce') || n.includes('miel') || n.includes('chocolate')) return 'Repostería';
+    if (n.includes('huevo')) return 'Panadería';
+    if (n.includes('sal')) return 'Conservas';
+    if (n.includes('aceite') || n.includes('grasa') || n.includes('manteca')) return 'Conservas';
+    return 'General';
+  }
+
+  getCategoriaClass(categoria: string): string {
+    switch (categoria) {
+      case 'Panadería': return 'category panaderia';
+      case 'Lácteos': return 'category lacteos';
+      case 'Repostería': return 'category reposteria';
+      case 'Conservas': return 'category conservas';
+      default: return 'category';
+    }
+  }
+
+  getEstadoClass(activo: boolean): string {
+    return activo ? 'status completed' : 'status cancelled';
+  }
+
+  getEstadoText(activo: boolean): string {
+    return activo ? 'Adecuado' : 'Inactiva';
+  }
+
+  getStockClass(cantidad: number, minimo: number): string {
+    if (minimo > 0 && cantidad === 0) return 'danger';
+    if (minimo > 0 && cantidad < minimo) return 'warn';
+    return '';
+  }
+
+  getStockIcon(cantidad: number, minimo: number): string {
+    if (minimo > 0 && cantidad === 0) return 'error';
+    if (minimo > 0 && cantidad < minimo) return 'warning';
+    return '';
   }
 }

@@ -1,123 +1,175 @@
-<header class="page-header">
-  <p>Administra los insumos que usas en tus recetas y controla su disponibilidad.</p>
+<div class="breadcrumb">Inicio / <b>Materias Primas</b></div>
 
-  <button
-    *siRol="['ADMIN']"
-    mat-flat-button
-    color="primary"
-    type="button"
-    (click)="abrirFormulario()"
-  >
-    <mat-icon>add</mat-icon>
-    Nueva materia prima
+<header class="page-header">
+  <div>
+    <h1>Materias Primas</h1>
+    <p>Administra los insumos que usas en tus recetas y controla su disponibilidad.</p>
+  </div>
+  <button class="btn-primary" type="button" *siRol="['ADMIN']" (click)="abrirFormulario()">
+    <svg class="ic" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Agregar materia prima
   </button>
 </header>
 
-<section class="filtros">
-  <mat-form-field appearance="outline" class="filtro-busqueda">
-    <mat-icon matPrefix>search</mat-icon>
-    <mat-label>Buscar por nombre</mat-label>
-    <input
-      matInput
-      [formControl]="filtros.controls.nombre"
-      autocomplete="off"
-    />
-  </mat-form-field>
+<div class="kpi-grid">
+  <div class="kpi">
+    <div>
+      <div class="kpi-label">Total materias primas</div>
+      <div class="kpi-number">{{ kpiTotal() }}</div>
+    </div>
+    <div class="kpi-icon">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M12 8c3 3 3 9 0 13-3-4-3-10 0-13Z"/><path d="M9 5c1 1 2 2 3 3 1-1 2-2 3-3"/><path d="M12 2v4"/></svg>
+    </div>
+  </div>
+  <div class="kpi">
+    <div>
+      <div class="kpi-label">Activas</div>
+      <div class="kpi-number">{{ kpiActivas() }}</div>
+    </div>
+    <div class="kpi-icon blue">
+      <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg>
+    </div>
+  </div>
+  <div class="kpi">
+    <div>
+      <div class="kpi-label">Proveedores</div>
+      <div class="kpi-number">{{ kpiProveedores() || '—' }}</div>
+    </div>
+    <div class="kpi-icon purple">
+      <svg class="ic" viewBox="0 0 24 24"><rect x="1" y="6" width="15" height="12" rx="1"/><path d="M16 10h4l3 3v5h-7z"/><circle cx="6" cy="19" r="2"/><circle cx="17.5" cy="19" r="2"/></svg>
+    </div>
+  </div>
+  <div class="kpi">
+    <div>
+      <div class="kpi-label">Con bajo stock</div>
+      <div class="kpi-number">{{ kpiBajoStock() }}</div>
+    </div>
+    <div class="kpi-icon red">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    </div>
+  </div>
+</div>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Estado</mat-label>
-    <mat-select [formControl]="filtros.controls.activo">
-      <mat-option [value]="null">Todos</mat-option>
-      <mat-option [value]="true">Activas</mat-option>
-      <mat-option [value]="false">Inactivas</mat-option>
-    </mat-select>
-  </mat-form-field>
-</section>
+<div class="filters">
+  <div class="filter-search">
+    <svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" placeholder="Buscar por nombre, categoría o proveedor..." [formControl]="filtros.controls.busqueda" autocomplete="off">
+  </div>
+  <select class="filter-select" [formControl]="filtros.controls.categoria">
+    <option value="">Todas las categorías</option>
+    <option value="Panadería">Panadería</option>
+    <option value="Lácteos">Lácteos</option>
+    <option value="Repostería">Repostería</option>
+    <option value="Conservas">Conservas</option>
+  </select>
+  <select class="filter-select" [formControl]="filtros.controls.estado">
+    <option value="">Todos los estados</option>
+    <option value="true">Activas</option>
+    <option value="false">Inactivas</option>
+  </select>
+</div>
 
-<app-tabla-paginada
-  [columnas]="columnas"
-  [datos]="materias()"
-  [total]="total()"
-  [page]="pagina()"
-  [size]="tamano()"
-  [cargando]="cargando()"
-  [error]="error()"
-  mensajeVacio="No hay materias primas para los filtros seleccionados."
-  (cambiarPagina)="onPagina($event)"
-  (cambiarOrden)="onOrden($event)"
-  (reintentar)="recargar()"
->
-  <ng-template appTablaColumna="nombre" let-materia>
-    {{ materia.nombre }}
-  </ng-template>
-
-  <ng-template appTablaColumna="unidad" let-materia>
-    {{ materia.unidad.abreviatura }}
-  </ng-template>
-
-  <ng-template appTablaColumna="stockMinimo" let-materia>
-    {{ materia.stockMinimo | number: '1.2-2' }}
-  </ng-template>
-
-  <ng-template appTablaColumna="disponible" let-materia>
-    <span
-      class="disponible"
-      [class.agotada]="
-        materia.stockMinimo > 0 && materia.cantidadDisponible === 0
-      "
-      [class.baja]="
-        materia.stockMinimo > 0 &&
-        materia.cantidadDisponible > 0 &&
-        materia.cantidadDisponible < materia.stockMinimo
-      "
-    >
-      @if (materia.stockMinimo > 0 && materia.cantidadDisponible === 0) {
-        <mat-icon>error</mat-icon>
-      } @else if (
-        materia.stockMinimo > 0 &&
-        materia.cantidadDisponible < materia.stockMinimo
-      ) {
-        <mat-icon>warning</mat-icon>
-      }
-      {{ materia.cantidadDisponible | number: '1.2-2' }}
-    </span>
-  </ng-template>
-
-  <ng-template appTablaColumna="costoUnitario" let-materia>
-    {{ materia.costoUnitario | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
-  </ng-template>
-
-  <ng-template appTablaColumna="estado" let-materia>
-    <span
-      class="chip-estado"
-      [class.activo]="materia.activo"
-      [class.inactivo]="!materia.activo"
-    >
-      <span class="punto"></span>
-      {{ materia.activo ? 'Activa' : 'Inactiva' }}
-    </span>
-  </ng-template>
-
-  <ng-template appTablaColumna="acciones" let-materia>
-    <button
-      *siRol="['ADMIN']"
-      mat-icon-button
-      type="button"
-      aria-label="Acciones de la materia prima"
-      [matMenuTriggerFor]="menuMateria"
-    >
-      <mat-icon>more_vert</mat-icon>
-    </button>
-
-    <mat-menu #menuMateria="matMenu">
-      <button mat-menu-item type="button" (click)="abrirFormulario(materia)">
-        <mat-icon>edit</mat-icon>
-        <span>Editar</span>
-      </button>
-      <button mat-menu-item type="button" (click)="cambiarEstado(materia)">
-        <mat-icon>{{ materia.activo ? 'toggle_off' : 'toggle_on' }}</mat-icon>
-        <span>{{ materia.activo ? 'Desactivar' : 'Activar' }}</span>
-      </button>
-    </mat-menu>
-  </ng-template>
-</app-tabla-paginada>
+<div class="table-card">
+  <div class="table-header">
+    <h3>Materias primas registradas</h3>
+    <span>{{ total() }} materias primas</span>
+  </div>
+  @if (cargando()) {
+    <div class="cargando-tabla">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+  } @else if (error()) {
+    <div class="error-tabla">
+      <mat-icon>cloud_off</mat-icon>
+      <p>{{ error() }}</p>
+      <button mat-stroked-button type="button" (click)="recargar()">Reintentar</button>
+    </div>
+  } @else if (materias().length === 0) {
+    <div class="vacio-tabla">
+      <mat-icon>inventory_2</mat-icon>
+      <p>{{ total() === 0 ? 'No hay materias primas registradas.' : 'Ninguna materia prima coincide con los filtros.' }}</p>
+    </div>
+  } @else {
+    <div class="tabla-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Materia prima</th>
+            <th>Categoría</th>
+            <th>Proveedor</th>
+            <th>Stock</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (materia of materias(); track materia.idMateriaPrima) {
+            <tr>
+              <td>
+                <div class="item-cell">
+                  <div class="item-thumb" [style.width.px]="36" [style.height.px]="36" [style.font-size.px]="18">
+                    {{ getIconoCategoria(materia.nombre) }}
+                  </div>
+                  <div>
+                    <div class="item-name">{{ materia.nombre }}</div>
+                    <div class="item-sub">{{ materia.unidad.abreviatura }} · Mín: {{ materia.stockMinimo | number:'1.2-2' }}</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span [class]="getCategoriaClass(getCategoriaBadge(materia.nombre))">
+                  {{ getCategoriaBadge(materia.nombre) }}
+                </span>
+              </td>
+              <td>—</td>
+              <td class="quantity">
+                <span [class]="getStockClass(materia.cantidadDisponible, materia.stockMinimo)">
+                  {{ materia.cantidadDisponible | number:'1.2-2' }}
+                  @if (getStockIcon(materia.cantidadDisponible, materia.stockMinimo)) {
+                    <mat-icon [class]="getStockClass(materia.cantidadDisponible, materia.stockMinimo)">{{ getStockIcon(materia.cantidadDisponible, materia.stockMinimo) }}</mat-icon>
+                  }
+                </span>
+              </td>
+              <td>
+                <span [class]="getEstadoClass(materia.activo)">
+                  <span class="punto"></span>
+                  {{ getEstadoText(materia.activo) }}
+                </span>
+              </td>
+              <td>
+                <div class="actions">
+                  <button class="action-btn" type="button" *siRol="['ADMIN']" (click)="abrirFormulario(materia)" aria-label="Editar {{ materia.nombre }}">
+                    <svg class="ic" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg>
+                  </button>
+                  <button class="action-btn" type="button" *siRol="['ADMIN']" (click)="cambiarEstado(materia)" [class.danger]="materia.activo" aria-label="{{ materia.activo ? 'Desactivar' : 'Activar' }} {{ materia.nombre }}">
+                    <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <div class="info">Página {{ pagina() + 1 }} de {{ totalPaginas() }}</div>
+      <div class="pages">
+        <button class="page-btn icon" type="button" [disabled]="pagina() === 0" (click)="pagina.set(pagina() - 1); recargar()" aria-label="Primera">
+          <svg class="ic" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="page-btn icon" type="button" [disabled]="pagina() === 0" (click)="pagina.set(pagina() - 1); recargar()" aria-label="Anterior">
+          <svg class="ic" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        @for (p of [0,1,2,3,4].slice(0, totalPaginas()).filter(i => i >= pagina() - 2 && i <= pagina() + 2); track p) {
+          <button class="page-btn" type="button" [class.active]="p === pagina()" (click)="pagina.set(p); recargar()">{{ p + 1 }}</button>
+        }
+        <button class="page-btn icon" type="button" [disabled]="pagina() >= totalPaginas() - 1" (click)="pagina.set(pagina() + 1); recargar()" aria-label="Siguiente">
+          <svg class="ic" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <button class="page-btn icon" type="button" [disabled]="pagina() >= totalPaginas() - 1" (click)="pagina.set(totalPaginas() - 1); recargar()" aria-label="Última">
+          <svg class="ic" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+  }
+</div>
