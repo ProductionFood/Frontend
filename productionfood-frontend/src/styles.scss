@@ -202,7 +202,7 @@ html[data-theme='dark'] body {
   color-scheme: dark;
 }
 
-/* Transición global del tema: suaviza las superficies sin recrear componentes. */
+/* Transición suave al alternar entre tema claro y oscuro. */
 body,
 body * {
   transition-property: color, background-color, border-color, box-shadow;
@@ -544,4 +544,137 @@ svg.ic {
   stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+
+/* =========================================================
+   ProductionFood — pulido visual compartido
+   Unifica tablas, filtros y formularios sin cambiar su lógica.
+   Los colores usan tokens existentes para respetar ambos temas.
+   ========================================================= */
+:root {
+  --pf-control-radius: 10px;
+  --pf-control-focus: 0 0 0 3px color-mix(in srgb, var(--verde-500) 17%, transparent);
+}
+
+/* Transiciones discretas para superficies comunes. */
+.mat-mdc-card,
+.mat-mdc-dialog-surface,
+.mat-mdc-form-field .mdc-text-field,
+.mat-mdc-form-field .mat-mdc-form-field-flex,
+.mat-mdc-select-panel,
+.mat-mdc-menu-panel,
+.mat-mdc-paginator,
+.mat-mdc-table {
+  transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+/* Campos y selectores: radios y foco consistentes. */
+.mat-mdc-form-field .mdc-text-field,
+.mat-mdc-form-field .mat-mdc-form-field-focus-overlay {
+  border-radius: var(--pf-control-radius);
+}
+
+.mat-mdc-form-field .mdc-text-field--outlined .mdc-notched-outline__leading {
+  border-radius: var(--pf-control-radius) 0 0 var(--pf-control-radius);
+}
+
+.mat-mdc-form-field .mdc-text-field--outlined .mdc-notched-outline__trailing {
+  border-radius: 0 var(--pf-control-radius) var(--pf-control-radius) 0;
+}
+
+.mat-mdc-form-field.mat-focused .mdc-text-field--outlined {
+  box-shadow: var(--pf-control-focus);
+}
+
+.mat-mdc-form-field .mdc-text-field--outlined .mdc-notched-outline__leading,
+.mat-mdc-form-field .mdc-text-field--outlined .mdc-notched-outline__notch,
+.mat-mdc-form-field .mdc-text-field--outlined .mdc-notched-outline__trailing {
+  transition: border-color 160ms ease;
+}
+
+/* Botones con respuesta táctil breve, sin alterar sus acciones. */
+.mat-mdc-button,
+.mat-mdc-unelevated-button,
+.mat-mdc-raised-button,
+.mat-mdc-outlined-button,
+.mat-mdc-icon-button {
+  transition: background-color 160ms ease, color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.mat-mdc-button:active:not(:disabled),
+.mat-mdc-unelevated-button:active:not(:disabled),
+.mat-mdc-raised-button:active:not(:disabled),
+.mat-mdc-outlined-button:active:not(:disabled),
+.mat-mdc-icon-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* Tablas: cabeceras más definidas y hover suave en ambas paletas. */
+.mat-mdc-table .mat-mdc-header-row {
+  background: var(--superficie-suave);
+}
+
+.mat-mdc-table .mat-mdc-header-cell {
+  color: var(--texto-suave);
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.mat-mdc-table .mat-mdc-row {
+  transition: background-color 160ms ease;
+}
+
+.mat-mdc-table .mat-mdc-row:hover {
+  background: var(--superficie-hover);
+}
+
+.mat-mdc-table .mat-mdc-cell,
+.mat-mdc-table .mat-mdc-header-cell {
+  border-bottom-color: var(--borde);
+}
+
+/* Tarjetas y paneles: borde más limpio, sin elevar excesivamente la UI. */
+.mat-mdc-card {
+  border-color: var(--borde);
+  border-radius: var(--radio-m);
+}
+
+/* Foco visible para teclado. */
+.mat-mdc-button:focus-visible,
+.mat-mdc-unelevated-button:focus-visible,
+.mat-mdc-raised-button:focus-visible,
+.mat-mdc-outlined-button:focus-visible,
+.mat-mdc-icon-button:focus-visible,
+.mat-mdc-checkbox:focus-visible,
+.mat-mdc-radio-button:focus-visible {
+  outline: 2px solid var(--verde-500);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mat-mdc-card,
+  .mat-mdc-dialog-surface,
+  .mat-mdc-form-field .mdc-text-field,
+  .mat-mdc-form-field .mat-mdc-form-field-flex,
+  .mat-mdc-select-panel,
+  .mat-mdc-menu-panel,
+  .mat-mdc-paginator,
+  .mat-mdc-table,
+  .mat-mdc-button,
+  .mat-mdc-unelevated-button,
+  .mat-mdc-raised-button,
+  .mat-mdc-outlined-button,
+  .mat-mdc-icon-button,
+  .mat-mdc-table .mat-mdc-row {
+    transition-duration: 0.01ms !important;
+  }
+
+  .mat-mdc-button:active:not(:disabled),
+  .mat-mdc-unelevated-button:active:not(:disabled),
+  .mat-mdc-raised-button:active:not(:disabled),
+  .mat-mdc-outlined-button:active:not(:disabled),
+  .mat-mdc-icon-button:active:not(:disabled) {
+    transform: none;
+  }
 }
