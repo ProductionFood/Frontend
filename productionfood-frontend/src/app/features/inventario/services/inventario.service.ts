@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { PageResponse } from '../../../shared/models/page-response.model';
-import { InventarioMateriaPrima, KardexInventario, MovimientoInventario } from '../models/inventario.model';
+import { CrearMovimientoInventarioDto, InventarioMateriaPrima, KardexInventario, MovimientoInventario } from '../models/inventario.model';
 
 export interface InventarioFiltro {
   page: number;
@@ -33,5 +33,9 @@ export class InventarioService {
     if (desde) params = params.set('desde', desde);
     if (hasta) params = params.set('hasta', hasta);
     return this.http.get<PageResponse<MovimientoInventario> | KardexInventario | MovimientoInventario[]>(`${this.url}/${idMateriaPrima}/movimientos`, { params });
+  }
+
+  crearMovimiento(dto: CrearMovimientoInventarioDto): Observable<MovimientoInventario> {
+    return this.http.post<MovimientoInventario>(`${this.url}/movimientos`, dto);
   }
 }

@@ -13,7 +13,7 @@
     mat-flat-button
     color="primary"
     type="button"
-    (click)="abrirFormulario()"
+    (click)="nueva()"
   >
     <mat-icon>add</mat-icon>
     Nueva compra
@@ -126,7 +126,7 @@
           *siRol="['ADMIN', 'COMPRAS']"
           mat-menu-item
           type="button"
-          (click)="abrirFormulario(compra)"
+          (click)="editar(compra)"
         >
           <mat-icon>edit</mat-icon>
           <span>Editar</span>

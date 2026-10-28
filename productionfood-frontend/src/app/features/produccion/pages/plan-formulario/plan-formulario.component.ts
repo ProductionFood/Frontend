@@ -6,12 +6,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { NotificacionService } from '../../../../core/ui/notificacion.service';
 import { PlanProduccionService } from '../../services/plan-produccion.service';
-@Component({selector:'app-plan-formulario',standalone:true,imports:[ReactiveFormsModule,RouterLink,MatButtonModule,MatCardModule,MatDatepickerModule,MatFormFieldModule,MatInputModule,MatSelectModule],templateUrl:'./plan-formulario.component.html',styleUrl:'./plan-formulario.component.scss'})
+@Component({selector:'app-plan-formulario',standalone:true,imports:[ReactiveFormsModule,RouterLink,MatButtonModule,MatCardModule,MatDatepickerModule,MatFormFieldModule,MatIconModule,MatInputModule,MatSelectModule],templateUrl:'./plan-formulario.component.html',styleUrl:'./plan-formulario.component.scss'})
 export class PlanFormularioComponent {
  private readonly fb=inject(FormBuilder);private readonly service=inject(PlanProduccionService);private readonly router=inject(Router);private readonly notify=inject(NotificacionService);readonly auth=inject(AuthService);
  readonly guardando=signal(false);readonly error=signal('');readonly fieldErrors=signal<Record<string,string>>({});

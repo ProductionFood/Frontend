@@ -40,3 +40,12 @@ export interface KardexInventario {
   saldoActual?: number;
   movimientos: MovimientoInventario[];
 }
+
+/** DTO para registrar un nuevo movimiento de inventario (entrada/salida). */
+export interface CrearMovimientoInventarioDto {
+  idMateriaPrima: number;
+  direccion: DireccionMovimiento;
+  cantidad: number;
+  tipoMovimiento?: string;
+  observacion?: string | null;
+}

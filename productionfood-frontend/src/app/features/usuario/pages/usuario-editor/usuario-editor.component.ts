@@ -6,14 +6,13 @@ import {
   Validators
 } from '@angular/forms';
 
+import { CommonModule } from '@angular/common';
+
 import { HttpErrorResponse } from '@angular/common/http';
 
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+
 import { MatButtonModule } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-  MatDialogRef
-} from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -25,10 +24,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Rol, Usuario } from '../../models/usuario.model';
 import { RolService } from '../../services/rol.service';
 import { UsuarioService } from '../../services/usuario.service';
-
-export interface UsuarioEditorData {
-  usuario: Usuario;
-}
+import { NotificacionService } from '../../../../core/ui/notificacion.service';
 
 interface CuerpoError {
   code?: string;
@@ -37,19 +33,21 @@ interface CuerpoError {
 }
 
 /**
- * Diálogo de edición de usuario (HU-02). Edita nombre, correo y rol; la
- * contraseña no se toca aquí (R-03). Cierra con `true` si guardó.
+ * Edición de usuario como página con router. Edita nombre, correo y rol; la
+ * contraseña no se toca aquí (R-03). Al guardar vuelve al listado con
+ * notificación.
  */
 @Component({
   selector: 'app-usuario-editor',
   standalone: true,
   imports: [
+    CommonModule,
     ReactiveFormsModule,
-    MatDialogModule,
+    RouterLink,
+    MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule
   ],
@@ -58,14 +56,14 @@ interface CuerpoError {
 })
 export class UsuarioEditorComponent {
   private readonly fb = inject(FormBuilder);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly usuarioService = inject(UsuarioService);
   private readonly rolService = inject(RolService);
+  private readonly notificacion = inject(NotificacionService);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly datos = inject<UsuarioEditorData>(MAT_DIALOG_DATA);
-
-  private readonly ref =
-    inject<MatDialogRef<UsuarioEditorComponent>>(MatDialogRef);
+  readonly idUsuario = Number(this.route.snapshot.paramMap.get('id'));
 
   readonly roles = signal<Rol[]>([]);
   readonly cargandoRoles = signal(true);
@@ -86,15 +84,26 @@ export class UsuarioEditorComponent {
   });
 
   constructor() {
-    const { usuario } = this.datos;
-
-    this.form.patchValue({
-      nombre: usuario.nombre,
-      correo: usuario.correo,
-      idRol: usuario.rol.idRol
-    });
-
     this.cargarRoles();
+    this.cargarUsuario(this.idUsuario);
+  }
+
+  cargarUsuario(id: number): void {
+    this.usuarioService
+      .obtener(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (usuario: Usuario) => {
+          this.form.patchValue({
+            nombre: usuario.nombre,
+            correo: usuario.correo,
+            idRol: usuario.rol.idRol
+          });
+        },
+        error: () => {
+          this.errorGeneral.set('No se pudo cargar el usuario.');
+        }
+      });
   }
 
   guardar(): void {
@@ -113,14 +122,17 @@ export class UsuarioEditorComponent {
     this.errorGeneral.set(null);
 
     this.usuarioService
-      .actualizar(this.datos.usuario.idUsuario, {
+      .actualizar(this.idUsuario, {
         nombre: valor.nombre.trim(),
         correo: valor.correo.trim().toLowerCase(),
         idRol: valor.idRol
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: () => this.ref.close(true),
+        next: () => {
+          this.notificacion.exito('Usuario actualizado correctamente.');
+          void this.router.navigate(['/app/usuarios']);
+        },
         error: (error: HttpErrorResponse) => {
           this.guardando.set(false);
           this.aplicarError(error);
@@ -128,8 +140,8 @@ export class UsuarioEditorComponent {
       });
   }
 
-  cancelar(): void {
-    this.ref.close(false);
+  volver(): void {
+    void this.router.navigate(['/app/usuarios']);
   }
 
   get nombreError(): string {

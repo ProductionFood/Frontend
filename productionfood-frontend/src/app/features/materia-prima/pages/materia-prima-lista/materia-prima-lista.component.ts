@@ -3,6 +3,7 @@ import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -41,7 +42,6 @@ import { KpisCatalogoComponent } from '../../../../shared/components/kpis-catalo
 import { MateriaPrima } from '../../models/materia-prima.model';
 import { MateriaPrimaService } from '../../services/materia-prima.service';
 import { contarCatalogo } from '../../../../shared/utils/conteo-catalogo';
-import { MateriaPrimaFormularioComponent } from '../materia-prima-formulario/materia-prima-formulario.component';
 
 @Component({
   selector: 'app-materia-prima-lista',
@@ -56,7 +56,6 @@ import { MateriaPrimaFormularioComponent } from '../materia-prima-formulario/mat
     MatMenuModule,
     MatProgressBarModule,
     SiRolDirective,
-    MateriaPrimaFormularioComponent,
     KpisCatalogoComponent,
     TablaPaginadaComponent,
     TablaColumnaDirective,
@@ -70,6 +69,7 @@ export class MateriaPrimaListaComponent {
   private readonly materiaPrimaService = inject(MateriaPrimaService);
   private readonly notificacion = inject(NotificacionService);
   private readonly dialog = inject(MatDialog);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly columnas: ColumnaTabla[] = [
@@ -201,27 +201,12 @@ export class MateriaPrimaListaComponent {
     this.recargar();
   }
 
-  abrirFormulario(materia?: MateriaPrima): void {
-    this.dialog
-      .open(MateriaPrimaFormularioComponent, {
-        data: { materia },
-        width: '600px',
-        maxWidth: '95vw',
-        autoFocus: 'first-tabbable',
-        disableClose: true
-      })
-      .afterClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((resultado) => {
-        if (resultado === true) {
-          this.notificacion.exito(
-            materia
-              ? 'Materia prima actualizada correctamente.'
-              : 'Materia prima registrada correctamente.'
-          );
-          this.recargar();
-        }
-      });
+  nueva(): void {
+    void this.router.navigate(['/app/materias-primas/nueva']);
+  }
+
+  abrir(materia: MateriaPrima): void {
+    void this.router.navigate(['/app/materias-primas', materia.idMateriaPrima]);
   }
 
   cambiarEstado(materia: MateriaPrima): void {

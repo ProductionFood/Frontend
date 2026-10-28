@@ -1,9 +1,9 @@
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 
 import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { Sort } from '@angular/material/sort';
@@ -19,7 +19,6 @@ import {
 import { TablaColumnaDirective } from '../../../../shared/components/tabla-paginada/tabla-columna.directive';
 import { UnidadMedida } from '../../models/unidad-medida.model';
 import { UnidadMedidaService } from '../../services/unidad-medida.service';
-import { UnidadFormularioComponent } from '../unidad-formulario/unidad-formulario.component';
 
 /**
  * Catálogo de unidades de medida (HU-07). Sin paginador (R-01) y sin acción
@@ -43,7 +42,7 @@ import { UnidadFormularioComponent } from '../unidad-formulario/unidad-formulari
 export class UnidadListaComponent {
   private readonly unidadService = inject(UnidadMedidaService);
   private readonly notificacion = inject(NotificacionService);
-  private readonly dialog = inject(MatDialog);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly columnas: ColumnaTabla[] = [
@@ -99,27 +98,12 @@ export class UnidadListaComponent {
     this.unidades.set(ordenadas);
   }
 
-  abrirFormulario(unidad?: UnidadMedida): void {
-    this.dialog
-      .open(UnidadFormularioComponent, {
-        data: { unidad },
-        width: '480px',
-        maxWidth: '95vw',
-        autoFocus: 'first-tabbable',
-        disableClose: true
-      })
-      .afterClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(guardado => {
-        if (guardado === true) {
-          this.notificacion.exito(
-            unidad
-              ? 'Unidad actualizada correctamente.'
-              : 'Unidad registrada correctamente.'
-          );
-          this.recargar();
-        }
-      });
+  nueva(): void {
+    void this.router.navigate(['/app/unidades-medida/nueva']);
+  }
+
+  abrir(unidad: UnidadMedida): void {
+    void this.router.navigate(['/app/unidades-medida', unidad.idUnidad]);
   }
 
   private mensajeError(error: HttpErrorResponse): string {

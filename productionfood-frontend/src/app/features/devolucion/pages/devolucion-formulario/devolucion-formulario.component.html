@@ -1,6 +1,13 @@
-<h2 mat-dialog-title>Registrar devolución</h2>
-<mat-dialog-content>
-<p>Pedido #{{data.pedido.idPedido}} · {{data.pedido.cliente.nombre}}</p><p><strong>Producto:</strong> {{data.linea.producto.nombre}}</p>
+<header class="page-header">
+  <a class="volver" mat-button routerLink="/app/pedidos/{{data.pedido.idPedido}}">
+    <mat-icon>arrow_back</mat-icon>
+    Volver al pedido
+  </a>
+  <h1>Registrar devolución</h1>
+  <p class="subtitulo">Pedido #{{data.pedido.idPedido}} · {{data.pedido.cliente.nombre}}</p>
+</header>
+
+<p><strong>Producto:</strong> {{data.linea.producto.nombre}}</p>
 @if(cargando()){<mat-progress-bar mode="indeterminate" aria-label="Cargando cantidades"/>}
 @if(error()){<p role="alert" class="error">{{error()}} <button mat-button type="button" (click)="cargar()">Reintentar</button></p>}
 @if(!cargando()&&!error()){
@@ -14,7 +21,6 @@
 @if(motivo.value==='Otro'){<mat-form-field appearance="outline"><mat-label>Especifique el motivo</mat-label><input matInput maxlength="50" [formControl]="otro"/><mat-hint align="end">{{otro.value.length}} / 50</mat-hint></mat-form-field>}
 <mat-form-field appearance="outline"><mat-label>Descripción (opcional)</mat-label><textarea matInput rows="3" maxlength="255" [formControl]="descripcion"></textarea><mat-hint align="end">{{descripcion.value.length}} / 255</mat-hint><mat-error>Máximo 255 caracteres.</mat-error></mat-form-field>
 <p class="aviso">La devolución quedará pendiente de aprobación. El stock volverá al inventario solo cuando sea aprobada.</p>
+<div class="acciones"><button mat-button type="button" (click)="volver()">Cancelar</button><button mat-flat-button type="submit" form="form-devolucion" [disabled]="cargando()||enviando()||!!error()||disponible()===0||cantidad.invalid||cantidad.value>disponible()||motivo.invalid||descripcion.invalid||(motivo.value==='Otro'&&!otro.value.trim())">{{enviando()?'Registrando…':'Registrar'}}</button></div>
 </form>}
 }
-</mat-dialog-content>
-<mat-dialog-actions align="end"><button mat-button type="button" (click)="cerrar()">Cancelar</button><button mat-flat-button type="submit" form="form-devolucion" [disabled]="cargando()||enviando()||!!error()||disponible()===0||cantidad.invalid||cantidad.value>disponible()||motivo.invalid||descripcion.invalid||(motivo.value==='Otro'&&!otro.value.trim())">{{enviando()?'Registrando…':'Registrar'}}</button></mat-dialog-actions>

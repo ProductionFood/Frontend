@@ -6,7 +6,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -14,7 +13,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import {
   EMPTY,
@@ -36,7 +35,6 @@ import { Proveedor } from '../../../proveedor/models/proveedor.model';
 import { ProveedorService } from '../../../proveedor/services/proveedor.service';
 import { Compra, CompraPrefill, EstadoCompra } from '../../models/compra.model';
 import { CompraService } from '../../services/compra.service';
-import { CompraFormularioComponent } from '../compra-formulario/compra-formulario.component';
 
 /**
  * Listado de compras (HU-13). Número, proveedor, fecha, ítems, total y
@@ -70,7 +68,7 @@ export class CompraListaComponent {
   private readonly compraService = inject(CompraService);
   private readonly proveedorService = inject(ProveedorService);
   private readonly notificacion = inject(NotificacionService);
-  private readonly dialog = inject(MatDialog);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly columnas: ColumnaTabla[] = [
@@ -155,27 +153,12 @@ export class CompraListaComponent {
     this.recargar();
   }
 
-  abrirFormulario(compra?: Compra, prefill?: CompraPrefill): void {
-    this.dialog
-      .open(CompraFormularioComponent, {
-        data: { compra, prefill },
-        width: '520px',
-        maxWidth: '95vw',
-        autoFocus: 'first-tabbable',
-        disableClose: true
-      })
-      .afterClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(resultado => {
-        if (resultado === true) {
-          this.notificacion.exito(
-            compra
-              ? 'Compra actualizada correctamente.'
-              : 'Compra registrada correctamente.'
-          );
-          this.recargar();
-        }
-      });
+  nueva(): void {
+    void this.router.navigate(['/app/compras/nueva']);
+  }
+
+  editar(compra: Compra): void {
+    void this.router.navigate(['/app/compras/editar', compra.idCompra]);
   }
 
   /**
@@ -194,7 +177,7 @@ export class CompraListaComponent {
     }
 
     window.history.replaceState(null, '');
-    this.abrirFormulario(undefined, prefill);
+    void this.router.navigate(['/app/compras/nueva'], { state: { compraSugerida: prefill } });
   }
 
   nombreProveedor(id: number): string {

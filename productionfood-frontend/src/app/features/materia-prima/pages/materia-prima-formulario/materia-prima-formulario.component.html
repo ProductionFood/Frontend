@@ -1,125 +1,63 @@
-<h2 mat-dialog-title>
-  {{ esEdicion ? 'Editar materia prima' : 'Nueva materia prima' }}
-</h2>
+<header class="page-header"><div><button mat-button type="button" (click)="volver()"><mat-icon>arrow_back</mat-icon> Volver a materias primas</button><h1>{{ esEdicion ? 'Editar materia prima' : 'Nueva materia prima' }}</h1><p>Administra los insumos que usas en tus recetas y controla su disponibilidad.</p></div></header>
 
-<form [formGroup]="form" (ngSubmit)="guardar()">
-  <mat-dialog-content class="contenido">
+@if (cargandoUnidades()) { <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner> }
+
+@else if (errorGeneral() && !materia() && esEdicion) { <div class="error-general" role="alert"><mat-icon>error_outline</mat-icon><span>{{ errorGeneral() }}</span><button mat-button type="button" (click)="cargar()">Reintentar</button></div> }
+
+@else {
+@if (errorGeneral()) { <div class="error-general" role="alert"><mat-icon>error_outline</mat-icon><span>{{ errorGeneral() }}</span><button mat-icon-button type="button" aria-label="Cerrar mensaje" (click)="errorGeneral.set(null)"><mat-icon>close</mat-icon></button></div> }
+
+<form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+  <mat-card class="seccion"><mat-card-header><mat-card-title>Datos de la materia prima</mat-card-title></mat-card-header><mat-card-content>
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Nombre</mat-label>
       <input matInput formControlName="nombre" autocomplete="off" />
-      @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
-        <mat-error>{{ nombreError }}</mat-error>
-      }
+      @if (form.controls.nombre.touched && form.controls.nombre.invalid) { <mat-error>{{ nombreError }}</mat-error> }
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Unidad de medida</mat-label>
-      <mat-select formControlName="idUnidad">
+      <mat-select formControlName="idUnidad" required>
+        <mat-option [value]="null">Seleccione una unidad</mat-option>
         @if (cargandoUnidades()) {
           <mat-option disabled>Cargando unidades...</mat-option>
         } @else {
           @for (unidad of unidades(); track unidad.idUnidad) {
-            <mat-option [value]="unidad.idUnidad">
-              {{ unidad.nombre }} ({{ unidad.abreviatura }})
-            </mat-option>
+            <mat-option [value]="unidad.idUnidad">{{ unidad.nombre }} ({{ unidad.abreviatura }})</mat-option>
           }
         }
       </mat-select>
-      @if (form.controls.idUnidad.touched && form.controls.idUnidad.invalid) {
-        <mat-error>{{ unidadError }}</mat-error>
-      }
+      @if (form.controls.idUnidad.touched && form.controls.idUnidad.invalid) { <mat-error>{{ unidadError }}</mat-error> }
     </mat-form-field>
 
     @if (sinUnidades) {
-      <div class="sin-unidades">
-        <mat-icon>info</mat-icon>
-        <span>Primero debe registrar unidades de medida.</span>
-        <button mat-button type="button" (click)="irAUnidades()">
-          Ir a Unidades de medida
-        </button>
-      </div>
+      <div class="sin-unidades"><mat-icon>info</mat-icon><span>Primero debe registrar unidades de medida.</span><a mat-button routerLink="/app/unidades-medida">Ir a Unidades de medida</a></div>
     }
 
     @if (errorUnidades()) {
-      <div class="sin-unidades">
-        <mat-icon>error_outline</mat-icon>
-        <span>{{ errorUnidades() }}</span>
-      </div>
+      <div class="sin-unidades"><mat-icon>error_outline</mat-icon><span>{{ errorUnidades() }}</span></div>
     }
 
     <div class="fila">
       <mat-form-field appearance="outline">
         <mat-label>Stock mínimo</mat-label>
-        <input
-          matInput
-          type="number"
-          min="0"
-          step="0.01"
-          formControlName="stockMinimo"
-        />
-        @if (unidadAbreviatura) {
-          <span matTextSuffix>{{ unidadAbreviatura }}</span>
-        }
+        <input matInput type="number" min="0" step="0.01" formControlName="stockMinimo" />
+        @if (unidadAbreviatura) { <span matTextSuffix>{{ unidadAbreviatura }}</span> }
         <mat-hint>Se alertará por debajo de esta cantidad</mat-hint>
-        @if (
-          form.controls.stockMinimo.touched &&
-          form.controls.stockMinimo.invalid
-        ) {
-          <mat-error>{{ stockError }}</mat-error>
-        }
+        @if (form.controls.stockMinimo.touched && form.controls.stockMinimo.invalid) { <mat-error>{{ stockError }}</mat-error> }
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Costo unitario</mat-label>
         <span matTextPrefix>$&nbsp;</span>
-        <input
-          matInput
-          type="number"
-          min="0"
-          step="0.01"
-          formControlName="costoUnitario"
-        />
-        @if (unidadAbreviatura) {
-          <span matTextSuffix>/{{ unidadAbreviatura }}</span>
-        }
+        <input matInput type="number" min="0" step="0.01" formControlName="costoUnitario" />
+        @if (unidadAbreviatura) { <span matTextSuffix>/{{ unidadAbreviatura }}</span> }
         <mat-hint>Valor de referencia para costear recetas</mat-hint>
-        @if (
-          form.controls.costoUnitario.touched &&
-          form.controls.costoUnitario.invalid
-        ) {
-          <mat-error>{{ costoError }}</mat-error>
-        }
+        @if (form.controls.costoUnitario.touched && form.controls.costoUnitario.invalid) { <mat-error>{{ costoError }}</mat-error> }
       </mat-form-field>
     </div>
+  </mat-card-content></mat-card>
 
-    @if (errorGeneral()) {
-      <div class="error-general">
-        <mat-icon>error_outline</mat-icon>
-        <span>{{ errorGeneral() }}</span>
-      </div>
-    }
-  </mat-dialog-content>
-
-  <mat-dialog-actions align="end">
-    <button
-      mat-stroked-button
-      type="button"
-      (click)="cancelar()"
-      [disabled]="guardando()"
-    >
-      Cancelar
-    </button>
-    <button
-      mat-flat-button
-      color="primary"
-      type="submit"
-      [disabled]="form.invalid || guardando() || sinUnidades"
-    >
-      @if (guardando()) {
-        <mat-spinner diameter="18" />
-      } @else {
-        {{ esEdicion ? 'Guardar cambios' : 'Registrar materia prima' }}
-      }
-    </button>
-  </mat-dialog-actions>
+  <div class="acciones-finales"><button mat-button type="button" (click)="volver()" [disabled]="guardando()">Cancelar</button><button mat-flat-button type="submit" [disabled]="guardando() || form.invalid || sinUnidades">@if (guardando()) { <mat-spinner diameter="18"></mat-spinner> }{{ guardando() ? 'Guardando…' : (esEdicion ? 'Guardar cambios' : 'Registrar materia prima') }}</button></div>
 </form>
+}

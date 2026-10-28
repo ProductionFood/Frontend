@@ -2,11 +2,11 @@ import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { PageEvent } from '@angular/material/paginator';
@@ -24,18 +24,17 @@ import { TarjetaTablaComponent } from '../../../../shared/components/tarjeta-tab
 import { MateriaPrima } from '../../../materia-prima/models/materia-prima.model';
 import { LoteMateriaPrima, ResultadoRegistroLote } from '../../models/lote.model';
 import { LoteMateriaPrimaService } from '../../services/lote-materia-prima.service';
-import { LoteMpFormularioComponent } from '../lote-mp-formulario/lote-mp-formulario.component';
 
 @Component({
   selector: 'app-lote-mp-lista', standalone: true,
-  imports: [ReactiveFormsModule, DatePipe, DecimalPipe, MatButtonModule, MatCardModule, MatCheckboxModule, MatChipsModule, MatDialogModule, MatFormFieldModule, MatIconModule, MatSelectModule, SiRolDirective, TablaPaginadaComponent, TablaColumnaDirective, TarjetaTablaComponent],
+  imports: [ReactiveFormsModule, DatePipe, DecimalPipe, MatButtonModule, MatCardModule, MatCheckboxModule, MatChipsModule, MatFormFieldModule, MatIconModule, MatSelectModule, SiRolDirective, TablaPaginadaComponent, TablaColumnaDirective, TarjetaTablaComponent],
   templateUrl: './lote-mp-lista.component.html', styleUrl: './lote-mp-lista.component.scss'
 })
 export class LoteMpListaComponent {
   private readonly fb = inject(FormBuilder);
   private readonly service = inject(LoteMateriaPrimaService);
-  private readonly dialog = inject(MatDialog);
   private readonly notify = inject(NotificacionService);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   readonly columnas: ColumnaTabla[] = [
     { id: 'codigoLote', titulo: 'Código', ordenable: false },
@@ -63,10 +62,8 @@ export class LoteMpListaComponent {
   }
   recargar(): void { this.reload$.next(); }
   onPagina(e: PageEvent): void { this.pagina.set(e.pageIndex); this.tamano.set(e.pageSize); this.recargar(); }
-  abrirFormulario(): void {
-    this.dialog.open(LoteMpFormularioComponent, { width: '680px', maxWidth: '96vw', disableClose: true, autoFocus: 'first-tabbable' }).afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((r: ResultadoRegistroLote | false | undefined) => {
-      if (r) { const unidad = r.unidad ?? ''; const saldo = r.saldoAnterior !== undefined && r.saldoPosterior !== undefined ? ` Inventario actualizado: ${r.saldoAnterior.toLocaleString('es-CO')} → ${r.saldoPosterior.toLocaleString('es-CO')} ${unidad}.` : ''; this.notify.exito(`Lote registrado correctamente.${saldo}`); this.recargar(); }
-    });
+  nueva(): void {
+    void this.router.navigate(['/app/lotes-materia-prima/nueva']);
   }
   estado(lote: LoteMateriaPrima): { texto: string; clase: string; dias: number } {
     const hoy = new Date(); hoy.setHours(0,0,0,0); const vence = new Date(`${lote.fechaVencimiento}T00:00:00`); const dias = Math.ceil((vence.getTime()-hoy.getTime())/86400000);

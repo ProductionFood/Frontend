@@ -1,0 +1,69 @@
+<mat-toolbar class="toolbar">
+  <button mat-icon-button (click)="volver()">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span>Registrar movimiento</span>
+</mat-toolbar>
+
+<div class="pagina">
+  <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+    <div class="formulario">
+      @if (cargando()) {
+        <mat-progress-bar mode="indeterminate" />
+      }
+      @if (error()) {
+        <p role="alert" class="error">{{ error() }}</p>
+      }
+
+      <mat-form-field appearance="outline">
+        <mat-label>Materia prima</mat-label>
+        <mat-select formControlName="idMateriaPrima" required>
+          @for (m of materias(); track m.idMateriaPrima) {
+            <mat-option [value]="m.idMateriaPrima">{{ m.nombre }} ({{ m.unidad.abreviatura }})</mat-option>
+          }
+        </mat-select>
+        @if (form.controls.idMateriaPrima.touched && form.controls.idMateriaPrima.invalid) {
+          <mat-error>{{ errorCampo('idMateriaPrima') }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Dirección</mat-label>
+        <mat-select formControlName="direccion" required>
+          @for (d of direcciones; track d.clave) {
+            <mat-option [value]="d.clave">{{ d.etiqueta }}</mat-option>
+          }
+        </mat-select>
+        @if (form.controls.direccion.touched && form.controls.direccion.invalid) {
+          <mat-error>{{ errorCampo('direccion') }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Cantidad</mat-label>
+        <input matInput type="number" min="0.000001" step="any" formControlName="cantidad" required />
+        @if (form.controls.cantidad.touched && form.controls.cantidad.invalid) {
+          <mat-error>{{ errorCampo('cantidad') }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Tipo de movimiento</mat-label>
+        <input matInput formControlName="tipoMovimiento" maxlength="100" placeholder="Ej: Compra, Consumo, Ajuste" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Observación</mat-label>
+        <textarea matInput formControlName="observacion" maxlength="255" rows="2"></textarea>
+        <mat-hint align="end">{{ form.controls.observacion.value?.length ?? 0 }} / 255</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div class="acciones">
+      <button mat-button type="button" (click)="volver()" [disabled]="guardando()">Volver</button>
+      <button mat-flat-button type="submit" [disabled]="guardando() || cargando() || form.invalid">
+        {{ guardando() ? 'Registrando…' : 'Registrar movimiento' }}
+      </button>
+    </div>
+  </form>
+</div>

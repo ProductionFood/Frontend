@@ -5,7 +5,7 @@
     <h1>Materias Primas</h1>
     <p>Administra los insumos que usas en tus recetas y controla su disponibilidad.</p>
   </div>
-  <button class="btn-primary" type="button" *siRol="['ADMIN']" (click)="abrirFormulario()">
+  <button class="btn-primary" type="button" *siRol="['ADMIN','PRODUCCION']" (click)="nueva()">
     <svg class="ic" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
     Agregar materia prima
   </button>
@@ -101,7 +101,7 @@
 
     <ng-template appTablaColumna="acciones" let-materia>
       <div class="actions">
-        <button class="action-btn" type="button" *siRol="['ADMIN']" (click)="abrirFormulario(materia)" aria-label="Editar {{ materia.nombre }}">
+        <button class="action-btn" type="button" *siRol="['ADMIN','PRODUCCION']" (click)="abrir(materia)" aria-label="Editar {{ materia.nombre }}">
           <svg class="ic" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg>
         </button>
         <button class="action-btn" type="button" *siRol="['ADMIN']" (click)="cambiarEstado(materia)" [class.danger]="materia.activo" aria-label="{{ materia.activo ? 'Desactivar' : 'Activar' }} {{ materia.nombre }}">

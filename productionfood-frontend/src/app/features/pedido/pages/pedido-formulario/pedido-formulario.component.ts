@@ -7,17 +7,13 @@ import {
 } from '@angular/forms';
 
 import { HttpErrorResponse } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import {
-  MAT_DIALOG_DATA,
-  MatDialog,
-  MatDialogModule,
-  MatDialogRef
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -34,10 +30,7 @@ import { Cliente } from '../../../cliente/models/cliente.model';
 import { ClienteService } from '../../../cliente/services/cliente.service';
 import { CrearPedidoDto, Pedido } from '../../models/pedido.model';
 import { PedidoService } from '../../services/pedido.service';
-
-export interface PedidoFormularioData {
-  pedido?: Pedido;
-}
+import { NotificacionService } from '../../../../core/ui/notificacion.service';
 
 interface CuerpoError {
   code?: string;
@@ -46,10 +39,10 @@ interface CuerpoError {
 }
 
 /**
- * Formulario de cabecera de pedido (HU-16) en `MatDialog`. No ofrece fecha
- * de pedido ni estado: los pone el servidor (R-01), y la nota informativa
- * muestra la fecha que se registrará sin presentarla como editable. La fecha
- * de entrega es opcional y no puede ser anterior a la del pedido (R-06).
+ * Formulario de cabecera de pedido (HU-16) como página con router.
+ * No ofrece fecha de pedido ni estado: los pone el servidor (R-01), y la nota
+ * informativa muestra la fecha que se registrará sin presentarla como editable.
+ * La fecha de entrega es opcional y no puede ser anterior a la del pedido (R-06).
  */
 @Component({
   selector: 'app-pedido-formulario',
@@ -57,6 +50,7 @@ interface CuerpoError {
   imports: [
     ReactiveFormsModule,
     DatePipe,
+    MatCardModule,
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
@@ -71,20 +65,21 @@ interface CuerpoError {
 })
 export class PedidoFormularioComponent {
   private readonly fb = inject(FormBuilder);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly pedidoService = inject(PedidoService);
   private readonly clienteService = inject(ClienteService);
   private readonly dialog = inject(MatDialog);
-  private readonly router = inject(Router);
+  private readonly notificacion = inject(NotificacionService);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly datos = inject<PedidoFormularioData>(MAT_DIALOG_DATA);
+  readonly idPedido = Number(this.route.snapshot.paramMap.get('id')) || null;
+  readonly esEdicion = this.idPedido !== null;
 
-  private readonly ref =
-    inject<MatDialogRef<PedidoFormularioComponent>>(MatDialogRef);
-
-  readonly esEdicion = !!this.datos.pedido;
   readonly guardando = signal(false);
   readonly errorGeneral = signal<string | null>(null);
+
+  readonly pedido = signal<Pedido | null>(null);
 
   readonly clientes = signal<Cliente[]>([]);
   readonly cargandoClientes = signal(true);
@@ -96,35 +91,47 @@ export class PedidoFormularioComponent {
    * del propio pedido.
    */
   readonly minFecha = this.esEdicion
-    ? this.aFecha(this.datos.pedido?.fechaPedido) ?? new Date()
+    ? this.aFecha(this.pedido()?.fechaPedido) ?? new Date()
     : new Date();
 
   /** La fecha del pedido no es editable: solo se informa (R-01). */
   readonly fechaPedidoInfo = this.esEdicion
-    ? this.datos.pedido?.fechaPedido ?? ''
+    ? this.pedido()?.fechaPedido ?? ''
     : this.iso(new Date());
 
   readonly form = this.fb.group({
-    idCliente: this.fb.control<number | null>(
-      this.datos.pedido?.cliente.idCliente ?? null,
-      [Validators.required]
-    ),
-    fechaEntrega: this.fb.control<Date | null>(
-      this.aFecha(this.datos.pedido?.fechaEntrega)
-    )
+    idCliente: this.fb.control<number | null>(null, [Validators.required]),
+    fechaEntrega: this.fb.control<Date | null>(null)
   });
 
   constructor() {
     this.cargarClientes();
+    if (this.esEdicion) {
+      this.cargarPedido(this.idPedido!);
+    }
+  }
+
+  cargarPedido(id: number): void {
+    this.pedidoService.obtener(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: p => {
+        this.pedido.set(p);
+        this.form.patchValue({
+          idCliente: p.cliente.idCliente,
+          fechaEntrega: this.aFecha(p.fechaEntrega)
+        });
+      },
+      error: (e: HttpErrorResponse) => {
+        this.errorGeneral.set(e.error?.message ?? 'No se pudo cargar el pedido.');
+      }
+    });
   }
 
   get sinClientes(): boolean {
     return !this.cargandoClientes() && this.clientes().length === 0;
   }
 
-  /** Cierra el diálogo y lleva a HU-05 para registrar el primer cliente. */
+  /** Navega a HU-05 para registrar el primer cliente. */
   irAClientes(): void {
-    this.ref.close(false);
     this.router.navigate(['/app/clientes']);
   }
 
@@ -164,11 +171,16 @@ export class PedidoFormularioComponent {
     };
 
     const peticion = this.esEdicion
-      ? this.pedidoService.actualizar(this.datos.pedido!.idPedido, dto)
+      ? this.pedidoService.actualizar(this.idPedido!, dto)
       : this.pedidoService.crear(dto);
 
     peticion.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => this.ref.close(true),
+      next: () => {
+        this.notificacion.exito(
+          this.esEdicion ? 'Pedido actualizado correctamente.' : 'Pedido creado correctamente.'
+        );
+        void this.router.navigate(['/app/pedidos']);
+      },
       error: (error: HttpErrorResponse) => {
         this.guardando.set(false);
         this.aplicarError(error);
@@ -176,13 +188,9 @@ export class PedidoFormularioComponent {
     });
   }
 
-  cancelar(): void {
-    if (this.guardando()) {
-      return;
-    }
-
+  volver(): void {
     if (!this.form.dirty) {
-      this.ref.close(false);
+      void this.router.navigate(['/app/pedidos']);
       return;
     }
 
@@ -205,7 +213,7 @@ export class PedidoFormularioComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(confirmado => {
         if (confirmado) {
-          this.ref.close(false);
+          void this.router.navigate(['/app/pedidos']);
         }
       });
   }
@@ -256,8 +264,7 @@ export class PedidoFormularioComponent {
         error: (error: HttpErrorResponse) => {
           this.cargandoClientes.set(false);
           this.errorClientes.set(
-            this.mensajeError(error) ??
-              'No se pudo cargar el catálogo de clientes.'
+            this.mensajeError(error) ?? 'No se pudo cargar el catálogo de clientes.'
           );
         }
       });

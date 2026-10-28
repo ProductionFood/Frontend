@@ -9,21 +9,17 @@ import {
 } from '@angular/forms';
 
 import { HttpErrorResponse } from '@angular/common/http';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { MatButtonModule } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA,
-  MatDialog,
-  MatDialogModule,
-  MatDialogRef
-} from '@angular/material/dialog';
+import { MatCardModule } from '@angular/material/card';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
-
-import { Router } from '@angular/router';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -34,14 +30,12 @@ import {
 import { UnidadMedida } from '../../../unidad-medida/models/unidad-medida.model';
 import { UnidadMedidaService } from '../../../unidad-medida/services/unidad-medida.service';
 import {
+  ActualizarMateriaPrimaDto,
   CrearMateriaPrimaDto,
   MateriaPrima
 } from '../../models/materia-prima.model';
 import { MateriaPrimaService } from '../../services/materia-prima.service';
-
-export interface MateriaPrimaFormularioData {
-  materia?: MateriaPrima;
-}
+import { NotificacionService } from '../../../../core/ui/notificacion.service';
 
 interface CuerpoError {
   code?: string;
@@ -70,69 +64,55 @@ function maxDosDecimales(
     : { decimales: true };
 }
 
-/**
- * Formulario de materia prima (HU-08) en `MatDialog`, para crear y editar.
- * El selector de unidad usa el catálogo cacheado de HU-07 y muestra
- * "Nombre (abreviatura)"; los números llevan el sufijo de la unidad elegida.
- */
 @Component({
   selector: 'app-materia-prima-formulario',
   standalone: true,
   imports: [
     ReactiveFormsModule,
+    MatCardModule,
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
     MatIconModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatTooltipModule,
+    RouterLink
   ],
   templateUrl: './materia-prima-formulario.component.html',
   styleUrl: './materia-prima-formulario.component.scss'
 })
 export class MateriaPrimaFormularioComponent {
   private readonly fb = inject(FormBuilder);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly materiaPrimaService = inject(MateriaPrimaService);
   private readonly unidadService = inject(UnidadMedidaService);
   private readonly dialog = inject(MatDialog);
-  private readonly router = inject(Router);
+  private readonly notificacion = inject(NotificacionService);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly datos = inject<MateriaPrimaFormularioData>(MAT_DIALOG_DATA);
+  readonly idMateriaPrima = Number(this.route.snapshot.paramMap.get('id')) || null;
+  readonly esEdicion = this.idMateriaPrima !== null;
 
-  private readonly ref =
-    inject<MatDialogRef<MateriaPrimaFormularioComponent>>(MatDialogRef);
-
-  readonly esEdicion = !!this.datos.materia;
   readonly guardando = signal(false);
   readonly errorGeneral = signal<string | null>(null);
 
   readonly unidades = signal<UnidadMedida[]>([]);
   readonly cargandoUnidades = signal(true);
   readonly errorUnidades = signal<string | null>(null);
+  readonly materia = signal<MateriaPrima | null>(null);
 
   readonly form = this.fb.group({
-    nombre: this.fb.nonNullable.control(
-      this.datos.materia?.nombre ?? '',
-      [Validators.required, Validators.maxLength(100)]
-    ),
-    idUnidad: this.fb.control<number | null>(
-      this.datos.materia?.unidad.idUnidad ?? null,
-      [Validators.required]
-    ),
-    stockMinimo: this.fb.control<number | null>(
-      this.datos.materia?.stockMinimo ?? null,
-      [Validators.required, Validators.min(0), maxDosDecimales]
-    ),
-    costoUnitario: this.fb.control<number | null>(
-      this.datos.materia?.costoUnitario ?? null,
-      [Validators.required, Validators.min(0), maxDosDecimales]
-    )
+    nombre: this.fb.nonNullable.control('', [Validators.required, Validators.maxLength(100)]),
+    idUnidad: this.fb.control<number | null>(null, [Validators.required]),
+    stockMinimo: this.fb.control<number | null>(null, [Validators.required, Validators.min(0), maxDosDecimales]),
+    costoUnitario: this.fb.control<number | null>(null, [Validators.required, Validators.min(0), maxDosDecimales])
   });
 
   constructor() {
-    this.cargarUnidades();
+    this.cargar();
   }
 
   get sinUnidades(): boolean {
@@ -144,6 +124,40 @@ export class MateriaPrimaFormularioComponent {
     return (
       this.unidades().find(unidad => unidad.idUnidad === id)?.abreviatura ?? ''
     );
+  }
+
+  cargar(): void {
+    this.cargandoUnidades.set(true);
+    this.unidadService.listar().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: unidades => {
+        this.unidades.set(unidades);
+        this.cargandoUnidades.set(false);
+        if (this.esEdicion) {
+          this.cargarMateria(this.idMateriaPrima!);
+        }
+      },
+      error: (error: HttpErrorResponse) => {
+        this.cargandoUnidades.set(false);
+        this.errorUnidades.set(this.mensajeError(error) ?? 'No se pudo cargar el catálogo de unidades.');
+      }
+    });
+  }
+
+  private cargarMateria(id: number): void {
+    this.materiaPrimaService.obtener(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: m => {
+        this.materia.set(m);
+        this.form.patchValue({
+          nombre: m.nombre,
+          idUnidad: m.unidad.idUnidad,
+          stockMinimo: m.stockMinimo,
+          costoUnitario: m.costoUnitario
+        });
+      },
+      error: (e: HttpErrorResponse) => {
+        this.errorGeneral.set(e.error?.message ?? 'No se pudo cargar la materia prima.');
+      }
+    });
   }
 
   guardar(): void {
@@ -172,15 +186,17 @@ export class MateriaPrimaFormularioComponent {
     this.guardando.set(true);
     this.errorGeneral.set(null);
 
-    const peticion = this.datos.materia
-      ? this.materiaPrimaService.actualizar(
-          this.datos.materia.idMateriaPrima,
-          dto
-        )
+    const peticion = this.esEdicion
+      ? this.materiaPrimaService.actualizar(this.idMateriaPrima!, dto)
       : this.materiaPrimaService.crear(dto);
 
     peticion.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => this.ref.close(true),
+      next: () => {
+        this.notificacion.exito(
+          this.esEdicion ? 'Materia prima actualizada correctamente.' : 'Materia prima registrada correctamente.'
+        );
+        void this.router.navigate(['/app/materias-primas']);
+      },
       error: (error: HttpErrorResponse) => {
         this.guardando.set(false);
         this.aplicarError(error);
@@ -188,20 +204,15 @@ export class MateriaPrimaFormularioComponent {
     });
   }
 
-  cancelar(): void {
-    if (this.guardando()) {
-      return;
-    }
-
+  volver(): void {
     if (!this.form.dirty) {
-      this.ref.close(false);
+      void this.router.navigate(['/app/materias-primas']);
       return;
     }
 
     const data: ConfirmarDialogData = {
       titulo: 'Descartar cambios',
-      mensaje:
-        'Tienes cambios sin guardar. ¿Quieres cerrar el formulario y descartarlos?',
+      mensaje: 'Tienes cambios sin guardar. ¿Quieres salir y descartarlos?',
       textoConfirmar: 'Descartar cambios',
       textoCancelar: 'Seguir editando',
       peligro: true
@@ -217,14 +228,9 @@ export class MateriaPrimaFormularioComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(confirmado => {
         if (confirmado) {
-          this.ref.close(false);
+          void this.router.navigate(['/app/materias-primas']);
         }
       });
-  }
-
-  irAUnidades(): void {
-    this.ref.close(false);
-    void this.router.navigate(['/app/unidades-medida']);
   }
 
   get nombreError(): string {
@@ -301,25 +307,6 @@ export class MateriaPrimaFormularioComponent {
     }
 
     return '';
-  }
-
-  private cargarUnidades(): void {
-    this.unidadService
-      .listar()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: unidades => {
-          this.unidades.set(unidades);
-          this.cargandoUnidades.set(false);
-        },
-        error: (error: HttpErrorResponse) => {
-          this.cargandoUnidades.set(false);
-          this.errorUnidades.set(
-            this.mensajeError(error) ??
-              'No se pudo cargar el catálogo de unidades.'
-          );
-        }
-      });
   }
 
   private aplicarError(error: HttpErrorResponse): void {

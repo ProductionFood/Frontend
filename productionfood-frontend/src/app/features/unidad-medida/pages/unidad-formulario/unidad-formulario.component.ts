@@ -7,14 +7,11 @@ import {
 } from '@angular/forms';
 
 import { HttpErrorResponse } from '@angular/common/http';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { MatButtonModule } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA,
-  MatDialog,
-  MatDialogModule,
-  MatDialogRef
-} from '@angular/material/dialog';
+import { MatCardModule } from '@angular/material/card';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -31,10 +28,7 @@ import {
   UnidadMedida
 } from '../../models/unidad-medida.model';
 import { UnidadMedidaService } from '../../services/unidad-medida.service';
-
-export interface UnidadFormularioData {
-  unidad?: UnidadMedida;
-}
+import { NotificacionService } from '../../../../core/ui/notificacion.service';
 
 interface CuerpoError {
   code?: string;
@@ -43,7 +37,7 @@ interface CuerpoError {
 }
 
 /**
- * Formulario de unidad de medida (HU-07) en `MatDialog`, para crear y editar.
+ * Formulario de unidad de medida (HU-07) como página con router, para crear y editar.
  * Si al editar cambia la abreviatura, avisa antes (R-04) porque altera cómo se
  * interpretan los registros que usan la unidad.
  */
@@ -53,6 +47,7 @@ interface CuerpoError {
   imports: [
     ReactiveFormsModule,
     MatDialogModule,
+    MatCardModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
@@ -64,29 +59,49 @@ interface CuerpoError {
 })
 export class UnidadFormularioComponent {
   private readonly fb = inject(FormBuilder);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly unidadService = inject(UnidadMedidaService);
   private readonly dialog = inject(MatDialog);
+  private readonly notificacion = inject(NotificacionService);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly datos = inject<UnidadFormularioData>(MAT_DIALOG_DATA);
+  readonly idUnidad = Number(this.route.snapshot.paramMap.get('id')) || null;
+  readonly esEdicion = this.idUnidad !== null;
 
-  private readonly ref =
-    inject<MatDialogRef<UnidadFormularioComponent>>(MatDialogRef);
-
-  readonly esEdicion = !!this.datos.unidad;
   readonly guardando = signal(false);
   readonly errorGeneral = signal<string | null>(null);
 
+  readonly unidad = signal<UnidadMedida | null>(null);
+
   readonly form = this.fb.group({
-    nombre: this.fb.nonNullable.control(this.datos.unidad?.nombre ?? '', [
+    nombre: this.fb.nonNullable.control('', [
       Validators.required,
       Validators.maxLength(50)
     ]),
     abreviatura: this.fb.nonNullable.control(
-      this.datos.unidad?.abreviatura ?? '',
+      '',
       [Validators.required, Validators.maxLength(50)]
     )
   });
+
+  constructor() {
+    this.cargar();
+  }
+
+  cargar(): void {
+    if (this.esEdicion) {
+      this.unidadService.obtener(this.idUnidad!).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+        next: u => {
+          this.unidad.set(u);
+          this.form.patchValue({ nombre: u.nombre, abreviatura: u.abreviatura });
+        },
+        error: (e: HttpErrorResponse) => {
+          this.errorGeneral.set(e.error?.message ?? 'No se pudo cargar la unidad.');
+        }
+      });
+    }
+  }
 
   guardar(): void {
     if (this.form.invalid || this.guardando()) {
@@ -96,7 +111,7 @@ export class UnidadFormularioComponent {
 
     const abreviatura = this.form.controls.abreviatura.value.trim();
     const cambioAbreviatura =
-      this.esEdicion && abreviatura !== this.datos.unidad?.abreviatura;
+      this.esEdicion && abreviatura !== this.unidad()?.abreviatura;
 
     if (cambioAbreviatura) {
       this.confirmarCambioAbreviatura();
@@ -106,20 +121,16 @@ export class UnidadFormularioComponent {
     this.enviar(false);
   }
 
-  cancelar(): void {
-    if (this.guardando()) {
-      return;
-    }
-
+  volver(): void {
     if (!this.form.dirty) {
-      this.ref.close(false);
+      void this.router.navigate(['/app/unidades-medida']);
       return;
     }
 
     const data: ConfirmarDialogData = {
       titulo: 'Descartar cambios',
       mensaje:
-        'Tienes cambios sin guardar. ¿Quieres cerrar el formulario y descartarlos?',
+        'Tienes cambios sin guardar. ¿Quieres salir y descartarlos?',
       textoConfirmar: 'Descartar cambios',
       textoCancelar: 'Seguir editando',
       peligro: true
@@ -135,7 +146,7 @@ export class UnidadFormularioComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(confirmado => {
         if (confirmado) {
-          this.ref.close(false);
+          void this.router.navigate(['/app/unidades-medida']);
         }
       });
   }
@@ -177,7 +188,7 @@ export class UnidadFormularioComponent {
   }
 
   private confirmarCambioAbreviatura(): void {
-    const unidad = this.datos.unidad;
+    const unidad = this.unidad();
 
     if (!unidad) {
       this.enviar(false);
@@ -225,16 +236,17 @@ export class UnidadFormularioComponent {
     this.guardando.set(true);
     this.errorGeneral.set(null);
 
-    const peticion = this.datos.unidad
-      ? this.unidadService.actualizar(
-          this.datos.unidad.idUnidad,
-          dto,
-          confirmar
-        )
+    const peticion = this.esEdicion
+      ? this.unidadService.actualizar(this.idUnidad!, dto, confirmar)
       : this.unidadService.crear(dto);
 
     peticion.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => this.ref.close(true),
+      next: () => {
+        this.notificacion.exito(
+          this.esEdicion ? 'Unidad actualizada correctamente.' : 'Unidad registrada correctamente.'
+        );
+        void this.router.navigate(['/app/unidades-medida']);
+      },
       error: (error: HttpErrorResponse) => {
         this.guardando.set(false);
         this.aplicarError(error);

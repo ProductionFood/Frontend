@@ -1,1 +1,59 @@
-.formulario{display:flex;flex-direction:column;gap:12px;min-width:0;padding-top:12px}.fechas{display:grid;grid-template-columns:1fr 1fr;gap:12px}.error{color:var(--peligro-texto)}.impacto{background:#eff6ff}@media(max-width: 720px){.fechas{grid-template-columns:1fr}}
+@use '../../../../shared/styles/ui' as ui;
+
+:host {
+  display: block;
+  min-width: 0;
+  max-width: 640px;
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  padding-top: var(--esp-2);
+  min-width: 0;
+}
+
+.mat-dialog-content {
+  padding-top: var(--esp-2);
+}
+
+.fechas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--esp-3);
+}
+
+@media (max-width: 560px) {
+  .fechas {
+    grid-template-columns: 1fr;
+  }
+}
+
+.error {
+  color: var(--peligro-texto);
+  font-size: 12.5px;
+  margin: 0;
+}
+
+.impacto {
+  @include ui.tarjeta;
+  padding: var(--esp-3) var(--esp-4);
+  margin-top: var(--esp-3);
+
+  mat-card-content {
+    p {
+      margin: var(--esp-2) 0 0;
+      font-size: 12.5px;
+      color: var(--texto);
+    }
+    strong {
+      color: var(--texto-titulo);
+    }
+  }
+}
+
+.mat-dialog-actions {
+  gap: var(--esp-2);
+  padding-top: var(--esp-2);
+}

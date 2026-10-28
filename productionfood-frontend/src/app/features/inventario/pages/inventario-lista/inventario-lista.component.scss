@@ -43,21 +43,10 @@
 }
 
 .btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border: none;
-  padding: 11px 18px;
-  border-radius: var(--radio-s);
+  @include ui.boton-primario;
   background: var(--verde-500);
-  color: white;
-  font-family: inherit;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
+  color: #ffffff;
   box-shadow: 0 5px 15px rgba(31, 170, 112, 0.22);
-  transition: 0.2s;
-  white-space: nowrap;
 }
 
 .btn-primary:hover {
@@ -65,9 +54,10 @@
   transform: translateY(-1px);
 }
 
-.btn-primary svg.ic {
-  width: 13px;
-  height: 13px;
+.btn-primary svg.ic,
+.btn-primary mat-icon {
+  width: 16px;
+  height: 16px;
 }
 
 .kpi-grid {
@@ -88,12 +78,15 @@
   gap: 17px;
 }
 
+@media (max-width: 900px) {
+  .two-col {
+    grid-template-columns: 1fr;
+  }
+}
+
 .table-card {
-  background: var(--superficie-alta);
-  border: 1px solid var(--linea);
-  border-radius: var(--radio-m);
+  @include ui.tarjeta-contenedor;
   overflow: hidden;
-  box-shadow: var(--sombra);
 }
 
 .table-header {
@@ -127,22 +120,22 @@
 
 .category.panaderia {
   background: var(--naranja-100);
-  color: #92610B;
+  color: var(--aviso-texto);
 }
 
 .category.lacteos {
   background: var(--azul-100);
-  color: #1D4ED8;
+  color: var(--info-texto);
 }
 
 .category.reposteria {
   background: var(--morado-100);
-  color: var(--morado-500);
+  color: var(--morado-texto);
 }
 
 .category.conservas {
   background: var(--rojo-100);
-  color: #B02A2E;
+  color: var(--peligro-texto);
 }
 
 .quantity {

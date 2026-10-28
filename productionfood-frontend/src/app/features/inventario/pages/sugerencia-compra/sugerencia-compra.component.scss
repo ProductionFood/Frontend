@@ -34,9 +34,9 @@ mat-progress-bar {
 }
 
 .grupo {
-  border: 1px solid var(--linea) !important;
-  border-radius: 12px !important;
-  box-shadow: none !important;
+  border: 1px solid var(--linea);
+  border-radius: var(--radio-m);
+  box-shadow: var(--sombra-1);
   margin-bottom: 14px;
 }
 
@@ -50,7 +50,7 @@ mat-progress-bar {
 }
 
 .grupo mat-panel-title mat-icon {
-  color: var(--verde-700);
+  color: var(--marca);
 }
 
 .grupo mat-panel-title mat-icon.sin-proveedor {
@@ -60,7 +60,7 @@ mat-progress-bar {
 .grupo mat-panel-description {
   justify-content: flex-end;
   font-weight: 600;
-  color: var(--tinta-600);
+  color: var(--texto-suave);
 }
 
 .aviso {

@@ -1,9 +1,12 @@
-<h2 mat-dialog-title>
-  {{ esEdicion ? 'Editar pedido' : 'Nuevo pedido' }}
-</h2>
+<header class="page-header"><div><button mat-button type="button" (click)="volver()"><mat-icon>arrow_back</mat-icon> Volver a pedidos</button><h1>{{ esEdicion ? 'Editar pedido' : 'Nuevo pedido' }}</h1><p>Gestiona los pedidos de tus clientes: crea, prepara y entrega.</p></div></header>
 
-<form [formGroup]="form" (ngSubmit)="guardar()">
-  <mat-dialog-content class="contenido">
+@if (guardando()) { <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner> }
+
+@else if (errorGeneral()) { <div class="error-general" role="alert"><mat-icon>error_outline</mat-icon><span>{{ errorGeneral() }}</span><button mat-icon-button type="button" aria-label="Cerrar mensaje" (click)="errorGeneral.set(null)"><mat-icon>close</mat-icon></button></div> }
+
+@else {
+<form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+  <mat-card class="seccion"><mat-card-header><mat-card-title>Datos del pedido</mat-card-title></mat-card-header><mat-card-content>
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Cliente</mat-label>
       <mat-select formControlName="idCliente">
@@ -11,9 +14,7 @@
           <mat-option disabled>Cargando clientes...</mat-option>
         } @else {
           @for (cliente of clientes(); track cliente.idCliente) {
-            <mat-option [value]="cliente.idCliente">
-              {{ cliente.nombre }}
-            </mat-option>
+            <mat-option [value]="cliente.idCliente">{{ cliente.nombre }}</mat-option>
           }
         }
       </mat-select>
@@ -27,9 +28,7 @@
         <mat-icon>info</mat-icon>
         <span>
           Primero debe registrar clientes activos.
-          <a href="#" (click)="$event.preventDefault(); irAClientes()">
-            Ir a Clientes
-          </a>
+          <a mat-button (click)="irAClientes()">Ir a Clientes</a>
         </span>
       </div>
     }
@@ -43,18 +42,11 @@
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Fecha de entrega</mat-label>
-      <input
-        matInput
-        [matDatepicker]="picker"
-        formControlName="fechaEntrega"
-        [min]="minFecha"
-      />
+      <input matInput [matDatepicker]="picker" formControlName="fechaEntrega" [min]="minFecha" />
       <mat-datepicker-toggle matIconSuffix [for]="picker" />
       <mat-datepicker #picker />
       <mat-hint>Opcional. No puede ser anterior a la fecha del pedido.</mat-hint>
-      @if (
-        form.controls.fechaEntrega.touched && form.controls.fechaEntrega.invalid
-      ) {
+      @if (form.controls.fechaEntrega.touched && form.controls.fechaEntrega.invalid) {
         <mat-error>{{ fechaError }}</mat-error>
       }
     </mat-form-field>
@@ -71,28 +63,8 @@
         <span>{{ errorGeneral() }}</span>
       </div>
     }
-  </mat-dialog-content>
+  </mat-card-content></mat-card>
 
-  <mat-dialog-actions align="end">
-    <button
-      mat-stroked-button
-      type="button"
-      (click)="cancelar()"
-      [disabled]="guardando()"
-    >
-      Cancelar
-    </button>
-    <button
-      mat-flat-button
-      color="primary"
-      type="submit"
-      [disabled]="form.invalid || guardando() || sinClientes"
-    >
-      @if (guardando()) {
-        <mat-spinner diameter="18" />
-      } @else {
-        {{ esEdicion ? 'Guardar cambios' : 'Crear pedido' }}
-      }
-    </button>
-  </mat-dialog-actions>
+  <div class="acciones-finales"><button mat-button type="button" (click)="volver()" [disabled]="guardando()">Cancelar</button><button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || guardando() || sinClientes">@if (guardando()) { <mat-spinner diameter="18" /> }{{ guardando() ? 'Guardando…' : (esEdicion ? 'Guardar cambios' : 'Crear pedido') }}</button></div>
 </form>
+}
