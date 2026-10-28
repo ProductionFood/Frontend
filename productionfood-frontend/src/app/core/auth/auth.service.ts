@@ -298,47 +298,43 @@ export class AuthService {
     );
   }
 
-  private decodificarToken(
-    token: string
-  ): JwtPayload | null {
-
+  private decodificarToken(token: string): JwtPayload | null {
     try {
+      const partes = token.split('.');
 
-      const partes =
-        token.split('.');
-
-      if (partes.length !== 3) {
+      if (partes.length !== 3 || !partes[1]) {
         return null;
       }
 
-      const base64 =
-        partes[1]
-          .replace(/-/g, '+')
-          .replace(/_/g, '/');
+      // JWT usa Base64URL, que puede omitir el relleno "=".
+      const base64 = partes[1]
+        .replace(/-/g, '+')
+        .replace(/_/g, '/');
+      const base64ConRelleno = base64.padEnd(
+        Math.ceil(base64.length / 4) * 4,
+        '='
+      );
 
-      const json =
-        decodeURIComponent(
-          atob(base64)
-            .split('')
-            .map(char =>
-              `%${(
-                '00' +
-                char
-                  .charCodeAt(0)
-                  .toString(16)
-              ).slice(-2)}`
-            )
-            .join('')
-        );
+      const binario = atob(base64ConRelleno);
+      const bytes = Uint8Array.from(
+        binario,
+        caracter => caracter.charCodeAt(0)
+      );
+      const json = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+      const payload: unknown = JSON.parse(json);
 
-      return JSON.parse(
-        json
-      ) as JwtPayload;
+      if (
+        payload === null ||
+        typeof payload !== 'object' ||
+        Array.isArray(payload)
+      ) {
+        return null;
+      }
 
+      return payload as JwtPayload;
     } catch {
-
+      // Un JWT malformado debe considerarse inválido.
       return null;
-
     }
   }
 
