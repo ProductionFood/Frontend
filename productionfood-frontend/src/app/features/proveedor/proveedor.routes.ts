@@ -1,25 +1,22 @@
 import { Routes } from '@angular/router';
 import { rolGuard } from '../../core/auth/rol.guard';
-import { ProveedorListaComponent } from './pages/proveedor-lista/proveedor-lista.component';
 import { ProveedorFormularioComponent } from './pages/proveedor-formulario/proveedor-formulario.component';
-
-const ROLES_LECTURA = ['ADMIN', 'COMPRAS', 'CONSULTA'] as const;
-const ROLES_ESCRITURA = ['ADMIN', 'COMPRAS'] as const;
+import { ProveedorListaComponent } from './pages/proveedor-lista/proveedor-lista.component';
 
 export const PROVEEDOR_ROUTES: Routes = [
   {
     path: '',
     component: ProveedorListaComponent,
-    canActivate: [rolGuard([...ROLES_LECTURA])]
+    canActivate: [rolGuard(['ADMIN', 'COMPRAS', 'CONSULTA'])]
   },
   {
-    path: 'nueva',
+    path: 'nuevo',
     component: ProveedorFormularioComponent,
-    canActivate: [rolGuard([...ROLES_ESCRITURA])]
+    canActivate: [rolGuard(['ADMIN', 'COMPRAS'])]
   },
   {
-    path: ':id',
+    path: ':id/editar',
     component: ProveedorFormularioComponent,
-    canActivate: [rolGuard([...ROLES_LECTURA])]
+    canActivate: [rolGuard(['ADMIN', 'COMPRAS'])]
   }
 ];

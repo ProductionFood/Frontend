@@ -14,7 +14,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, Subject, catchError, switchMap, tap } from 'rxjs';
 import { SiRolDirective } from '../../../../shared/directives/si-rol.directive';
-import { NotificacionService } from '../../../../core/ui/notificacion.service';
 import {
   ColumnaTabla,
   TablaPaginadaComponent
@@ -22,7 +21,7 @@ import {
 import { TablaColumnaDirective } from '../../../../shared/components/tabla-paginada/tabla-columna.directive';
 import { TarjetaTablaComponent } from '../../../../shared/components/tarjeta-tabla/tarjeta-tabla.component';
 import { MateriaPrima } from '../../../materia-prima/models/materia-prima.model';
-import { LoteMateriaPrima, ResultadoRegistroLote } from '../../models/lote.model';
+import { LoteMateriaPrima } from '../../models/lote.model';
 import { LoteMateriaPrimaService } from '../../services/lote-materia-prima.service';
 
 @Component({
@@ -33,7 +32,6 @@ import { LoteMateriaPrimaService } from '../../services/lote-materia-prima.servi
 export class LoteMpListaComponent {
   private readonly fb = inject(FormBuilder);
   private readonly service = inject(LoteMateriaPrimaService);
-  private readonly notify = inject(NotificacionService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   readonly columnas: ColumnaTabla[] = [
@@ -62,8 +60,8 @@ export class LoteMpListaComponent {
   }
   recargar(): void { this.reload$.next(); }
   onPagina(e: PageEvent): void { this.pagina.set(e.pageIndex); this.tamano.set(e.pageSize); this.recargar(); }
-  nueva(): void {
-    void this.router.navigate(['/app/lotes-materia-prima/nueva']);
+  abrirFormulario(): void {
+    void this.router.navigate(['/app/lotes-materia-prima', 'nuevo']);
   }
   estado(lote: LoteMateriaPrima): { texto: string; clase: string; dias: number } {
     const hoy = new Date(); hoy.setHours(0,0,0,0); const vence = new Date(`${lote.fechaVencimiento}T00:00:00`); const dias = Math.ceil((vence.getTime()-hoy.getTime())/86400000);

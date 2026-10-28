@@ -1,39 +1,59 @@
-<header class="page-header"><div><button mat-button type="button" (click)="volver()"><mat-icon>arrow_back</mat-icon> Volver a unidades</button><h1>{{ esEdicion ? 'Editar unidad' : 'Nueva unidad' }}</h1><p>Catálogo de unidades de medida del sistema.</p></div></header>
-
-@if (guardando()) { <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner> }
-
-@else if (errorGeneral()) { <div class="error-general" role="alert"><mat-icon>error_outline</mat-icon><span>{{ errorGeneral() }}</span><button mat-icon-button type="button" aria-label="Cerrar mensaje" (click)="errorGeneral.set(null)"><mat-icon>close</mat-icon></button></div> }
-
-@else {
 <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
-  <mat-card class="seccion"><mat-card-header><mat-card-title>Datos de la unidad</mat-card-title></mat-card-header><mat-card-content>
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Nombre</mat-label>
-      <input matInput formControlName="nombre" autocomplete="off" />
-      @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
-        <mat-error>{{ nombreError }}</mat-error>
-      }
-    </mat-form-field>
+  <header class="formulario-cabecera">
+    <div>
+      <button mat-button type="button" [disabled]="guardando()" (click)="cancelar()">
+        <mat-icon>arrow_back</mat-icon>
+        Volver a unidades
+      </button>
+      <h1>{{ esEdicion ? 'Editar unidad' : 'Nueva unidad' }}</h1>
+      <p>Nombre y abreviatura con los que se medirá el inventario.</p>
+    </div>
+  </header>
 
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Abreviatura</mat-label>
-      <input matInput formControlName="abreviatura" autocomplete="off" />
-      @if (
-        form.controls.abreviatura.touched &&
-        form.controls.abreviatura.invalid
-      ) {
-        <mat-error>{{ abreviaturaError }}</mat-error>
-      }
-    </mat-form-field>
-
+  @if (cargando()) {
+    <div class="estado-carga"><mat-spinner diameter="24"></mat-spinner><span>Cargando unidad…</span></div>
+  } @else {
     @if (errorGeneral()) {
-      <div class="error-general">
+      <div class="formulario-alerta formulario-alerta--error" role="alert">
         <mat-icon>error_outline</mat-icon>
         <span>{{ errorGeneral() }}</span>
       </div>
     }
-  </mat-card-content></mat-card>
 
-  <div class="acciones-finales"><button mat-button type="button" (click)="volver()" [disabled]="guardando()">Cancelar</button><button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || guardando()">@if (guardando()) { <mat-spinner diameter="18" /> }{{ guardando() ? 'Guardando…' : (esEdicion ? 'Guardar cambios' : 'Crear unidad') }}</button></div>
+    <section class="formulario-seccion">
+      <div class="formulario-seccion__titulo">
+        <h3>Datos de la unidad</h3>
+        <p>Usa abreviaturas cortas: kg, g, L, ml, pza.</p>
+      </div>
+
+      <div class="formulario-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Nombre</mat-label>
+          <input matInput formControlName="nombre" autocomplete="off" />
+          @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
+            <mat-error>{{ nombreError }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Abreviatura</mat-label>
+          <input matInput formControlName="abreviatura" autocomplete="off" />
+          @if (form.controls.abreviatura.touched && form.controls.abreviatura.invalid) {
+            <mat-error>{{ abreviaturaError }}</mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </section>
+
+    <div class="formulario-acciones">
+      <button mat-button type="button" (click)="cancelar()" [disabled]="guardando()">Cancelar</button>
+      <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || guardando()">
+        @if (guardando()) {
+          <mat-spinner diameter="18" />
+        } @else {
+          {{ esEdicion ? 'Guardar cambios' : 'Crear unidad' }}
+        }
+      </button>
+    </div>
+  }
 </form>
-}

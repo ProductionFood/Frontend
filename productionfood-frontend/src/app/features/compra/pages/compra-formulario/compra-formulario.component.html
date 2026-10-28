@@ -1,78 +1,104 @@
-<header class="page-header"><div><button mat-button type="button" (click)="volver()"><mat-icon>arrow_back</mat-icon> Volver a compras</button><h1>{{ esEdicion ? 'Editar compra' : 'Nueva compra' }}</h1><p>Registra las adquisiciones de materia prima a tus proveedores.</p></div></header>
-
-@if (guardando()) { <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner> }
-
-@else if (errorGeneral()) { <div class="error-general" role="alert"><mat-icon>error_outline</mat-icon><span>{{ errorGeneral() }}</span><button mat-icon-button type="button" aria-label="Cerrar mensaje" (click)="errorGeneral.set(null)"><mat-icon>close</mat-icon></button></div> }
-
-@else {
 <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
-  <mat-card class="seccion"><mat-card-header><mat-card-title>Datos de la compra</mat-card-title></mat-card-header><mat-card-content>
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Proveedor</mat-label>
-      <mat-select formControlName="idProveedor">
-        @if (cargandoProveedores()) {
-          <mat-option disabled>Cargando proveedores...</mat-option>
-        } @else {
-          @for (proveedor of proveedores(); track proveedor.idProveedor) {
-            <mat-option [value]="proveedor.idProveedor">{{ proveedor.nombre }}</mat-option>
-          }
-        }
-      </mat-select>
-      @if (form.controls.idProveedor.touched && form.controls.idProveedor.invalid) {
-        <mat-error>{{ proveedorError }}</mat-error>
-      }
-    </mat-form-field>
-
-    @if (sinProveedores) {
-      <div class="sin-proveedores">
-        <mat-icon>info</mat-icon>
-        <span>Primero debe registrar proveedores activos.</span>
-      </div>
+  <header class="formulario-cabecera">
+    <div>
+      <button mat-button type="button" [disabled]="guardando()" (click)="cancelar()">
+        <mat-icon>arrow_back</mat-icon>
+        Volver a compras
+      </button>
+      <h1>{{ esEdicion ? 'Editar compra' : 'Nueva compra' }}</h1>
+      <p>Registra el proveedor y la fecha de la compra. Los ítems se agregan desde el detalle.</p>
+    </div>
+    @if (esEdicion && compra(); as c) {
+      <span class="formulario-estado" [class.inactiva]="c.estado === 'CANCELADA'">{{ c.estado }}</span>
     }
+  </header>
 
-    @if (errorProveedores()) {
-      <div class="sin-proveedores">
-        <mat-icon>error_outline</mat-icon>
-        <span>{{ errorProveedores() }}</span>
-      </div>
-    }
-
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Fecha de compra</mat-label>
-      <input matInput [matDatepicker]="picker" formControlName="fecha" [max]="maxFecha" />
-      <mat-datepicker-toggle matIconSuffix [for]="picker" />
-      <mat-datepicker #picker />
-      <mat-hint>Puede ser pasada, pero no futura</mat-hint>
-      @if (form.controls.fecha.touched && form.controls.fecha.invalid) {
-        <mat-error>{{ fechaError }}</mat-error>
-      }
-    </mat-form-field>
-
-    @if (!esEdicion) {
-      <p class="nota-estado">
-        <mat-icon>info</mat-icon>
-        La compra se registra como <strong>Pendiente</strong>. El estado
-        cambia desde su detalle al recibir o cancelar.
-      </p>
-    }
-
-    @if (!esEdicion && itemsSugeridos.length > 0) {
-      <p class="nota-estado">
-        <mat-icon>info</mat-icon>
-        Se agregarán <strong>{{ itemsSugeridos.length }}</strong>
-        {{ itemsSugeridos.length === 1 ? 'ítem' : 'ítems' }} de la sugerencia
-        de compra al registrar.
-      </p>
-    }
-
+  @if (cargando()) {
+    <div class="estado-carga"><mat-spinner diameter="24"></mat-spinner><span>Cargando compra…</span></div>
+  } @else {
     @if (errorGeneral()) {
-      <div class="error-general">
+      <div class="formulario-alerta formulario-alerta--error" role="alert">
         <mat-icon>error_outline</mat-icon>
         <span>{{ errorGeneral() }}</span>
       </div>
     }
-  </mat-card-content></mat-card>
 
-  <div class="acciones-finales"><button mat-button type="button" (click)="volver()" [disabled]="guardando()">Cancelar</button><button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || guardando() || sinProveedores">@if (guardando()) { <mat-spinner diameter="18" /> }{{ guardando() ? 'Guardando…' : (esEdicion ? 'Guardar cambios' : 'Registrar compra') }}</button></div>
+    <section class="formulario-seccion">
+      <div class="formulario-seccion__titulo">
+        <h3>Datos de la compra</h3>
+        <p>El proveedor debe estar activo para poder registrar la compra.</p>
+      </div>
+
+      <div class="formulario-grid">
+        <mat-form-field appearance="outline" class="ancho-completo">
+          <mat-label>Proveedor</mat-label>
+          <mat-select formControlName="idProveedor">
+            @if (cargandoProveedores()) {
+              <mat-option disabled>Cargando proveedores...</mat-option>
+            } @else {
+              @for (proveedor of proveedores(); track proveedor.idProveedor) {
+                <mat-option [value]="proveedor.idProveedor">{{ proveedor.nombre }}</mat-option>
+              }
+            }
+          </mat-select>
+          @if (form.controls.idProveedor.touched && form.controls.idProveedor.invalid) {
+            <mat-error>{{ proveedorError }}</mat-error>
+          }
+        </mat-form-field>
+
+        @if (sinProveedores) {
+          <div class="formulario-alerta formulario-alerta--aviso ancho-completo" role="status">
+            <mat-icon>info</mat-icon>
+            <span>Primero debe registrar proveedores activos.</span>
+          </div>
+        }
+
+        @if (errorProveedores()) {
+          <div class="formulario-alerta formulario-alerta--error ancho-completo" role="alert">
+            <mat-icon>error_outline</mat-icon>
+            <span>{{ errorProveedores() }}</span>
+          </div>
+        }
+
+        <mat-form-field appearance="outline" class="ancho-completo">
+          <mat-label>Fecha de compra</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="fecha" [max]="maxFecha" />
+          <mat-datepicker-toggle matIconSuffix [for]="picker" />
+          <mat-datepicker #picker />
+          <mat-hint>Puede ser pasada, pero no futura</mat-hint>
+          @if (form.controls.fecha.touched && form.controls.fecha.invalid) {
+            <mat-error>{{ fechaError }}</mat-error>
+          }
+        </mat-form-field>
+
+        @if (!esEdicion) {
+          <div class="formulario-alerta formulario-alerta--info ancho-completo" role="status">
+            <mat-icon>info</mat-icon>
+            <span>La compra se registra como <strong>Pendiente</strong>. El estado cambia desde su detalle al recibir o cancelar.</span>
+          </div>
+        }
+
+        @if (!esEdicion && itemsSugeridos.length > 0) {
+          <div class="formulario-alerta formulario-alerta--info ancho-completo" role="status">
+            <mat-icon>info</mat-icon>
+            <span>
+              Se agregarán <strong>{{ itemsSugeridos.length }}</strong>
+              {{ itemsSugeridos.length === 1 ? 'ítem' : 'ítems' }} de la sugerencia de compra al registrar.
+            </span>
+          </div>
+        }
+      </div>
+    </section>
+
+    <div class="formulario-acciones">
+      <button mat-button type="button" (click)="cancelar()" [disabled]="guardando()">Cancelar</button>
+      <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || guardando() || sinProveedores">
+        @if (guardando()) {
+          <mat-spinner diameter="18" />
+        } @else {
+          {{ itemsPendientes ? 'Reintentar ítems' : (esEdicion ? 'Guardar cambios' : 'Registrar compra') }}
+        }
+      </button>
+    </div>
+  }
 </form>
-}

@@ -1,137 +1,136 @@
-<div class="breadcrumb">Inicio / <b>Lotes de producto</b></div>
+<section class="pagina">
+  <header class="cabecera">
+    <button mat-flat-button (click)="abrirFormulario()" *siRol="['ADMIN', 'PRODUCCION']">
+      <mat-icon>add</mat-icon>
+      Nuevo lote
+    </button>
+  </header>
 
-<header class="page-header">
-  <div>
-    <h1>Lotes de producto terminado</h1>
-    <p>Registra y controla los lotes de producto terminado, sus fechas de vencimiento y el stock disponible.</p>
-  </div>
-  <button class="btn-primary" type="button" *siRol="['ADMIN', 'PRODUCCION']" (click)="nuevoLote()">
-    <svg class="ic" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-    Nuevo lote
-  </button>
-</header>
+  @if (cargando()) {
+    <mat-progress-bar mode="indeterminate" aria-label="Cargando lotes" />
+  }
 
-<div class="kpi-grid">
-  <app-kpi-card
-    etiqueta="Lotes vigentes con stock"
-    [valor]="vigentes()"
-    icono="inventory_2"
-  />
-  <app-kpi-card
-    etiqueta="Vencen en ≤ 3 días"
-    [valor]="proximos()"
-    icono="schedule"
-    tono="naranja"
-  />
-  <app-kpi-card
-    etiqueta="Vencidos con stock: retirar del estante"
-    [valor]="vencidos()"
-    icono="error_outline"
-    tono="rojo"
-    tonoValor="rojo"
-  />
-</div>
-
-<p class="nota">
-  Los contadores corresponden a los lotes de la página actual. Mantén
-  «Incluir vencidos» activo para detectar mercancía que debe retirarse.
-</p>
-
-<section class="filtros" aria-label="Filtros de lotes de producto terminado">
-  <mat-form-field appearance="outline" class="filtro-select">
-    <mat-label>Producto</mat-label>
-    <mat-select formControlName="idProducto">
-      <mat-option [value]="null">Todos</mat-option>
-      @for (p of productos(); track p.idProducto) {
-        <mat-option [value]="p.idProducto">{{ p.nombre }}</mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
-  <mat-checkbox formControlName="soloConStock">Solo con stock</mat-checkbox>
-  <mat-checkbox formControlName="proximos">Próximos a vencer</mat-checkbox>
-  <mat-checkbox formControlName="incluirVencidos">Incluir vencidos</mat-checkbox>
-</section>
-
-<div class="table-card">
-  <div class="table-header">
-    <h3>Lotes registrados</h3>
-    <span>{{ total() }} {{ total() === 1 ? 'lote' : 'lotes' }}</span>
+  <div class="kpi-grid">
+    <app-kpi-card
+      etiqueta="Lotes vigentes con stock"
+      [valor]="vigentes()"
+      icono="inventory_2"
+    />
+    <app-kpi-card
+      etiqueta="Vencen en ≤ 3 días"
+      [valor]="proximos()"
+      icono="schedule"
+      tono="naranja"
+    />
+    <app-kpi-card
+      etiqueta="Vencidos con stock: retirar del estante"
+      [valor]="vencidos()"
+      icono="error_outline"
+      tono="rojo"
+      tonoValor="rojo"
+    />
   </div>
 
-  <app-tabla-paginada
-    [columnas]="columnas"
-    [datos]="lotes()"
-    [total]="total()"
-    [page]="pagina()"
-    [size]="tamano()"
-    [opcionesTamano]="[10, 20, 50]"
-    [cargando]="cargando()"
-    [error]="error() || null"
-    mensajeVacio="Ningún lote coincide con los filtros."
-    (cambiarPagina)="cambiarPagina($event)"
-    (cambiarOrden)="ordenar($event)"
-    (reintentar)="recargar()"
+  <p class="nota">
+    Los contadores corresponden a los lotes de la página actual. Mantén
+    «Incluir vencidos» activo para detectar mercancía que debe retirarse.
+  </p>
+
+  <form [formGroup]="filtros" class="filtros-card" aria-label="Filtros de lotes de producto terminado">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Producto</mat-label>
+      <mat-select formControlName="idProducto">
+        <mat-option [value]="null">Todos</mat-option>
+        @for (p of productos(); track p.idProducto) {
+          <mat-option [value]="p.idProducto">{{ p.nombre }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-checkbox formControlName="soloConStock">Solo con stock</mat-checkbox>
+    <mat-checkbox formControlName="proximos">Próximos a vencer</mat-checkbox>
+    <mat-checkbox formControlName="incluirVencidos">Incluir vencidos</mat-checkbox>
+  </form>
+
+  <app-tarjeta-tabla
+    titulo="Lotes registrados"
+    [contador]="total() + (total() === 1 ? ' lote' : ' lotes')"
   >
-    <ng-template appTablaColumna="codigoLote" let-l>
-      <span class="codigo">{{ l.codigoLote }}</span>
-    </ng-template>
-
-    <ng-template appTablaColumna="producto" let-l>
-      <span class="producto">{{ l.producto.nombre }}</span>
-    </ng-template>
-
-    <ng-template appTablaColumna="fechaProduccion" let-l>
-      {{ l.fechaProduccion | date: 'dd/MM/yyyy' }}
-    </ng-template>
-
-    <ng-template appTablaColumna="fechaVencimiento" let-l>
-      {{ l.fechaVencimiento | date: 'dd/MM/yyyy' }}
-    </ng-template>
-
-    <ng-template appTablaColumna="cantidadIngresada" let-l>
-      {{ l.cantidadIngresada | number: '1.0-2' }}
-    </ng-template>
-
-    <ng-template appTablaColumna="cantidadDisponible" let-l>
-      <span class="cantidad">{{ l.cantidadDisponible | number: '1.0-2' }}</span>
-    </ng-template>
-
-    <ng-template appTablaColumna="estado" let-l>
-      <app-semaforo-vencimiento [fechaVencimiento]="l.fechaVencimiento" />
-      @if (dias(l) < 0 && l.cantidadDisponible > 0) {
-        <span class="retirar">Retirar</span>
-      }
-    </ng-template>
-
-    <ng-template appTablaColumna="acciones" let-l>
-      <a mat-button [routerLink]="['/app/lotes-producto', l.idLote, 'kardex']">Kardex</a>
-    </ng-template>
-  </app-tabla-paginada>
-</div>
-
-@if (!cargando() && !error() && lotes().length === 0) {
-  <app-estado-vacio
-    icono="inventory_2"
-    [mensaje]="
-      total() === 0 && !filtros.dirty
-        ? 'No hay lotes registrados. Registrar el primero: sin lotes no se puede vender.'
-        : 'Ningún lote coincide con los filtros.'
-    "
-  >
-    @if (filtros.dirty) {
-      <button mat-stroked-button type="button" (click)="limpiarFiltros()">
-        Limpiar filtros
-      </button>
-    } @else {
-      <button
-        *siRol="['ADMIN', 'PRODUCCION']"
-        class="btn-primary"
-        type="button"
-        (click)="nuevoLote()"
+    @if (!cargando() && !error() && lotes().length === 0) {
+      <app-estado-vacio
+        icono="inventory_2"
+        [mensaje]="
+          total() === 0 && !filtros.dirty
+            ? 'No hay lotes registrados. Registrar el primero: sin lotes no se puede vender.'
+            : 'Ningún lote coincide con los filtros.'
+        "
       >
-        <svg class="ic" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Registrar el primero
-      </button>
+        @if (filtros.dirty) {
+          <button mat-stroked-button type="button" (click)="limpiarFiltros()">
+            Limpiar filtros
+          </button>
+        } @else {
+          <button
+            *siRol="['ADMIN', 'PRODUCCION']"
+            mat-flat-button
+            color="primary"
+            type="button"
+            (click)="abrirFormulario()"
+          >
+            Registrar el primero
+          </button>
+        }
+      </app-estado-vacio>
+    } @else {
+      <app-tabla-paginada
+        [columnas]="columnas"
+        [datos]="lotes()"
+        [total]="total()"
+        [page]="pagina()"
+        [size]="tamano()"
+        [opcionesTamano]="[10, 20, 50]"
+        [cargando]="cargando()"
+        [error]="error() || null"
+        mensajeVacio="Ningún lote coincide con los filtros."
+        (cambiarPagina)="cambiarPagina($event)"
+        (cambiarOrden)="ordenar($event)"
+        (reintentar)="recargar()"
+      >
+        <ng-template appTablaColumna="codigoLote" let-l>
+          <span class="codigo">{{ l.codigoLote }}</span>
+        </ng-template>
+
+        <ng-template appTablaColumna="producto" let-l>
+          <span class="producto">{{ l.producto.nombre }}</span>
+        </ng-template>
+
+        <ng-template appTablaColumna="fechaProduccion" let-l>
+          {{ l.fechaProduccion | date: 'dd/MM/yyyy' }}
+        </ng-template>
+
+        <ng-template appTablaColumna="fechaVencimiento" let-l>
+          {{ l.fechaVencimiento | date: 'dd/MM/yyyy' }}
+        </ng-template>
+
+        <ng-template appTablaColumna="cantidadIngresada" let-l>
+          {{ l.cantidadIngresada | number: '1.0-2' }}
+        </ng-template>
+
+        <ng-template appTablaColumna="cantidadDisponible" let-l>
+          <span class="cantidad">{{ l.cantidadDisponible | number: '1.0-2' }}</span>
+        </ng-template>
+
+        <ng-template appTablaColumna="estado" let-l>
+          <app-semaforo-vencimiento [fechaVencimiento]="l.fechaVencimiento" />
+          @if (dias(l) < 0 && l.cantidadDisponible > 0) {
+            <span class="retirar">Retirar</span>
+          }
+        </ng-template>
+
+        <ng-template appTablaColumna="acciones" let-l>
+          <a mat-button [routerLink]="['/app/lotes-producto', l.idLote, 'kardex']">Kardex</a>
+        </ng-template>
+      </app-tabla-paginada>
     }
-  </app-estado-vacio>
-}
+  </app-tarjeta-tabla>
+</section>

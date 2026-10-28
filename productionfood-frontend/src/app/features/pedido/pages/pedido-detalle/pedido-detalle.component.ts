@@ -1,6 +1,6 @@
-import { DetallePedidoService } from '../../services/detalle-pedido.service';
-import { DetallePedidoTablaComponent } from '../../components/detalle-pedido-tabla/detalle-pedido-tabla.component';
 import { AgregarProductoDialogComponent } from '../../components/agregar-producto-dialog/agregar-producto-dialog.component';
+import { DetallePedidoTablaComponent } from '../../components/detalle-pedido-tabla/detalle-pedido-tabla.component';
+import { DetallePedidoService } from '../../services/detalle-pedido.service';
 import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
@@ -29,7 +29,6 @@ import {
 import { EstadoPedido, LineaPedido, Pedido } from '../../models/pedido.model';
 import { PedidoService } from '../../services/pedido.service';
 import { CancelarPedidoDialogComponent } from '../../components/cancelar-pedido-dialog/cancelar-pedido-dialog.component';
-import { PedidoFormularioComponent } from '../pedido-formulario/pedido-formulario.component';
 
 /**
  * Detalle de un pedido (HU-16): cabecera con estado, acciones de la máquina
@@ -56,12 +55,12 @@ import { PedidoFormularioComponent } from '../pedido-formulario/pedido-formulari
   styleUrl: './pedido-detalle.component.scss'
 })
 export class PedidoDetalleComponent {
-  private readonly router = inject(Router);
   private readonly detalleService = inject(DetallePedidoService);
   private readonly route = inject(ActivatedRoute);
   private readonly pedidoService = inject(PedidoService);
   private readonly notificacion = inject(NotificacionService);
   private readonly dialog = inject(MatDialog);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly idPedido = Number(this.route.snapshot.paramMap.get('id'));
@@ -139,22 +138,7 @@ export class PedidoDetalleComponent {
       return;
     }
 
-    this.dialog
-      .open(PedidoFormularioComponent, {
-        data: { pedido },
-        width: '520px',
-        maxWidth: '95vw',
-        autoFocus: 'first-tabbable',
-        disableClose: true
-      })
-      .afterClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(resultado => {
-        if (resultado === true) {
-          this.notificacion.exito('Pedido actualizado correctamente.');
-          this.recargar();
-        }
-      });
+    void this.router.navigate(['/app/pedidos', pedido.idPedido, 'editar']);
   }
 
   iniciarPreparacion(): void {
@@ -227,7 +211,7 @@ export class PedidoDetalleComponent {
   registrarDevolucion(linea: LineaPedido): void {
     const pedido=this.pedido();
     if(!pedido||pedido.estado!=='ENTREGADO')return;
-    void this.router.navigate(['/app/devoluciones/nueva'],{state:{pedido,linea}});
+    void this.router.navigate(['/app/devoluciones','nueva',pedido.idPedido,linea.idDetallePedido]);
   }
   agregarProducto(): void {
     if (!this.pedido()?.editable) return;

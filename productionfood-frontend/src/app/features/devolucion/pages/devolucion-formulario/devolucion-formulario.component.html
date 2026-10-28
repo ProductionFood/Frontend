@@ -1,26 +1,117 @@
-<header class="page-header">
-  <a class="volver" mat-button routerLink="/app/pedidos/{{data.pedido.idPedido}}">
-    <mat-icon>arrow_back</mat-icon>
-    Volver al pedido
-  </a>
-  <h1>Registrar devolución</h1>
-  <p class="subtitulo">Pedido #{{data.pedido.idPedido}} · {{data.pedido.cliente.nombre}}</p>
-</header>
+<div class="formulario-pagina">
+  <header class="formulario-cabecera">
+    <div>
+      <button mat-button type="button" [disabled]="enviando()" (click)="cerrar()">
+        <mat-icon>arrow_back</mat-icon>
+        Volver al pedido
+      </button>
+      <h1>Registrar devolución</h1>
+      @if (pedido(); as p) {
+        <p>Pedido #{{ p.idPedido }} · {{ p.cliente.nombre }}{{ linea() ? ' · ' + linea()!.producto.nombre : '' }}</p>
+      }
+    </div>
+  </header>
 
-<p><strong>Producto:</strong> {{data.linea.producto.nombre}}</p>
-@if(cargando()){<mat-progress-bar mode="indeterminate" aria-label="Cargando cantidades"/>}
-@if(error()){<p role="alert" class="error">{{error()}} <button mat-button type="button" (click)="cargar()">Reintentar</button></p>}
-@if(!cargando()&&!error()){
-<div class="resumen"><div>Cantidad pedida: <strong>{{data.linea.cantidad}}</strong></div><div>Ya devuelta o en trámite: <strong>{{previo()}}</strong></div><div>Disponible para devolver: <strong>{{disponible()}}</strong></div></div>
-@if(disponible()===0){<p role="status">Esta línea ya fue devuelta por completo.</p>}
-@else {
-<form id="form-devolucion" (ngSubmit)="guardar()">
-<mat-form-field appearance="outline"><mat-label>Cantidad a devolver</mat-label><input matInput type="number" min="1" step="1" [max]="disponible()" [formControl]="cantidad"/><mat-error>Ingrese una cantidad válida, hasta {{disponible()}} unidades.</mat-error></mat-form-field>
-@if(fieldErrors()['cantidad']){<p role="alert" class="error">{{fieldErrors()['cantidad']}}</p>}
-<mat-form-field appearance="outline"><mat-label>Motivo</mat-label><mat-select [formControl]="motivo">@for(opcion of motivos;track opcion){<mat-option [value]="opcion">{{opcion}}</mat-option>}</mat-select><mat-error>Indique el motivo de la devolución.</mat-error></mat-form-field>
-@if(motivo.value==='Otro'){<mat-form-field appearance="outline"><mat-label>Especifique el motivo</mat-label><input matInput maxlength="50" [formControl]="otro"/><mat-hint align="end">{{otro.value.length}} / 50</mat-hint></mat-form-field>}
-<mat-form-field appearance="outline"><mat-label>Descripción (opcional)</mat-label><textarea matInput rows="3" maxlength="255" [formControl]="descripcion"></textarea><mat-hint align="end">{{descripcion.value.length}} / 255</mat-hint><mat-error>Máximo 255 caracteres.</mat-error></mat-form-field>
-<p class="aviso">La devolución quedará pendiente de aprobación. El stock volverá al inventario solo cuando sea aprobada.</p>
-<div class="acciones"><button mat-button type="button" (click)="volver()">Cancelar</button><button mat-flat-button type="submit" form="form-devolucion" [disabled]="cargando()||enviando()||!!error()||disponible()===0||cantidad.invalid||cantidad.value>disponible()||motivo.invalid||descripcion.invalid||(motivo.value==='Otro'&&!otro.value.trim())">{{enviando()?'Registrando…':'Registrar'}}</button></div>
-</form>}
-}
+  @if (cargando()) {
+    <div class="estado-carga"><mat-spinner diameter="24"></mat-spinner><span>Cargando devoluciones previas…</span></div>
+  } @else {
+    @if (error()) {
+      <div class="formulario-alerta formulario-alerta--error" role="alert">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ error() }}</span>
+        <button mat-button type="button" (click)="cargar()">Reintentar</button>
+      </div>
+    } @else if (!linea()) {
+      <div class="formulario-alerta formulario-alerta--aviso" role="status">
+        <mat-icon>info</mat-icon>
+        <span>No se encontró la línea del pedido que se quiere devolver.</span>
+      </div>
+    } @else {
+      <section class="formulario-seccion">
+        <div class="formulario-seccion__titulo">
+          <h3>Resumen del pedido</h3>
+          <p>Cantidades registradas para esta línea del pedido.</p>
+        </div>
+
+        <div class="resumen">
+          <div class="resumen__linea"><span>Cantidad pedida</span><strong>{{ linea()!.cantidad }}</strong></div>
+          <div class="resumen__linea"><span>Ya devuelta o en trámite</span><strong>{{ previo() }}</strong></div>
+          <div class="resumen__linea"><span>Disponible para devolver</span><strong>{{ disponible() }}</strong></div>
+        </div>
+      </section>
+
+      @if (disponible() === 0) {
+        <div class="formulario-alerta formulario-alerta--aviso" role="status">
+          <mat-icon>info</mat-icon>
+          <span>Esta línea ya fue devuelta por completo.</span>
+        </div>
+      } @else {
+        <section class="formulario-seccion">
+          <div class="formulario-seccion__titulo">
+            <h3>Datos de la devolución</h3>
+            <p>Indica la cantidad y el motivo. La devolución queda pendiente de aprobación.</p>
+          </div>
+
+          <form id="form-devolucion" (ngSubmit)="guardar()" novalidate>
+            <div class="formulario-grid">
+              <mat-form-field appearance="outline">
+                <mat-label>Cantidad a devolver</mat-label>
+                <input matInput type="number" min="1" step="1" [max]="disponible()" [formControl]="cantidad" />
+                <mat-error>Ingrese una cantidad válida, hasta {{ disponible() }} unidades.</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Motivo</mat-label>
+                <mat-select [formControl]="motivo">
+                  @for (opcion of motivos; track opcion) {
+                    <mat-option [value]="opcion">{{ opcion }}</mat-option>
+                  }
+                </mat-select>
+                <mat-error>Indique el motivo de la devolución.</mat-error>
+              </mat-form-field>
+
+              @if (motivo.value === 'Otro') {
+                <mat-form-field appearance="outline" class="ancho-completo">
+                  <mat-label>Especifique el motivo</mat-label>
+                  <input matInput maxlength="50" [formControl]="otro" />
+                  <mat-hint align="end">{{ otro.value.length }} / 50</mat-hint>
+                </mat-form-field>
+              }
+
+              <mat-form-field appearance="outline" class="ancho-completo">
+                <mat-label>Descripción (opcional)</mat-label>
+                <textarea matInput rows="3" maxlength="255" [formControl]="descripcion"></textarea>
+                <mat-hint align="end">{{ descripcion.value.length }} / 255</mat-hint>
+                <mat-error>Máximo 255 caracteres.</mat-error>
+              </mat-form-field>
+
+              @if (fieldErrors()['cantidad']) {
+                <div class="formulario-alerta formulario-alerta--error ancho-completo" role="alert">
+                  <mat-icon>error_outline</mat-icon>
+                  <span>{{ fieldErrors()['cantidad'] }}</span>
+                </div>
+              }
+
+              <div class="formulario-alerta formulario-alerta--info ancho-completo" role="status">
+                <mat-icon>info</mat-icon>
+                <span>La devolución quedará pendiente de aprobación. El stock volverá al inventario solo cuando sea aprobada.</span>
+              </div>
+            </div>
+          </form>
+        </section>
+
+        <div class="formulario-acciones">
+          <button mat-button type="button" (click)="cerrar()" [disabled]="enviando()">Cancelar</button>
+          <button
+            mat-flat-button
+            type="submit"
+            form="form-devolucion"
+            [disabled]="enviando() || cantidad.invalid || cantidad.value > disponible() || motivo.invalid || descripcion.invalid || (motivo.value === 'Otro' && !otro.value.trim())"
+          >
+            {{ enviando() ? 'Registrando…' : 'Registrar' }}
+          </button>
+        </div>
+      }
+    }
+  }
+</div>

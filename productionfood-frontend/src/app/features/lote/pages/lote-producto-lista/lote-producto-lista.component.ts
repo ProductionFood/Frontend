@@ -37,8 +37,8 @@ export class LoteProductoListaComponent {
     this.filtros.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(()=>{this.pagina.set(0);this.recargar();});this.recargar();}
   dias(l:LoteProducto):number{const h=new Date();h.setHours(0,0,0,0);return Math.round((new Date(`${l.fechaVencimiento}T00:00:00`).getTime()-h.getTime())/86400000);}
   limpiarFiltros():void{this.filtros.reset({idProducto:null,soloConStock:true,incluirVencidos:true,proximos:false});}
-  recargar():void{this.reload$.next();}
+ recargar():void{this.reload$.next();}
   cambiarPagina(e:PageEvent):void{this.pagina.set(e.pageIndex);this.tamano.set(e.pageSize);this.recargar();}
   ordenar(e:Sort):void{this.sort.set(e.direction?`${e.active},${e.direction}`:'fechaVencimiento,asc');this.recargar();}
-  nuevoLote():void{void this.router.navigate(['/app/lotes-producto/nuevo']);}
+  abrirFormulario():void{void this.router.navigate(['/app/lotes-producto','nuevo']);}
 }

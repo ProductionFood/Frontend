@@ -1,9 +1,9 @@
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 
 import { HttpErrorResponse } from '@angular/common/http';
-import { Router } from '@angular/router';
 
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { Sort } from '@angular/material/sort';
@@ -19,6 +19,7 @@ import {
 import { TablaColumnaDirective } from '../../../../shared/components/tabla-paginada/tabla-columna.directive';
 import { UnidadMedida } from '../../models/unidad-medida.model';
 import { UnidadMedidaService } from '../../services/unidad-medida.service';
+import { Router } from '@angular/router';
 
 /**
  * Catálogo de unidades de medida (HU-07). Sin paginador (R-01) y sin acción
@@ -42,6 +43,7 @@ import { UnidadMedidaService } from '../../services/unidad-medida.service';
 export class UnidadListaComponent {
   private readonly unidadService = inject(UnidadMedidaService);
   private readonly notificacion = inject(NotificacionService);
+  private readonly dialog = inject(MatDialog);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -98,12 +100,9 @@ export class UnidadListaComponent {
     this.unidades.set(ordenadas);
   }
 
-  nueva(): void {
-    void this.router.navigate(['/app/unidades-medida/nueva']);
-  }
-
-  abrir(unidad: UnidadMedida): void {
-    void this.router.navigate(['/app/unidades-medida', unidad.idUnidad]);
+  abrirFormulario(unidad?: UnidadMedida): void {
+    const ruta = unidad ? ['/app/unidades-medida', unidad.idUnidad, 'editar'] : ['/app/unidades-medida', 'nuevo'];
+    void this.router.navigate(ruta);
   }
 
   private mensajeError(error: HttpErrorResponse): string {

@@ -9,7 +9,6 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
-import { Router } from '@angular/router';
 import { EMPTY, Subject, catchError, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -23,6 +22,7 @@ import { Cliente } from '../../models/cliente.model';
 import { ClienteService } from '../../services/cliente.service';
 import { KpisCatalogoComponent } from '@shared/components/kpis-catalogo/kpis-catalogo.component';
 import { contarCatalogo } from '@shared/utils/conteo-catalogo';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-cliente-lista',
@@ -128,12 +128,9 @@ export class ClienteListaComponent {
     this.recargar();
   }
 
-  nueva(): void {
-    void this.router.navigate(['/app/clientes/nueva']);
-  }
-
-  abrir(cliente: Cliente): void {
-    void this.router.navigate(['/app/clientes', cliente.idCliente]);
+  abrirFormulario(cliente?: Cliente): void {
+    const ruta = cliente ? ['/app/clientes', cliente.idCliente, 'editar'] : ['/app/clientes', 'nuevo'];
+    void this.router.navigate(ruta);
   }
 
   cambiarEstado(cliente: Cliente): void {
@@ -147,7 +144,7 @@ export class ClienteListaComponent {
       peligro: !activar
     };
     this.dialog.open(ConfirmarDialogComponent, { data, width: '440px', autoFocus: 'dialog' })
-      .afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((confirmado: boolean) => {
+      .afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(confirmado => {
         if (!confirmado) return;
         this.clienteService.cambiarEstado(cliente.idCliente, activar)
           .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({

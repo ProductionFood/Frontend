@@ -1,79 +1,78 @@
-<header class="page-header">
-  <a class="volver" mat-button routerLink="/app/usuarios">
-    <mat-icon>arrow_back</mat-icon>
-    Volver a Usuarios
-  </a>
-  <h1>Editar usuario</h1>
-</header>
+<form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+  <header class="formulario-cabecera">
+    <div>
+      <button mat-button type="button" [disabled]="guardando()" (click)="cancelar()">
+        <mat-icon>arrow_back</mat-icon>
+        Volver a usuarios
+      </button>
+      <h1>Editar usuario</h1>
+      <p>Actualiza los datos de acceso y el rol del usuario.</p>
+    </div>
+  </header>
 
-<form [formGroup]="form" (ngSubmit)="guardar()">
-  <mat-form-field appearance="outline" class="full-width">
-    <mat-label>Nombre completo</mat-label>
-    <mat-icon matPrefix>person_outline</mat-icon>
-    <input matInput formControlName="nombre" autocomplete="name" />
-    @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
-      <mat-error>{{ nombreError }}</mat-error>
+  @if (cargando()) {
+    <div class="estado-carga"><mat-spinner diameter="24"></mat-spinner><span>Cargando usuario…</span></div>
+  } @else {
+    @if (errorGeneral()) {
+      <div class="formulario-alerta formulario-alerta--error" role="alert">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ errorGeneral() }}</span>
+      </div>
     }
-  </mat-form-field>
 
-  <mat-form-field appearance="outline" class="full-width">
-    <mat-label>Correo electrónico</mat-label>
-    <mat-icon matPrefix>mail_outline</mat-icon>
-    <input
-      matInput
-      type="email"
-      formControlName="correo"
-      autocomplete="email"
-    />
-    @if (form.controls.correo.touched && form.controls.correo.invalid) {
-      <mat-error>{{ correoError }}</mat-error>
-    }
-  </mat-form-field>
+    <section class="formulario-seccion">
+      <div class="formulario-seccion__titulo">
+        <h3>Datos del usuario</h3>
+        <p>El correo identifica al usuario al iniciar sesión.</p>
+      </div>
 
-  <mat-form-field appearance="outline" class="full-width">
-    <mat-label>Rol</mat-label>
-    <mat-icon matPrefix>admin_panel_settings</mat-icon>
-    <mat-select formControlName="idRol">
-      @if (cargandoRoles()) {
-        <mat-option disabled>Cargando roles...</mat-option>
-      } @else {
-        @for (rol of roles(); track rol.idRol) {
-          <mat-option [value]="rol.idRol">{{ rol.nombre }}</mat-option>
+      <div class="formulario-grid">
+        <mat-form-field appearance="outline" class="ancho-completo">
+          <mat-label>Nombre completo</mat-label>
+          <mat-icon matPrefix>person_outline</mat-icon>
+          <input matInput formControlName="nombre" autocomplete="name" />
+          @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
+            <mat-error>{{ nombreError }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="ancho-completo">
+          <mat-label>Correo electrónico</mat-label>
+          <mat-icon matPrefix>mail_outline</mat-icon>
+          <input matInput type="email" formControlName="correo" autocomplete="email" />
+          @if (form.controls.correo.touched && form.controls.correo.invalid) {
+            <mat-error>{{ correoError }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="ancho-completo">
+          <mat-label>Rol</mat-label>
+          <mat-icon matPrefix>admin_panel_settings</mat-icon>
+          <mat-select formControlName="idRol">
+            @if (cargandoRoles()) {
+              <mat-option disabled>Cargando roles...</mat-option>
+            } @else {
+              @for (rol of roles(); track rol.idRol) {
+                <mat-option [value]="rol.idRol">{{ rol.nombre }}</mat-option>
+              }
+            }
+          </mat-select>
+          @if (form.controls.idRol.touched && form.controls.idRol.invalid) {
+            <mat-error>{{ rolError }}</mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </section>
+
+    <div class="formulario-acciones">
+      <button mat-button type="button" (click)="cancelar()" [disabled]="guardando()">Cancelar</button>
+      <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || guardando()">
+        @if (guardando()) {
+          <mat-spinner diameter="18" />
+        } @else {
+          Guardar cambios
         }
-      }
-    </mat-select>
-    @if (form.controls.idRol.touched && form.controls.idRol.invalid) {
-      <mat-error>{{ rolError }}</mat-error>
-    }
-  </mat-form-field>
-
-  @if (errorGeneral()) {
-    <div class="error-general">
-      <mat-icon>error_outline</mat-icon>
-      <span>{{ errorGeneral() }}</span>
+      </button>
     </div>
   }
-
-  <div class="acciones">
-    <button
-      mat-stroked-button
-      type="button"
-      (click)="volver()"
-      [disabled]="guardando()"
-    >
-      Cancelar
-    </button>
-    <button
-      mat-flat-button
-      color="primary"
-      type="submit"
-      [disabled]="form.invalid || guardando()"
-    >
-      @if (guardando()) {
-        <mat-spinner diameter="18" />
-      } @else {
-        Guardar cambios
-      }
-    </button>
-  </div>
 </form>

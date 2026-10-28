@@ -3,7 +3,6 @@ import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Router } from '@angular/router';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -42,6 +41,7 @@ import { KpisCatalogoComponent } from '../../../../shared/components/kpis-catalo
 import { MateriaPrima } from '../../models/materia-prima.model';
 import { MateriaPrimaService } from '../../services/materia-prima.service';
 import { contarCatalogo } from '../../../../shared/utils/conteo-catalogo';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-materia-prima-lista',
@@ -201,12 +201,9 @@ export class MateriaPrimaListaComponent {
     this.recargar();
   }
 
-  nueva(): void {
-    void this.router.navigate(['/app/materias-primas/nueva']);
-  }
-
-  abrir(materia: MateriaPrima): void {
-    void this.router.navigate(['/app/materias-primas', materia.idMateriaPrima]);
+  abrirFormulario(materia?: MateriaPrima): void {
+    const ruta = materia ? ['/app/materias-primas', materia.idMateriaPrima, 'editar'] : ['/app/materias-primas', 'nuevo'];
+    void this.router.navigate(ruta);
   }
 
   cambiarEstado(materia: MateriaPrima): void {

@@ -1,6 +1,6 @@
 <header class="page-header">
   <p>Administra los proveedores y sus datos de contacto.</p>
-  <button mat-flat-button type="button" *siRol="['ADMIN', 'COMPRAS']" (click)="nueva()">
+  <button mat-flat-button type="button" *siRol="['ADMIN', 'COMPRAS']" (click)="abrirFormulario()">
     <mat-icon>add</mat-icon> Nuevo proveedor
   </button>
 </header>
@@ -50,7 +50,7 @@
   <ng-template appTablaColumna="acciones" let-proveedor>
     <button mat-icon-button type="button" [matMenuTriggerFor]="menuProveedor" [attr.aria-label]="'Acciones para ' + proveedor.nombre"><mat-icon>more_vert</mat-icon></button>
     <mat-menu #menuProveedor="matMenu">
-      <button mat-menu-item type="button" *siRol="['ADMIN', 'COMPRAS']" (click)="abrir(proveedor)"><mat-icon>edit</mat-icon><span>Editar</span></button>
+      <button mat-menu-item type="button" *siRol="['ADMIN', 'COMPRAS']" (click)="abrirFormulario(proveedor)"><mat-icon>edit</mat-icon><span>Editar</span></button>
       <button mat-menu-item type="button" *siRol="['ADMIN', 'COMPRAS']" (click)="cambiarEstado(proveedor)"><mat-icon>{{ proveedor.activo ? 'person_off' : 'person_check' }}</mat-icon><span>{{ proveedor.activo ? 'Desactivar' : 'Activar' }}</span></button>
     </mat-menu>
   </ng-template>

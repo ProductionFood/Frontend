@@ -1,37 +1,78 @@
-<header class="page-header"><div><button mat-button type="button" (click)="volver()"><mat-icon>arrow_back</mat-icon> Volver a proveedores</button><h1>{{ esEdicion ? 'Editar proveedor' : 'Nuevo proveedor' }}</h1><p>Administra los proveedores y sus datos de contacto.</p></div></header>
-
-@if (guardando()) { <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner> }
-
-@else if (errorGeneral()) { <div class="error-general" role="alert"><mat-icon>error_outline</mat-icon><span>{{ errorGeneral() }}</span><button mat-icon-button type="button" aria-label="Cerrar mensaje" (click)="errorGeneral.set(null)"><mat-icon>close</mat-icon></button></div> }
-
-@else {
 <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
-  <mat-card class="seccion"><mat-card-header><mat-card-title>Datos del proveedor</mat-card-title></mat-card-header><mat-card-content>
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Nombre</mat-label>
-      <input matInput formControlName="nombre" maxlength="100" autocomplete="organization" required />
-      <mat-hint align="end">{{ form.controls.nombre.value.length }} / 100</mat-hint>
-      @if (form.controls.nombre.touched && form.controls.nombre.invalid) { <mat-error>{{ nombreError }}</mat-error> }
-    </mat-form-field>
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Persona de contacto</mat-label>
-      <input matInput formControlName="contacto" maxlength="100" autocomplete="name" />
-      @if (form.controls.contacto.touched && form.controls.contacto.invalid) { <mat-error>{{ contactoError }}</mat-error> }
-    </mat-form-field>
-    <div class="campos-dobles">
-      <mat-form-field appearance="outline" class="campo">
-        <mat-label>Teléfono</mat-label>
-        <input matInput formControlName="telefono" maxlength="20" autocomplete="tel" />
-        @if (form.controls.telefono.touched && form.controls.telefono.invalid) { <mat-error>{{ telefonoError }}</mat-error> }
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="campo">
-        <mat-label>Correo electrónico</mat-label>
-        <input matInput type="email" formControlName="correo" maxlength="100" autocomplete="email" />
-        @if (form.controls.correo.touched && form.controls.correo.invalid) { <mat-error>{{ correoError }}</mat-error> }
-      </mat-form-field>
+  <header class="formulario-cabecera">
+    <div>
+      <button mat-button type="button" [disabled]="guardando()" (click)="cancelar()">
+        <mat-icon>arrow_back</mat-icon>
+        Volver a proveedores
+      </button>
+      <h1>{{ esEdicion ? 'Editar proveedor' : 'Nuevo proveedor' }}</h1>
+      <p>Datos de contacto para compras y abastecimiento.</p>
     </div>
-  </mat-card-content></mat-card>
+    @if (esEdicion && proveedor(); as p) {
+      <span class="formulario-estado" [class.inactiva]="!p.activo">{{ p.activo ? 'Activo' : 'Inactivo' }}</span>
+    }
+  </header>
 
-  <div class="acciones-finales"><button mat-button type="button" (click)="volver()" [disabled]="guardando()">Cancelar</button><button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || guardando()">@if (guardando()) { <mat-spinner diameter="18" aria-label="Guardando"></mat-spinner> }{{ guardando() ? 'Guardando…' : 'Guardar' }}</button></div>
+  @if (cargando()) {
+    <div class="estado-carga"><mat-spinner diameter="24"></mat-spinner><span>Cargando proveedor…</span></div>
+  } @else {
+    @if (errorGeneral()) {
+      <div class="formulario-alerta formulario-alerta--error" role="alert">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ errorGeneral() }}</span>
+      </div>
+    }
+
+    <section class="formulario-seccion">
+      <div class="formulario-seccion__titulo">
+        <h3>Datos del proveedor</h3>
+        <p>El nombre es obligatorio; los demás datos son opcionales.</p>
+      </div>
+
+      <div class="formulario-grid">
+        <mat-form-field appearance="outline" class="ancho-completo">
+          <mat-label>Nombre</mat-label>
+          <input matInput formControlName="nombre" maxlength="100" autocomplete="organization" required />
+          <mat-hint align="end">{{ form.controls.nombre.value.length }} / 100</mat-hint>
+          @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
+            <mat-error>{{ nombreError }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="ancho-completo">
+          <mat-label>Persona de contacto</mat-label>
+          <input matInput formControlName="contacto" maxlength="100" autocomplete="name" />
+          @if (form.controls.contacto.touched && form.controls.contacto.invalid) {
+            <mat-error>{{ contactoError }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Teléfono</mat-label>
+          <input matInput formControlName="telefono" maxlength="20" autocomplete="tel" />
+          @if (form.controls.telefono.touched && form.controls.telefono.invalid) {
+            <mat-error>{{ telefonoError }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Correo electrónico</mat-label>
+          <input matInput type="email" formControlName="correo" maxlength="100" autocomplete="email" />
+          @if (form.controls.correo.touched && form.controls.correo.invalid) {
+            <mat-error>{{ correoError }}</mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </section>
+
+    <div class="formulario-acciones">
+      <button mat-button type="button" [disabled]="guardando()" (click)="cancelar()">Cancelar</button>
+      <button mat-flat-button type="submit" [disabled]="guardando() || form.invalid">
+        @if (guardando()) {
+          <mat-spinner diameter="18" aria-label="Guardando"></mat-spinner>
+        }
+        {{ guardando() ? 'Guardando…' : 'Guardar' }}
+      </button>
+    </div>
+  }
 </form>
-}

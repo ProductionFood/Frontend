@@ -4,14 +4,12 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
-import { Router, RouterLink } from '@angular/router';
 import { EMPTY, Subject, catchError, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -24,13 +22,14 @@ import { TablaColumnaDirective } from '../../../../shared/components/tabla-pagin
 import { EstadoVacioComponent } from '../../../../shared/components/estado-vacio/estado-vacio.component';
 import { Producto } from '../../models/producto.model';
 import { ProductoService } from '../../services/producto.service';
+import { Router } from '@angular/router';
 import { KpiCardComponent } from '../../../../shared/components/kpi-card/kpi-card.component';
 import { contarCatalogo } from '../../../../shared/utils/conteo-catalogo';
 
 @Component({
   selector: 'app-producto-lista',
   standalone: true,
-  imports: [ReactiveFormsModule, DecimalPipe, CurrencyPipe, MatFormFieldModule, MatSelectModule, MatButtonModule, MatDialogModule, MatIconModule, MatMenuModule, TablaPaginadaComponent, TablaColumnaDirective, EstadoVacioComponent, SiRolDirective, KpiCardComponent, FiltroBusquedaComponent, RouterLink],
+  imports: [ReactiveFormsModule, DecimalPipe, CurrencyPipe, MatFormFieldModule, MatSelectModule, MatButtonModule, MatIconModule, MatMenuModule, TablaPaginadaComponent, TablaColumnaDirective, EstadoVacioComponent, SiRolDirective, KpiCardComponent, FiltroBusquedaComponent],
   templateUrl: './producto-lista.component.html',
   styleUrl: './producto-lista.component.scss'
 })
@@ -38,8 +37,8 @@ export class ProductoListaComponent {
   private readonly fb = inject(FormBuilder);
   private readonly productoService = inject(ProductoService);
   private readonly notificacion = inject(NotificacionService);
-  private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly columnas: ColumnaTabla[] = [
@@ -167,8 +166,9 @@ export class ProductoListaComponent {
     this.recargar();
   }
 
-  nuevoProducto(): void {
-    void this.router.navigate(['/app/productos/nuevo']);
+  abrirFormulario(producto?: Producto): void {
+    const ruta = producto ? ['/app/productos', producto.idProducto, 'editar'] : ['/app/productos', 'nuevo'];
+    void this.router.navigate(ruta);
   }
 
   cambiarEstado(producto: Producto): void {
@@ -185,7 +185,7 @@ export class ProductoListaComponent {
       peligro: !activar
     };
     this.dialog.open(ConfirmarDialogComponent, { data, width: '480px', autoFocus: 'dialog' })
-      .afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((confirmado: boolean) => {
+      .afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(confirmado => {
         if (!confirmado) return;
         this.productoService.cambiarEstado(producto.idProducto, activar).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
           next: () => { this.notificacion.exito(activar ? 'Producto activado.' : 'Producto desactivado.'); this.recargarConKpis(); },

@@ -1,25 +1,27 @@
 import { Routes } from '@angular/router';
-import { rolGuard } from '../../core/auth/rol.guard';
-import { UnidadListaComponent } from './pages/unidad-lista/unidad-lista.component';
-import { UnidadFormularioComponent } from './pages/unidad-formulario/unidad-formulario.component';
 
-const ROLES_LECTURA = ['ADMIN', 'PRODUCCION', 'COMPRAS', 'VENTAS', 'CONSULTA'] as const;
-const ROLES_ESCRITURA = ['ADMIN'] as const;
+import { rolGuard } from '../../core/auth/rol.guard';
+import { UnidadFormularioComponent } from './pages/unidad-formulario/unidad-formulario.component';
+import { UnidadListaComponent } from './pages/unidad-lista/unidad-lista.component';
 
 export const UNIDAD_MEDIDA_ROUTES: Routes = [
   {
+    // Lectura para todos los roles autenticados; la escritura se controla
+    // en la interfaz con *siRol="['ADMIN']".
     path: '',
     component: UnidadListaComponent,
-    canActivate: [rolGuard([...ROLES_LECTURA])]
+    canActivate: [
+      rolGuard(['ADMIN', 'PRODUCCION', 'COMPRAS', 'VENTAS', 'CONSULTA'])
+    ]
   },
   {
-    path: 'nueva',
+    path: 'nuevo',
     component: UnidadFormularioComponent,
-    canActivate: [rolGuard([...ROLES_ESCRITURA])]
+    canActivate: [rolGuard(['ADMIN'])]
   },
   {
-    path: ':id',
+    path: ':id/editar',
     component: UnidadFormularioComponent,
-    canActivate: [rolGuard([...ROLES_LECTURA])]
+    canActivate: [rolGuard(['ADMIN'])]
   }
 ];

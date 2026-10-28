@@ -6,6 +6,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -68,6 +69,7 @@ export class CompraListaComponent {
   private readonly compraService = inject(CompraService);
   private readonly proveedorService = inject(ProveedorService);
   private readonly notificacion = inject(NotificacionService);
+  private readonly dialog = inject(MatDialog);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -153,12 +155,13 @@ export class CompraListaComponent {
     this.recargar();
   }
 
-  nueva(): void {
-    void this.router.navigate(['/app/compras/nueva']);
-  }
-
-  editar(compra: Compra): void {
-    void this.router.navigate(['/app/compras/editar', compra.idCompra]);
+  abrirFormulario(compra?: Compra, prefill?: CompraPrefill): void {
+    if (compra) {
+      void this.router.navigate(['/app/compras', compra.idCompra, 'editar']);
+      return;
+    }
+    const extras = prefill ? { state: { compraPrefill: prefill } } : {};
+    void this.router.navigate(['/app/compras', 'nuevo'], extras);
   }
 
   /**
@@ -177,7 +180,7 @@ export class CompraListaComponent {
     }
 
     window.history.replaceState(null, '');
-    void this.router.navigate(['/app/compras/nueva'], { state: { compraSugerida: prefill } });
+    this.abrirFormulario(undefined, prefill);
   }
 
   nombreProveedor(id: number): string {

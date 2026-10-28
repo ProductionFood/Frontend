@@ -1,26 +1,26 @@
 import { Routes } from '@angular/router';
 
 import { rolGuard } from '../../core/auth/rol.guard';
-import { MateriaPrimaListaComponent } from './pages/materia-prima-lista/materia-prima-lista.component';
 import { MateriaPrimaFormularioComponent } from './pages/materia-prima-formulario/materia-prima-formulario.component';
-
-const ROLES_LECTURA = ['ADMIN', 'PRODUCCION', 'COMPRAS', 'CONSULTA'] as const;
-const ROLES_ESCRITURA = ['ADMIN', 'PRODUCCION'] as const;
+import { MateriaPrimaListaComponent } from './pages/materia-prima-lista/materia-prima-lista.component';
 
 export const MATERIA_PRIMA_ROUTES: Routes = [
   {
+    // Lectura amplia; la escritura se controla con *siRol="['ADMIN']".
     path: '',
     component: MateriaPrimaListaComponent,
-    canActivate: [rolGuard([...ROLES_LECTURA])]
+    canActivate: [
+      rolGuard(['ADMIN', 'PRODUCCION', 'COMPRAS', 'CONSULTA'])
+    ]
   },
   {
-    path: 'nueva',
+    path: 'nuevo',
     component: MateriaPrimaFormularioComponent,
-    canActivate: [rolGuard([...ROLES_ESCRITURA])]
+    canActivate: [rolGuard(['ADMIN'])]
   },
   {
-    path: ':id',
+    path: ':id/editar',
     component: MateriaPrimaFormularioComponent,
-    canActivate: [rolGuard([...ROLES_LECTURA])]
+    canActivate: [rolGuard(['ADMIN'])]
   }
 ];

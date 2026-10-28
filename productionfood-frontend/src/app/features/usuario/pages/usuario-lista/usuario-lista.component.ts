@@ -24,7 +24,6 @@ import {
   tap
 } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Router, RouterLink } from '@angular/router';
 
 import { NotificacionService } from '../../../../core/ui/notificacion.service';
 import { SiRolDirective } from '../../../../shared/directives/si-rol.directive';
@@ -42,6 +41,7 @@ import { FiltroBusquedaComponent } from '../../../../shared/components/filtro-bu
 import { Rol, Usuario } from '../../models/usuario.model';
 import { RolService } from '../../services/rol.service';
 import { UsuarioService } from '../../services/usuario.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-usuario-lista',
@@ -63,7 +63,6 @@ import { UsuarioService } from '../../services/usuario.service';
     EstadoVacioComponent,
     EstadoBadgeComponent,
     FiltroBusquedaComponent,
-    RouterLink
   ],
   templateUrl: './usuario-lista.component.html',
   styleUrl: './usuario-lista.component.scss'
@@ -73,8 +72,8 @@ export class UsuarioListaComponent {
   private readonly usuarioService = inject(UsuarioService);
   private readonly rolService = inject(RolService);
   private readonly notificacion = inject(NotificacionService);
-  private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly columnas: ColumnaTabla[] = [
@@ -207,11 +206,7 @@ export class UsuarioListaComponent {
   }
 
   editar(usuario: Usuario): void {
-    void this.router.navigate(['/app/usuarios/editar', usuario.idUsuario]);
-  }
-
-  nueva(): void {
-    void this.router.navigate(['/app/usuarios/nuevo']);
+    void this.router.navigate(['/app/usuarios', usuario.idUsuario, 'editar']);
   }
 
   cambiarEstado(usuario: Usuario): void {

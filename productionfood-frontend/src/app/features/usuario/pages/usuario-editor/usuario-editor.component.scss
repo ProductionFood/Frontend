@@ -1,28 +1,23 @@
-.contenido {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding-top: 8px;
-  min-width: 380px;
+@use '../../../../shared/styles/ui' as ui;
+
+@include ui.formulario-pagina;
+
+:host {
+  width: min(100% - 2rem, 820px);
+  margin: clamp(1rem, 3vw, 2rem) auto;
 }
 
-.full-width {
-  width: 100%;
-}
-
-.error-general {
+.estado-carga {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 12px;
-  border-radius: var(--radio-s);
-  background: var(--rojo-100);
-  color: var(--peligro-texto);
-  font-size: 12.5px;
+  gap: 0.7rem;
+  padding: 1rem 0.2rem;
+  color: var(--formulario-texto-secundario);
 }
 
-.error-general mat-icon {
-  width: 18px;
-  height: 18px;
-  font-size: 18px;
+@media (max-width: 600px) {
+  :host {
+    width: min(100% - 1rem, 820px);
+    margin: 0.5rem auto;
+  }
 }

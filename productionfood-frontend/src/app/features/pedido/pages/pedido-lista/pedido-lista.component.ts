@@ -6,6 +6,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -69,6 +70,7 @@ export class PedidoListaComponent {
   private readonly pedidoService = inject(PedidoService);
   private readonly clienteService = inject(ClienteService);
   private readonly notificacion = inject(NotificacionService);
+  private readonly dialog = inject(MatDialog);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -168,12 +170,9 @@ export class PedidoListaComponent {
     this.recargar();
   }
 
-  nueva(): void {
-    void this.router.navigate(['/app/pedidos/nueva']);
-  }
-
-  editar(pedido: Pedido): void {
-    void this.router.navigate(['/app/pedidos/editar', pedido.idPedido]);
+  abrirFormulario(pedido?: Pedido): void {
+    const ruta = pedido ? ['/app/pedidos', pedido.idPedido, 'editar'] : ['/app/pedidos', 'nuevo'];
+    void this.router.navigate(ruta);
   }
 
   /** Entrega de un pedido aún no cerrado con fecha ya superada (🔴). */

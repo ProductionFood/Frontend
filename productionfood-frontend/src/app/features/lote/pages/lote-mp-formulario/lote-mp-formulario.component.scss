@@ -1,10 +1,22 @@
-.full { width: 100%; }
-.fechas { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.impacto { margin: 4px 0 12px; border-left: 4px solid #1976d2; background: #eef6ff; }
-.impacto mat-card-title { font-size: 1rem; }
-.impacto p { font-weight: 600; margin-bottom: 8px; }
-.impacto small { color: #374151; }
-.advertencia, .error-general { padding: 10px 12px; border-radius: 6px; }
-.advertencia { display: flex; align-items: center; gap: 8px; color: #8a4b08; background: #fff4dc; }
-.error-general { color: var(--peligro-texto); background: #ffebee; }
-@media (max-width: 720px) { .fechas { grid-template-columns: 1fr; gap: 0; } }
+@use '../../../../shared/styles/ui' as ui;
+
+@include ui.formulario-pagina;
+
+:host {
+  width: min(100% - 2rem, 960px);
+  margin: clamp(1rem, 3vw, 2rem) auto;
+}
+
+.formulario-alerta small {
+  display: block;
+  margin-top: 0.35rem;
+  color: inherit;
+  opacity: 0.85;
+}
+
+@media (max-width: 600px) {
+  :host {
+    width: min(100% - 1rem, 960px);
+    margin: 0.5rem auto;
+  }
+}

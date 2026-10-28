@@ -9,7 +9,6 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
-import { Router } from '@angular/router';
 import { EMPTY, Subject, catchError, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -23,6 +22,7 @@ import { Proveedor } from '../../models/proveedor.model';
 import { ProveedorService } from '../../services/proveedor.service';
 import { KpisCatalogoComponent } from '@shared/components/kpis-catalogo/kpis-catalogo.component';
 import { contarCatalogo } from '@shared/utils/conteo-catalogo';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-proveedor-lista',
@@ -130,12 +130,9 @@ export class ProveedorListaComponent {
     this.recargar();
   }
 
-  nueva(): void {
-    void this.router.navigate(['/app/proveedores/nueva']);
-  }
-
-  abrir(proveedor: Proveedor): void {
-    void this.router.navigate(['/app/proveedores', proveedor.idProveedor]);
+  abrirFormulario(proveedor?: Proveedor): void {
+    const ruta = proveedor ? ['/app/proveedores', proveedor.idProveedor, 'editar'] : ['/app/proveedores', 'nuevo'];
+    void this.router.navigate(ruta);
   }
 
   cambiarEstado(proveedor: Proveedor): void {
@@ -149,7 +146,7 @@ export class ProveedorListaComponent {
       peligro: !activar
     };
     this.dialog.open(ConfirmarDialogComponent, { data, width: '440px', autoFocus: 'dialog' })
-      .afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((confirmado: boolean) => {
+      .afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(confirmado => {
         if (!confirmado) return;
         this.proveedorService.cambiarEstado(proveedor.idProveedor, activar)
           .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
