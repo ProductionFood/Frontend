@@ -37,11 +37,7 @@
 </div>
 
 <div class="filtros" aria-label="Filtros de usuarios">
-  <mat-form-field appearance="outline" class="filtro-busqueda">
-    <mat-icon matPrefix>search</mat-icon>
-    <mat-label>Buscar por nombre, correo o rol</mat-label>
-    <input matInput [formControl]="filtros.controls.busqueda" autocomplete="off">
-  </mat-form-field>
+  <app-filtro-busqueda etiqueta="Buscar por nombre, correo o rol" [control]="filtros.controls.busqueda" />
 
   <mat-form-field appearance="outline">
     <mat-label>Rol</mat-label>

@@ -1,0 +1,16 @@
+<mat-form-field appearance="outline" class="campo">
+  <mat-icon matPrefix>{{ icono() }}</mat-icon>
+  <mat-label>{{ etiqueta() }}</mat-label>
+  <input matInput [formControl]="control()" autocomplete="off" />
+  @if (control().value) {
+    <button
+      mat-icon-button
+      matSuffix
+      type="button"
+      [attr.aria-label]="'Limpiar ' + etiqueta()"
+      (click)="limpiar()"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  }
+</mat-form-field>

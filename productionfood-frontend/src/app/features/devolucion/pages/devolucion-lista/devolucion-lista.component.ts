@@ -5,7 +5,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -13,8 +12,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatSortModule, Sort } from '@angular/material/sort';
+import { PageEvent } from '@angular/material/paginator';
+import { Sort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
 import { SiRolDirective } from '../../../../shared/directives/si-rol.directive';
 import { NotificacionService } from '../../../../core/ui/notificacion.service';
@@ -25,12 +24,14 @@ import { RechazarDevolucionDialogComponent } from '../../components/rechazar-dev
 import { EstadoBadgeComponent } from '../../../../shared/components/estado-badge/estado-badge.component';
 import { EstadoVacioComponent } from '../../../../shared/components/estado-vacio/estado-vacio.component';
 import { TarjetaTablaComponent } from '../../../../shared/components/tarjeta-tabla/tarjeta-tabla.component';
-@Component({selector:'app-devolucion-lista',standalone:true,imports:[DatePipe,ReactiveFormsModule,RouterLink,MatButtonModule,MatTableModule,MatIconModule,MatMenuModule,MatFormFieldModule,MatSelectModule,MatDatepickerModule,MatInputModule,MatProgressBarModule,MatPaginatorModule,MatSortModule,SiRolDirective,EstadoBadgeComponent,EstadoVacioComponent,TarjetaTablaComponent],templateUrl:'./devolucion-lista.component.html',styleUrl:'./devolucion-lista.component.scss'})
+import { ColumnaTabla, TablaPaginadaComponent } from '../../../../shared/components/tabla-paginada/tabla-paginada.component';
+import { TablaColumnaDirective } from '../../../../shared/components/tabla-paginada/tabla-columna.directive';
+@Component({selector:'app-devolucion-lista',standalone:true,imports:[DatePipe,ReactiveFormsModule,RouterLink,MatButtonModule,MatIconModule,MatMenuModule,MatFormFieldModule,MatSelectModule,MatDatepickerModule,MatInputModule,MatProgressBarModule,SiRolDirective,EstadoBadgeComponent,EstadoVacioComponent,TarjetaTablaComponent,TablaPaginadaComponent,TablaColumnaDirective],templateUrl:'./devolucion-lista.component.html',styleUrl:'./devolucion-lista.component.scss'})
 export class DevolucionListaComponent {
  private readonly service=inject(DevolucionService);private readonly destroyRef=inject(DestroyRef);private readonly dialog=inject(MatDialog);private readonly notificacion=inject(NotificacionService);
  readonly cargando=signal(true);readonly error=signal('');readonly devoluciones=signal<Devolucion[]>([]);readonly total=signal(0);readonly pagina=signal(0);readonly tamano=signal(10);readonly orden=signal('fechaRegistro,desc');
  readonly estado=new FormControl<EstadoDevolucion|'TODAS'>('PENDIENTE',{nonNullable:true});readonly desde=new FormControl<Date|null>(null);readonly hasta=new FormControl<Date|null>(null);
- readonly columnas=['pedido','cliente','producto','cantidad','motivo','fecha','estado','acciones'];
+ readonly columnas:ColumnaTabla[]=[{id:'idPedido',titulo:'Pedido',ordenable:true},{id:'cliente',titulo:'Cliente',ordenable:false},{id:'producto',titulo:'Producto',ordenable:false},{id:'cantidad',titulo:'Cant.',ordenable:true,clase:'numerica'},{id:'motivo',titulo:'Motivo',ordenable:false},{id:'fechaRegistro',titulo:'Fecha',ordenable:true},{id:'estado',titulo:'Estado',ordenable:false},{id:'acciones',titulo:'Acciones',ordenable:false}];
  constructor(){this.cargar();}
  private fecha(d:Date|null):string|undefined {if(!d)return undefined;const yyyy=d.getFullYear();const mm=String(d.getMonth()+1).padStart(2,'0');const dd=String(d.getDate()).padStart(2,'0');return `${yyyy}-${mm}-${dd}`;}
  limpiarFiltros():void{this.estado.setValue('PENDIENTE');this.desde.setValue(null);this.hasta.setValue(null);this.aplicar();}

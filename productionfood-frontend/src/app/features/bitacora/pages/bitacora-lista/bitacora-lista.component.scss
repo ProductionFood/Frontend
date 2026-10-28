@@ -1,3 +1,5 @@
+@use '../../../../shared/styles/ui' as ui;
+
 :host {
   display: block;
 }
@@ -23,10 +25,7 @@
 }
 
 .filtros {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
+  @include ui.filtros-tarjeta;
   margin-bottom: 16px;
 }
 

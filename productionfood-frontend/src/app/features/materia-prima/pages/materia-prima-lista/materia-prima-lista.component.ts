@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, signal, computed } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 
 import { DecimalPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
@@ -8,7 +8,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
@@ -32,15 +31,17 @@ import {
   ConfirmarDialogComponent,
   ConfirmarDialogData
 } from '../../../../shared/components/confirmar-dialog/confirmar-dialog.component';
+import {
+  ColumnaTabla,
+  TablaPaginadaComponent
+} from '../../../../shared/components/tabla-paginada/tabla-paginada.component';
+import { TablaColumnaDirective } from '../../../../shared/components/tabla-paginada/tabla-columna.directive';
+import { FiltroBusquedaComponent } from '../../../../shared/components/filtro-busqueda/filtro-busqueda.component';
+import { KpisCatalogoComponent } from '../../../../shared/components/kpis-catalogo/kpis-catalogo.component';
 import { MateriaPrima } from '../../models/materia-prima.model';
 import { MateriaPrimaService } from '../../services/materia-prima.service';
 import { contarCatalogo } from '../../../../shared/utils/conteo-catalogo';
 import { MateriaPrimaFormularioComponent } from '../materia-prima-formulario/materia-prima-formulario.component';
-
-// Descomenta si tu plantilla usa los componentes compartidos:
-// import { KpisCatalogoComponent } from '../../../../shared/components/kpis-catalogo/kpis-catalogo.component';
-// import { TablaPaginadaComponent } from '../../../../shared/components/tabla-paginada/tabla-paginada.component';
-// import { TablaColumnaDirective } from '../../../../shared/directives/tabla-columna.directive';
 
 @Component({
   selector: 'app-materia-prima-lista',
@@ -49,17 +50,17 @@ import { MateriaPrimaFormularioComponent } from '../materia-prima-formulario/mat
     ReactiveFormsModule,
     DecimalPipe,
     MatFormFieldModule,
-    MatInputModule,
     MatSelectModule,
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
     MatProgressBarModule,
     SiRolDirective,
-    MateriaPrimaFormularioComponent
-    // KpisCatalogoComponent,
-    // TablaPaginadaComponent,
-    // TablaColumnaDirective
+    MateriaPrimaFormularioComponent,
+    KpisCatalogoComponent,
+    TablaPaginadaComponent,
+    TablaColumnaDirective,
+    FiltroBusquedaComponent
   ],
   templateUrl: './materia-prima-lista.component.html',
   styleUrl: './materia-prima-lista.component.scss'
@@ -71,13 +72,13 @@ export class MateriaPrimaListaComponent {
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly columnas = [
-    'materiaPrima',
-    'categoria',
-    'proveedor',
-    'stock',
-    'estado',
-    'acciones'
+  readonly columnas: ColumnaTabla[] = [
+    { id: 'materiaPrima', titulo: 'Materia prima', ordenable: true },
+    { id: 'categoria', titulo: 'Categoría', ordenable: false },
+    { id: 'proveedor', titulo: 'Proveedor', ordenable: false },
+    { id: 'stock', titulo: 'Stock', ordenable: false },
+    { id: 'estado', titulo: 'Estado', ordenable: false },
+    { id: 'acciones', titulo: '', ordenable: false }
   ];
 
   readonly filtros = this.fb.group({
@@ -91,17 +92,13 @@ export class MateriaPrimaListaComponent {
 
   readonly kpiTotal = signal(0);
   readonly kpiActivas = signal(0);
-  readonly kpiBajoStock = signal(0);
+  readonly kpiInactivas = signal(0);
 
   readonly cargandoKpis = signal(true);
   readonly pagina = signal(0);
   readonly tamano = signal(20);
   readonly cargando = signal(false);
   readonly error = signal<string | null>(null);
-
-  readonly totalPaginas = computed(
-    () => Math.ceil(this.total() / this.tamano()) || 1
-  );
 
   private readonly ordenCampo = signal('');
   private readonly ordenDireccion = signal<'asc' | 'desc' | ''>('');
@@ -171,41 +168,21 @@ export class MateriaPrimaListaComponent {
   private cargarKpis(): void {
     this.cargandoKpis.set(true);
 
-    // Conteos de total y activas vía contarCatalogo (peticiones size: 1, solo lee totalElements)
-    contarCatalogo((activo) =>
+    contarCatalogo(activo =>
       this.materiaPrimaService.listar({ page: 0, size: 1, activo })
     )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: ({ total, activos }) => {
+        next: ({ total, activos, inactivos }) => {
           this.kpiTotal.set(total);
           this.kpiActivas.set(activos);
-
-          // Bajo stock requiere cantidades reales: se pide un lote amplio
-          this.materiaPrimaService
-            .listar({ page: 0, size: 1000 })
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe({
-              next: (respuesta) => {
-                this.kpiBajoStock.set(
-                  respuesta.content.filter(
-                    (m) =>
-                      m.stockMinimo > 0 &&
-                      m.cantidadDisponible < m.stockMinimo
-                  ).length
-                );
-                this.cargandoKpis.set(false);
-              },
-              error: () => {
-                this.kpiBajoStock.set(0);
-                this.cargandoKpis.set(false);
-              }
-            });
+          this.kpiInactivas.set(inactivos);
+          this.cargandoKpis.set(false);
         },
         error: () => {
           this.kpiTotal.set(0);
           this.kpiActivas.set(0);
-          this.kpiBajoStock.set(0);
+          this.kpiInactivas.set(0);
           this.cargandoKpis.set(false);
         }
       });

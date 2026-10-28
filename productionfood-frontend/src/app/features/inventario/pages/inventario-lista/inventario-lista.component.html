@@ -11,100 +11,65 @@
   </button>
 </header>
 
-<div class="kpi-grid">
-  <div class="kpi">
-    <div>
-      <div class="kpi-label">Inventario total</div>
-      <div class="kpi-number">{{ kpiInventarioTotal() | number:'1.2-2' }} kg</div>
-    </div>
-    <div class="kpi-icon">
-      <svg class="ic" viewBox="0 0 24 24"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M3.3 7 12 12l8.7-5"/><path d="M12 22V12"/></svg>
-    </div>
-  </div>
-  <div class="kpi">
-    <div>
-      <div class="kpi-label">Entradas hoy</div>
-      <div class="kpi-number">{{ kpiEntradasHoy() || '—' }}</div>
-    </div>
-    <div class="kpi-icon blue">
-      <svg class="ic" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
-    </div>
-  </div>
-  <div class="kpi">
-    <div>
-      <div class="kpi-label">Salidas hoy</div>
-      <div class="kpi-number">{{ kpiSalidasHoy() || '—' }}</div>
-    </div>
-    <div class="kpi-icon orange">
-      <svg class="ic" viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
-    </div>
-  </div>
-  <div class="kpi">
-    <div>
-      <div class="kpi-label">Alertas activas</div>
-      <div class="kpi-number">{{ kpiAlertasActivas() }}</div>
-    </div>
-    <div class="kpi-icon red">
-      <svg class="ic" viewBox="0 0 24 24"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-    </div>
-  </div>
-</div>
+<section class="kpi-grid" aria-label="Resumen de inventario">
+  <app-kpi-card
+    etiqueta="Inventario total"
+    [valor]="cargandoKpis() ? '—' : kpiTotalTexto()"
+    icono="inventory_2"
+    tono="verde"
+  />
+  <app-kpi-card
+    etiqueta="Entradas hoy"
+    [valor]="cargandoKpis() ? '—' : (kpiEntradasHoy() || '—')"
+    icono="arrow_downward"
+    tono="azul"
+  />
+  <app-kpi-card
+    etiqueta="Salidas hoy"
+    [valor]="cargandoKpis() ? '—' : (kpiSalidasHoy() || '—')"
+    icono="arrow_upward"
+    tono="naranja"
+  />
+  <app-kpi-card
+    etiqueta="Alertas activas"
+    [valor]="cargandoKpis() ? '—' : kpiAlertasActivas()"
+    icono="warning"
+    tono="rojo"
+  />
+</section>
 
-<div class="filters">
-  <div class="filter-search">
-    <svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    <input type="text" placeholder="Buscar por nombre, categoría o proveedor..." [formControl]="filtros.controls.busqueda" autocomplete="off">
-  </div>
-  <label class="filter-checkbox">
-    <input type="checkbox" [formControl]="filtros.controls.soloStockBajo">
-    <span>Solo stock bajo</span>
-  </label>
-  <label class="filter-checkbox">
-    <input type="checkbox" [formControl]="filtros.controls.incluirInactivas">
-    <span>Incluir inactivas</span>
-  </label>
-</div>
+<section class="filtros" aria-label="Filtros de inventario">
+  <app-filtro-busqueda etiqueta="Buscar por nombre, categoría o proveedor..." [control]="filtros.controls.busqueda" />
+  <mat-checkbox [formControl]="filtros.controls.soloStockBajo">Solo stock bajo</mat-checkbox>
+  <mat-checkbox [formControl]="filtros.controls.incluirInactivas">Incluir inactivas</mat-checkbox>
+</section>
 
 <div class="two-col">
   <div class="table-card">
     <div class="table-header">
       <h3>Existencias por categoría</h3>
     </div>
-    @if (cargando()) {
-      <div class="cargando-tabla">
-        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-      </div>
-    } @else if (existenciasPorCategoria().length === 0) {
-      <div class="vacio-tabla">
-        <mat-icon>inventory_2</mat-icon>
-        <p>No hay datos de inventario para mostrar.</p>
-      </div>
-    } @else {
-      <div class="tabla-scroll">
-        <table>
-          <thead>
-            <tr>
-              <th>Categoría</th>
-              <th>Cantidad</th>
-              <th>% del total</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (cat of existenciasPorCategoria(); track cat.nombre) {
-              <tr>
-                <td>
-                  <span [class]="getCategoriaClass(cat.nombre)">
-                    {{ cat.nombre }}
-                  </span>
-                </td>
-                <td class="quantity">{{ cat.cantidad | number:'1.2-2' }} kg</td>
-                <td>{{ cat.porcentaje }}%</td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-    }
+    <app-tabla-paginada
+      [columnas]="columnas"
+      [datos]="existenciasPorCategoria()"
+      [total]="existenciasPorCategoria().length"
+      [paginado]="false"
+      [cargando]="cargando()"
+      [error]="error() || null"
+      mensajeVacio="No hay datos de inventario para mostrar."
+    >
+      <ng-template appTablaColumna="categoria" let-cat>
+        <span [class]="getCategoriaClass(cat.nombre)">{{ cat.nombre }}</span>
+      </ng-template>
+
+      <ng-template appTablaColumna="cantidad" let-cat>
+        <span class="quantity">{{ cat.cantidad | number:'1.2-2' }} kg</span>
+      </ng-template>
+
+      <ng-template appTablaColumna="porcentaje" let-cat>
+        {{ cat.porcentaje }}%
+      </ng-template>
+    </app-tabla-paginada>
   </div>
 
   <div class="table-card">
@@ -116,10 +81,11 @@
         <mat-progress-bar mode="indeterminate"></mat-progress-bar>
       </div>
     } @else if (alertasInventario().length === 0) {
-      <div class="vacio-tabla">
-        <mat-icon>check_circle</mat-icon>
-        <p>No hay alertas activas.</p>
-      </div>
+      <app-estado-vacio
+        icono="check_circle"
+        mensaje="No hay alertas activas."
+        tono="exito"
+      />
     } @else {
       @for (alerta of alertasInventario(); track alerta.nombre) {
         <div class="alert-row">

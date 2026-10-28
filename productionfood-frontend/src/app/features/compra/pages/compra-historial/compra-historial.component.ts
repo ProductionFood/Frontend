@@ -8,11 +8,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { PageEvent } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
-import { MatSortModule, Sort } from '@angular/material/sort';
-import { MatTableModule } from '@angular/material/table';
+import { Sort } from '@angular/material/sort';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import {
@@ -29,6 +28,13 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { AuthService } from '../../../../core/auth/auth.service';
+import { EstadoVacioComponent } from '../../../../shared/components/estado-vacio/estado-vacio.component';
+import {
+  ColumnaTabla,
+  TablaPaginadaComponent
+} from '../../../../shared/components/tabla-paginada/tabla-paginada.component';
+import { TablaColumnaDirective } from '../../../../shared/components/tabla-paginada/tabla-columna.directive';
+import { TablaDetalleDirective } from '../../../../shared/components/tabla-paginada/tabla-detalle.directive';
 import { PageResponse } from '../../../../shared/models/page-response.model';
 import { Proveedor } from '../../../proveedor/models/proveedor.model';
 import { ProveedorService } from '../../../proveedor/services/proveedor.service';
@@ -64,10 +70,11 @@ import { ResumenComprasCardsComponent } from '../../components/resumen-compras-c
     MatDatepickerModule,
     MatButtonModule,
     MatIconModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatSortModule,
     MatProgressBarModule,
+    EstadoVacioComponent,
+    TablaPaginadaComponent,
+    TablaColumnaDirective,
+    TablaDetalleDirective,
     ResumenComprasCardsComponent,
     GastoProveedorChartComponent
   ],
@@ -89,14 +96,13 @@ export class CompraHistorialComponent {
     'COMPRAS'
   ]);
 
-  readonly columnas = [
-    'expand',
-    'id',
-    'proveedor',
-    'fecha',
-    'cantidadItems',
-    'totalCompra',
-    'estado'
+  readonly columnas: ColumnaTabla[] = [
+    { id: 'id', titulo: 'N.º', ordenable: true },
+    { id: 'proveedor', titulo: 'Proveedor', ordenable: false },
+    { id: 'fecha', titulo: 'Fecha', ordenable: true },
+    { id: 'cantidadItems', titulo: 'Ítems', ordenable: false },
+    { id: 'totalCompra', titulo: 'Total', ordenable: true },
+    { id: 'estado', titulo: 'Estado', ordenable: true }
   ];
 
   readonly estados: EstadoCompra[] = ['PENDIENTE', 'RECIBIDA', 'CANCELADA'];
@@ -192,12 +198,13 @@ export class CompraHistorialComponent {
     });
   }
 
-  esExpandida(idCompra: number): boolean {
-    return this.expandidos().has(idCompra);
+  esExpandida(compra: Compra): boolean {
+    return this.expandidos().has(compra.idCompra);
   }
 
   /** Carga el detalle de la compra al expandir la fila (R-06), una sola vez. */
-  alternar(idCompra: number): void {
+  alternar(compra: Compra): void {
+    const idCompra = compra.idCompra;
     const expandidos = new Set(this.expandidos());
 
     if (expandidos.has(idCompra)) {

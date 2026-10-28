@@ -17,14 +17,7 @@
 />
 
 <section class="filtros" aria-label="Filtros de proveedores">
-  <mat-form-field appearance="outline" class="filtro-busqueda">
-    <mat-icon matPrefix>search</mat-icon>
-    <mat-label>Buscar por nombre</mat-label>
-    <input matInput [formControl]="filtros.controls.busqueda" autocomplete="off" />
-    @if (filtros.controls.busqueda.value) {
-      <button mat-icon-button matSuffix type="button" aria-label="Limpiar búsqueda" (click)="filtros.controls.busqueda.setValue('')"><mat-icon>close</mat-icon></button>
-    }
-  </mat-form-field>
+  <app-filtro-busqueda etiqueta="Buscar por nombre" [control]="filtros.controls.busqueda" />
   <mat-form-field appearance="outline">
     <mat-label>Estado</mat-label>
     <mat-select [formControl]="filtros.controls.activo">
@@ -38,7 +31,7 @@
 <app-tabla-paginada
   [columnas]="columnas" [datos]="proveedores()" [total]="total()"
   [page]="pagina()" [size]="tamano()" [cargando]="cargando()" [error]="error()"
-  mensajeVacio="No hay proveedores registrados."
+  [mensajeVacio]="filtroAplicado() ? 'Ningún proveedor coincide con los filtros.' : 'No hay proveedores registrados.'"
   (cambiarPagina)="onPagina($event)" (cambiarOrden)="onOrden($event)" (reintentar)="recargar()"
 >
   <ng-template appTablaColumna="nombre" let-proveedor>{{ proveedor.nombre }}</ng-template>

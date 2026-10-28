@@ -1,17 +1,6 @@
-@use '../../../../shared/styles/ui' as ui;
-
 .pagina {
   display: grid;
   gap: var(--esp-4);
-}
-
-.tabla {
-  @include ui.tarjeta-contenedor;
-  overflow: auto;
-}
-
-table {
-  @include ui.tabla;
 }
 
 .entrada {

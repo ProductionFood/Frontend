@@ -17,14 +17,7 @@
 />
 
 <section class="filtros" aria-label="Filtros de clientes">
-  <mat-form-field appearance="outline" class="filtro-busqueda">
-    <mat-icon matPrefix>search</mat-icon>
-    <mat-label>Buscar por nombre</mat-label>
-    <input matInput [formControl]="filtros.controls.busqueda" autocomplete="off" />
-    @if (filtros.controls.busqueda.value) {
-      <button mat-icon-button matSuffix type="button" aria-label="Limpiar búsqueda" (click)="filtros.controls.busqueda.setValue('')"><mat-icon>close</mat-icon></button>
-    }
-  </mat-form-field>
+  <app-filtro-busqueda etiqueta="Buscar por nombre" [control]="filtros.controls.busqueda" />
   <mat-form-field appearance="outline">
     <mat-label>Estado</mat-label>
     <mat-select [formControl]="filtros.controls.activo">

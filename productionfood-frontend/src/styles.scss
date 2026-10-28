@@ -427,6 +427,11 @@ html .mat-mdc-dialog-surface {
   background-color: var(--superficie-alta);
 }
 
+/* §19 · Modales y overlays: el overlay es siempre navy al 45% de opacidad. */
+.cdk-overlay-backdrop {
+  background-color: rgba(16, 27, 39, 0.45);
+}
+
 /* =========================================================
    Toasts (§10): borde izquierdo, superficie neutral
    ========================================================= */

@@ -72,158 +72,105 @@
 
   <section class="tabla-panel">
     @if (!cargando() && compras().length === 0) {
-      <div class="estado estado--vacio">
-        @if (hayFiltrosActivos()) {
-          <mat-icon>search_off</mat-icon>
-          <p>Ninguna compra coincide con los filtros</p>
+      @if (hayFiltrosActivos()) {
+        <app-estado-vacio
+          icono="search_off"
+          mensaje="Ninguna compra coincide con los filtros"
+        >
           <button mat-stroked-button type="button" (click)="limpiarFiltros()">
             Limpiar filtros
           </button>
-        } @else {
-          <mat-icon>event_busy</mat-icon>
-          <p>No hay compras en el período seleccionado</p>
+        </app-estado-vacio>
+      } @else {
+        <app-estado-vacio
+          icono="event_busy"
+          mensaje="No hay compras en el período seleccionado"
+        >
           <button mat-stroked-button type="button" (click)="limpiarFiltros()">
             Volver al mes actual
           </button>
-        }
-      </div>
+        </app-estado-vacio>
+      }
     } @else {
-      <table
-        mat-table
-        [dataSource]="compras()"
-        multiTemplateDataRows
-        matSort
-        (matSortChange)="onOrden($event)"
-        aria-label="Historial de compras"
+      <app-tabla-paginada
+        [columnas]="columnas"
+        [datos]="compras()"
+        [total]="total()"
+        [page]="pagina()"
+        [size]="tamano()"
+        [opcionesTamano]="[5, 10, 20, 50]"
+        [primeraUltima]="true"
+        [expandible]="true"
+        [expandida]="esExpandida"
+        [cargando]="cargando()"
+        (cambiarPagina)="onPagina($event)"
+        (cambiarOrden)="onOrden($event)"
+        (alternarFila)="alternar($event)"
+        (reintentar)="recargar()"
       >
-        <ng-container matColumnDef="expand">
-          <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let compra">
-            <button
-              mat-icon-button
-              type="button"
-              [attr.aria-label]="'Ver ítems de la compra ' + compra.idCompra"
-              [attr.aria-expanded]="esExpandida(compra.idCompra)"
-              (click)="alternar(compra.idCompra); $event.stopPropagation()"
-            >
-              <mat-icon>
-                {{ esExpandida(compra.idCompra) ? 'expand_more' : 'chevron_right' }}
-              </mat-icon>
-            </button>
-          </td>
-        </ng-container>
 
-        <ng-container matColumnDef="id">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>N.º</th>
-          <td mat-cell *matCellDef="let compra">#{{ compra.idCompra }}</td>
-        </ng-container>
+        <ng-template appTablaColumna="id" let-compra>#{{ compra.idCompra }}</ng-template>
 
-        <ng-container matColumnDef="proveedor">
-          <th mat-header-cell *matHeaderCellDef>Proveedor</th>
-          <td mat-cell *matCellDef="let compra">{{ compra.proveedor.nombre }}</td>
-        </ng-container>
+        <ng-template appTablaColumna="proveedor" let-compra>
+          {{ compra.proveedor.nombre }}
+        </ng-template>
 
-        <ng-container matColumnDef="fecha">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
-          <td mat-cell *matCellDef="let compra">
-            {{ compra.fecha | date: 'dd/MM/yyyy' }}
-          </td>
-        </ng-container>
+        <ng-template appTablaColumna="fecha" let-compra>
+          {{ compra.fecha | date: 'dd/MM/yyyy' }}
+        </ng-template>
 
-        <ng-container matColumnDef="cantidadItems">
-          <th mat-header-cell *matHeaderCellDef>Ítems</th>
-          <td mat-cell *matCellDef="let compra">{{ compra.cantidadItems }}</td>
-        </ng-container>
+        <ng-template appTablaColumna="cantidadItems" let-compra>
+          {{ compra.cantidadItems }}
+        </ng-template>
 
-        <ng-container matColumnDef="totalCompra">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
-          <td mat-cell *matCellDef="let compra">
-            {{ compra.totalCompra | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
-          </td>
-        </ng-container>
+        <ng-template appTablaColumna="totalCompra" let-compra>
+          {{ compra.totalCompra | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
+        </ng-template>
 
-        <ng-container matColumnDef="estado">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Estado</th>
-          <td mat-cell *matCellDef="let compra">
-            <span
-              class="chip-estado"
-              [class.pendiente]="compra.estado === 'PENDIENTE'"
-              [class.recibida]="compra.estado === 'RECIBIDA'"
-              [class.cancelada]="compra.estado === 'CANCELADA'"
-            >
-              <span class="punto"></span>
-              {{ textoEstado(compra.estado) }}
-            </span>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="detalle">
-          <td
-            mat-cell
-            *matCellDef="let compra"
-            [attr.colspan]="columnas.length"
+        <ng-template appTablaColumna="estado" let-compra>
+          <span
+            class="chip-estado"
+            [class.pendiente]="compra.estado === 'PENDIENTE'"
+            [class.recibida]="compra.estado === 'RECIBIDA'"
+            [class.cancelada]="compra.estado === 'CANCELADA'"
           >
-            @if (esExpandida(compra.idCompra)) {
-              <div class="detalle-contenido">
-                @if (cargandoDetalle() === compra.idCompra) {
-                  <p class="detalle-estado">Cargando ítems…</p>
-                } @else if (errorDetalle()) {
-                  <p class="detalle-estado detalle-estado--error">
-                    {{ errorDetalle() }}
-                  </p>
-                } @else if (detalleDe(compra.idCompra).length === 0) {
-                  <p class="detalle-estado">Esta compra no registra ítems</p>
-                } @else {
-                  <ul class="detalle-lineas">
-                    @for (linea of detalleDe(compra.idCompra); track linea.idDetalleCompra) {
-                      <li class="linea">
-                        <span class="mp">{{ linea.materiaPrima.nombre }}</span>
-                        <span class="cantidad">
-                          {{ linea.cantidad | number: '1.2-2' }}
-                          {{ linea.materiaPrima.unidad.abreviatura }}
-                        </span>
-                        <span class="precio">
-                          {{ linea.precioUnitario | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
-                        </span>
-                        <span class="subtotal">
-                          {{ linea.subtotal | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
-                        </span>
-                      </li>
-                    }
-                  </ul>
+            <span class="punto"></span>
+            {{ textoEstado(compra.estado) }}
+          </span>
+        </ng-template>
+
+        <ng-template appTablaDetalle let-compra>
+          @if (esExpandida(compra)) {
+            @if (cargandoDetalle() === compra.idCompra) {
+              <p class="detalle-estado">Cargando ítems…</p>
+            } @else if (errorDetalle()) {
+              <p class="detalle-estado detalle-estado--error">
+                {{ errorDetalle() }}
+              </p>
+            } @else if (detalleDe(compra.idCompra).length === 0) {
+              <p class="detalle-estado">Esta compra no registra ítems</p>
+            } @else {
+              <ul class="detalle-lineas">
+                @for (linea of detalleDe(compra.idCompra); track linea.idDetalleCompra) {
+                  <li class="linea">
+                    <span class="mp">{{ linea.materiaPrima.nombre }}</span>
+                    <span class="cantidad">
+                      {{ linea.cantidad | number: '1.2-2' }}
+                      {{ linea.materiaPrima.unidad.abreviatura }}
+                    </span>
+                    <span class="precio">
+                      {{ linea.precioUnitario | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
+                    </span>
+                    <span class="subtotal">
+                      {{ linea.subtotal | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
+                    </span>
+                  </li>
                 }
-              </div>
+              </ul>
             }
-          </td>
-        </ng-container>
-
-        <tr
-          mat-header-row
-          *matHeaderRowDef="columnas"
-        ></tr>
-        <tr
-          mat-row
-          *matRowDef="let compra; columns: columnas"
-          class="fila-principal"
-          [class.fila-expandida]="esExpandida(compra.idCompra)"
-          (click)="alternar(compra.idCompra)"
-        ></tr>
-        <tr
-          mat-row
-          *matRowDef="let compra; columns: ['detalle']"
-          class="fila-detalle"
-        ></tr>
-      </table>
-
-      <mat-paginator
-        [length]="total()"
-        [pageIndex]="pagina()"
-        [pageSize]="tamano()"
-        [pageSizeOptions]="[5, 10, 20, 50]"
-        showFirstLastButtons
-        aria-label="Páginas del historial"
-        (page)="onPagina($event)"
-      />
+          }
+        </ng-template>
+      </app-tabla-paginada>
     }
   </section>
 }

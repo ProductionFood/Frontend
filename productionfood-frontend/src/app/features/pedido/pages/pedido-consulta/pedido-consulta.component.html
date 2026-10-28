@@ -106,184 +106,125 @@
 
   <section class="tabla-panel">
     @if (!cargando() && pedidos().length === 0) {
-      <div class="estado estado--vacio">
-        @if (hayFiltrosActivos()) {
-          <mat-icon>search_off</mat-icon>
-          <p>Ningún pedido coincide con los filtros</p>
+      @if (hayFiltrosActivos()) {
+        <app-estado-vacio
+          icono="search_off"
+          mensaje="Ningún pedido coincide con los filtros"
+        >
           <button mat-stroked-button type="button" (click)="limpiarFiltros()">
             Limpiar filtros
           </button>
-        } @else {
-          <mat-icon>event_busy</mat-icon>
-          <p>No hay pedidos en el período seleccionado</p>
+        </app-estado-vacio>
+      } @else {
+        <app-estado-vacio
+          icono="event_busy"
+          mensaje="No hay pedidos en el período seleccionado"
+        >
           <button mat-stroked-button type="button" (click)="limpiarFiltros()">
             Volver al mes actual
           </button>
-        }
-      </div>
+        </app-estado-vacio>
+      }
     } @else {
-      <table
-        mat-table
-        [dataSource]="pedidos()"
-        multiTemplateDataRows
-        matSort
-        (matSortChange)="onOrden($event)"
-        aria-label="Consulta de pedidos"
+      <app-tabla-paginada
+        [columnas]="columnas"
+        [datos]="pedidos()"
+        [total]="total()"
+        [page]="pagina()"
+        [size]="tamano()"
+        [opcionesTamano]="[5, 10, 20, 50]"
+        [primeraUltima]="true"
+        [expandible]="true"
+        [expandida]="esExpandida"
+        [cargando]="cargando()"
+        (cambiarPagina)="onPagina($event)"
+        (cambiarOrden)="onOrden($event)"
+        (alternarFila)="alternar($event)"
+        (reintentar)="recargar()"
       >
-        <ng-container matColumnDef="expand">
-          <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let pedido">
-            <button
-              mat-icon-button
-              type="button"
-              [attr.aria-label]="'Ver productos del pedido ' + pedido.idPedido"
-              [attr.aria-expanded]="esExpandida(pedido.idPedido)"
-              (click)="alternar(pedido.idPedido); $event.stopPropagation()"
-            >
-              <mat-icon>
-                {{ esExpandida(pedido.idPedido) ? 'expand_more' : 'chevron_right' }}
-              </mat-icon>
-            </button>
-          </td>
-        </ng-container>
+        <ng-template appTablaColumna="id" let-pedido>#{{ pedido.idPedido }}</ng-template>
 
-        <ng-container matColumnDef="id">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>N.º</th>
-          <td mat-cell *matCellDef="let pedido">#{{ pedido.idPedido }}</td>
-        </ng-container>
+        <ng-template appTablaColumna="cliente" let-pedido>
+          {{ pedido.cliente.nombre }}
+        </ng-template>
 
-        <ng-container matColumnDef="cliente">
-          <th mat-header-cell *matHeaderCellDef>Cliente</th>
-          <td mat-cell *matCellDef="let pedido">{{ pedido.cliente.nombre }}</td>
-        </ng-container>
+        <ng-template appTablaColumna="fechaPedido" let-pedido>
+          {{ pedido.fechaPedido | date: 'dd/MM/yyyy' }}
+        </ng-template>
 
-        <ng-container matColumnDef="fechaPedido">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Pedido</th>
-          <td mat-cell *matCellDef="let pedido">
-            {{ pedido.fechaPedido | date: 'dd/MM/yyyy' }}
-          </td>
-        </ng-container>
+        <ng-template appTablaColumna="fechaEntrega" let-pedido>
+          @if (pedido.fechaEntrega) {
+            {{ pedido.fechaEntrega | date: 'dd/MM/yyyy' }}
+          } @else {
+            <span class="sin-datos">—</span>
+          }
+        </ng-template>
 
-        <ng-container matColumnDef="fechaEntrega">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Entrega</th>
-          <td mat-cell *matCellDef="let pedido">
-            @if (pedido.fechaEntrega) {
-              {{ pedido.fechaEntrega | date: 'dd/MM/yyyy' }}
-            } @else {
-              <span class="sin-datos">—</span>
-            }
-          </td>
-        </ng-container>
+        <ng-template appTablaColumna="totalBruto" let-pedido>
+          {{ pedido.totalBruto | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
+        </ng-template>
 
-        <ng-container matColumnDef="totalBruto">
-          <th mat-header-cell *matHeaderCellDef class="numerica" mat-sort-header>
-            Bruto
-          </th>
-          <td mat-cell *matCellDef="let pedido" class="numerica">
-            {{ pedido.totalBruto | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="devoluciones">
-          <th mat-header-cell *matHeaderCellDef class="numerica">Devol.</th>
-          <td mat-cell *matCellDef="let pedido" class="numerica">
-            @if (pedido.devoluciones > 0) {
-              <span class="devolucion">
-                {{ pedido.devoluciones | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
-              </span>
-            } @else {
-              <span class="sin-datos">—</span>
-            }
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="totalNeto">
-          <th mat-header-cell *matHeaderCellDef class="numerica">Neto</th>
-          <td mat-cell *matCellDef="let pedido" class="numerica neto">
-            {{ pedido.totalNeto | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="estado">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Estado</th>
-          <td mat-cell *matCellDef="let pedido">
-            <span
-              class="chip-estado"
-              [class.pendiente]="pedido.estado === 'PENDIENTE'"
-              [class.en-preparacion]="pedido.estado === 'EN_PREPARACION'"
-              [class.entregado]="pedido.estado === 'ENTREGADO'"
-              [class.cancelado]="pedido.estado === 'CANCELADO'"
-            >
-              <span class="punto"></span>
-              {{ textoEstado(pedido.estado) }}
+        <ng-template appTablaColumna="devoluciones" let-pedido>
+          @if (pedido.devoluciones > 0) {
+            <span class="devolucion">
+              {{ pedido.devoluciones | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
             </span>
-          </td>
-        </ng-container>
+          } @else {
+            <span class="sin-datos">—</span>
+          }
+        </ng-template>
 
-        <ng-container matColumnDef="detalle">
-          <td
-            mat-cell
-            *matCellDef="let pedido"
-            [attr.colspan]="columnas.length"
+        <ng-template appTablaColumna="totalNeto" let-pedido>
+          <span class="neto">
+            {{ pedido.totalNeto | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
+          </span>
+        </ng-template>
+
+        <ng-template appTablaColumna="estado" let-pedido>
+          <span
+            class="chip-estado"
+            [class.pendiente]="pedido.estado === 'PENDIENTE'"
+            [class.en-preparacion]="pedido.estado === 'EN_PREPARACION'"
+            [class.entregado]="pedido.estado === 'ENTREGADO'"
+            [class.cancelado]="pedido.estado === 'CANCELADO'"
           >
-            @if (esExpandida(pedido.idPedido)) {
-              <div class="detalle-contenido">
-                @if (cargandoDetalle() === pedido.idPedido) {
-                  <p class="detalle-estado">Cargando productos…</p>
-                } @else if (errorDetalle()) {
-                  <p class="detalle-estado detalle-estado--error">
-                    {{ errorDetalle() }}
-                  </p>
-                } @else if (detalleDe(pedido.idPedido).length === 0) {
-                  <p class="detalle-estado">Este pedido no registra productos</p>
-                } @else {
-                  <ul class="detalle-lineas">
-                    @for (linea of detalleDe(pedido.idPedido); track linea.idDetallePedido) {
-                      <li class="linea">
-                        <span class="producto">{{ linea.producto.nombre }}</span>
-                        <span class="cantidad">
-                          {{ linea.cantidad | number: '1.0-2' }}
-                          {{ linea.producto.unidad }}
-                        </span>
-                        <span class="precio">
-                          {{ linea.precioUnitario | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
-                        </span>
-                        <span class="subtotal">
-                          {{ linea.subtotal | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
-                        </span>
-                      </li>
-                    }
-                  </ul>
+            <span class="punto"></span>
+            {{ textoEstado(pedido.estado) }}
+          </span>
+        </ng-template>
+
+        <ng-template appTablaDetalle let-pedido>
+          @if (esExpandida(pedido)) {
+            @if (cargandoDetalle() === pedido.idPedido) {
+              <p class="detalle-estado">Cargando productos…</p>
+            } @else if (errorDetalle()) {
+              <p class="detalle-estado detalle-estado--error">
+                {{ errorDetalle() }}
+              </p>
+            } @else if (detalleDe(pedido.idPedido).length === 0) {
+              <p class="detalle-estado">Este pedido no registra productos</p>
+            } @else {
+              <ul class="detalle-lineas">
+                @for (linea of detalleDe(pedido.idPedido); track linea.idDetallePedido) {
+                  <li class="linea">
+                    <span class="producto">{{ linea.producto.nombre }}</span>
+                    <span class="cantidad">
+                      {{ linea.cantidad | number: '1.0-2' }}
+                      {{ linea.producto.unidad }}
+                    </span>
+                    <span class="precio">
+                      {{ linea.precioUnitario | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
+                    </span>
+                    <span class="subtotal">
+                      {{ linea.subtotal | currency: 'COP' : 'symbol-narrow' : '1.2-2' }}
+                    </span>
+                  </li>
                 }
-              </div>
+              </ul>
             }
-          </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-        <tr
-          mat-row
-          *matRowDef="let pedido; columns: columnas"
-          class="fila-principal"
-          [class.fila-expandida]="esExpandida(pedido.idPedido)"
-          (click)="alternar(pedido.idPedido)"
-        ></tr>
-        <tr
-          mat-row
-          *matRowDef="let pedido; columns: ['detalle']"
-          class="fila-detalle"
-        ></tr>
-      </table>
-
-      <mat-paginator
-        [length]="total()"
-        [pageIndex]="pagina()"
-        [pageSize]="tamano()"
-        [pageSizeOptions]="[5, 10, 20, 50]"
-        showFirstLastButtons
-        aria-label="Páginas de la consulta"
-        (page)="onPagina($event)"
-      />
+          }
+        </ng-template>
+      </app-tabla-paginada>
     }
   </section>
 }

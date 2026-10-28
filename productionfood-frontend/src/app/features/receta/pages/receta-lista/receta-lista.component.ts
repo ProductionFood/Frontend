@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, signal, computed } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -8,7 +8,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { PageEvent } from '@angular/material/paginator';
@@ -31,6 +30,13 @@ import {
   ConfirmarDialogComponent,
   ConfirmarDialogData
 } from '../../../../shared/components/confirmar-dialog/confirmar-dialog.component';
+import {
+  ColumnaTabla,
+  TablaPaginadaComponent
+} from '../../../../shared/components/tabla-paginada/tabla-paginada.component';
+import { TablaColumnaDirective } from '../../../../shared/components/tabla-paginada/tabla-columna.directive';
+import { FiltroBusquedaComponent } from '../../../../shared/components/filtro-busqueda/filtro-busqueda.component';
+import { KpiCardComponent } from '../../../../shared/components/kpi-card/kpi-card.component';
 import { Receta } from '../../models/receta.model';
 import { RecetaService } from '../../services/receta.service';
 
@@ -43,10 +49,13 @@ import { RecetaService } from '../../services/receta.service';
     MatButtonModule,
     MatFormFieldModule,
     MatIconModule,
-    MatInputModule,
     MatProgressBarModule,
     MatSelectModule,
-    SiRolDirective
+    SiRolDirective,
+    KpiCardComponent,
+    TablaPaginadaComponent,
+    TablaColumnaDirective,
+    FiltroBusquedaComponent
   ],
   templateUrl: './receta-lista.component.html',
   styleUrl: './receta-lista.component.scss'
@@ -59,7 +68,15 @@ export class RecetaListaComponent {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly columnas = ['receta', 'producto', 'ingredientes', 'tiempo', 'rendimiento', 'estado', 'acciones'];
+  readonly columnas: ColumnaTabla[] = [
+    { id: 'receta', titulo: 'Receta', ordenable: true },
+    { id: 'producto', titulo: 'Producto asociado', ordenable: true },
+    { id: 'ingredientes', titulo: 'Ingredientes', ordenable: false },
+    { id: 'tiempo', titulo: 'Tiempo', ordenable: false },
+    { id: 'rendimiento', titulo: 'Rendimiento', ordenable: false },
+    { id: 'estado', titulo: 'Estado', ordenable: false },
+    { id: 'acciones', titulo: '', ordenable: false }
+  ];
 
   readonly filtros = this.fb.group({
     busqueda: this.fb.nonNullable.control(''),
@@ -77,8 +94,6 @@ export class RecetaListaComponent {
   readonly tamano = signal(20);
   readonly cargando = signal(false);
   readonly error = signal<string | null>(null);
-
-  readonly totalPaginas = computed(() => Math.ceil(this.total() / this.tamano()) || 1);
 
   private readonly ordenCampo = signal('');
   private readonly ordenDireccion = signal<'asc' | 'desc' | ''>('');

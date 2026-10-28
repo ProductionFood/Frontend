@@ -1,0 +1,19 @@
+// El host es el elemento flex de la barra de filtros de la página; el
+// mat-form-field interno lo rellena por completo.
+:host {
+  display: block;
+  flex: 1 1 320px;
+  min-width: 240px;
+  max-width: 480px;
+}
+
+.campo {
+  width: 100%;
+}
+
+@media (max-width: 720px) {
+  :host {
+    flex-basis: 100%;
+    max-width: none;
+  }
+}

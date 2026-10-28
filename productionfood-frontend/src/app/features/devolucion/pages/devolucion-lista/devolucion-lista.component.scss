@@ -23,20 +23,6 @@
   min-width: 220px;
 }
 
-.estado-error {
-  @include ui.panel-error;
-  margin-bottom: var(--esp-4);
-}
-
-.tabla-scroll {
-  overflow: auto;
-}
-
-table {
-  @include ui.tabla;
-  min-width: 860px;
-}
-
 .enlace {
   color: var(--verde-700);
   font-weight: 700;
@@ -52,15 +38,7 @@ table {
   font-weight: 600;
 }
 
-.numerica {
-  text-align: right;
-}
-
 .cantidad {
   font-weight: 700;
   color: var(--tinta-900);
-}
-
-mat-paginator {
-  border-top: 1px solid var(--linea);
 }

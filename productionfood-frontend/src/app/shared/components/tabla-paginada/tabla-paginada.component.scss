@@ -20,3 +20,39 @@ table {
   @include ui.estado-vacio;
   padding: 48px 24px;
 }
+
+// Columnas numéricas (clase `numerica` de ColumnaTabla.clase): alineación a
+// la derecha para que las cifras se comparen de un vistazo.
+th.numerica,
+td.numerica {
+  text-align: right;
+}
+
+// Solo las filas de datos alternan el detalle, así que son las clicables.
+.tabla-contenedor--expandible .fila-dato {
+  cursor: pointer;
+}
+
+// La celda de la fila de detalle no lleva padding ni borde propios: los
+// aporta su contenedor .detalle-contenido.
+tr[mat-detail-row] td {
+  padding: 0;
+  border-bottom: none;
+}
+
+// Fila con detalle desplegado (expandible = true).
+.fila-expandida {
+  background: var(--superficie-suave);
+}
+
+// Contenido de la fila de detalle: se colapsa cuando la fila está cerrada.
+// El sangrado de 56px alinea el detalle bajo la primera celda de datos
+// (justo después del chevron de expansión).
+.detalle-contenido {
+  display: none;
+  padding: var(--esp-1) var(--esp-5) var(--esp-4) 56px;
+
+  &.abierto {
+    display: block;
+  }
+}

@@ -5,7 +5,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { PageEvent } from '@angular/material/paginator';
@@ -13,21 +12,22 @@ import { Sort } from '@angular/material/sort';
 import { EMPTY, Subject, catchError, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { NotificacionService } from '../../../../core/ui/notificacion.service';
-import { SiRolDirective } from '../../../../shared/directives/si-rol.directive';
-import { ConfirmarDialogComponent, ConfirmarDialogData } from '../../../../shared/components/confirmar-dialog/confirmar-dialog.component';
-import { ColumnaTabla, TablaPaginadaComponent } from '../../../../shared/components/tabla-paginada/tabla-paginada.component';
-import { TablaColumnaDirective } from '../../../../shared/components/tabla-paginada/tabla-columna.directive';
+import { NotificacionService } from '@core/ui/notificacion.service';
+import { SiRolDirective } from '@shared/directives/si-rol.directive';
+import { ConfirmarDialogComponent, ConfirmarDialogData } from '@shared/components/confirmar-dialog/confirmar-dialog.component';
+import { FiltroBusquedaComponent } from '@shared/components/filtro-busqueda/filtro-busqueda.component';
+import { ColumnaTabla, TablaPaginadaComponent } from '@shared/components/tabla-paginada/tabla-paginada.component';
+import { TablaColumnaDirective } from '@shared/components/tabla-paginada/tabla-columna.directive';
 import { Proveedor } from '../../models/proveedor.model';
 import { ProveedorService } from '../../services/proveedor.service';
-import { KpisCatalogoComponent } from '../../../../shared/components/kpis-catalogo/kpis-catalogo.component';
-import { contarCatalogo } from '../../../../shared/utils/conteo-catalogo';
+import { KpisCatalogoComponent } from '@shared/components/kpis-catalogo/kpis-catalogo.component';
+import { contarCatalogo } from '@shared/utils/conteo-catalogo';
 import { ProveedorFormularioComponent } from '../proveedor-formulario/proveedor-formulario.component';
 
 @Component({
   selector: 'app-proveedor-lista',
   standalone: true,
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatIconModule, MatMenuModule, TablaPaginadaComponent, TablaColumnaDirective, SiRolDirective, KpisCatalogoComponent],
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatSelectModule, MatButtonModule, MatIconModule, MatMenuModule, TablaPaginadaComponent, TablaColumnaDirective, SiRolDirective, KpisCatalogoComponent, FiltroBusquedaComponent],
   templateUrl: './proveedor-lista.component.html',
   styleUrl: './proveedor-lista.component.scss'
 })
@@ -42,7 +42,7 @@ export class ProveedorListaComponent {
     { id: 'nombre', titulo: 'Nombre', ordenable: true },
     { id: 'contacto', titulo: 'Contacto', ordenable: true },
     { id: 'telefono', titulo: 'Teléfono', ordenable: false },
-    { id: 'correo', titulo: 'Correo', ordenable: false, clase: 'columna-correo' },
+    { id: 'correo', titulo: 'Correo', ordenable: false },
     { id: 'estado', titulo: 'Estado', ordenable: false },
     { id: 'acciones', titulo: '', ordenable: false }
   ];
@@ -93,9 +93,16 @@ export class ProveedorListaComponent {
     this.filtros.controls.activo.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => { this.pagina.set(0); this.recargar(); });
     this.recargar();
+    this.cargarKpis();
   }
 
-  recargar(): void { this.recargar$.next(); this.cargarKpis(); }
+  recargar(): void { this.recargar$.next(); }
+
+  /** Recarga la tabla y, además, los KPIs del catálogo (tras crear/editar/cambiar estado). */
+  private recargarConKpis(): void {
+    this.recargar();
+    this.cargarKpis();
+  }
 
   private cargarKpis(): void {
     this.cargandoKpis.set(true);
@@ -122,19 +129,13 @@ export class ProveedorListaComponent {
     this.recargar();
   }
 
-  limpiarFiltros(): void {
-    this.filtros.setValue({ busqueda: '', activo: true });
-    this.pagina.set(0);
-    this.recargar();
-  }
-
   abrirFormulario(proveedor?: Proveedor): void {
     this.dialog.open(ProveedorFormularioComponent, {
       data: { proveedor }, width: '560px', maxWidth: '95vw', autoFocus: 'first-tabbable', disableClose: true
     }).afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(resultado => {
       if (resultado === true) {
         this.notificacion.exito(proveedor ? 'Proveedor actualizado correctamente.' : 'Proveedor registrado correctamente.');
-        this.recargar();
+        this.recargarConKpis();
       }
     });
   }
@@ -154,7 +155,7 @@ export class ProveedorListaComponent {
         if (!confirmado) return;
         this.proveedorService.cambiarEstado(proveedor.idProveedor, activar)
           .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-            next: () => { this.notificacion.exito(activar ? 'Proveedor activado.' : 'Proveedor desactivado.'); this.recargar(); },
+            next: () => { this.notificacion.exito(activar ? 'Proveedor activado.' : 'Proveedor desactivado.'); this.recargarConKpis(); },
             error: (error: HttpErrorResponse) => this.notificacion.error(this.mensajeError(error))
           });
       });

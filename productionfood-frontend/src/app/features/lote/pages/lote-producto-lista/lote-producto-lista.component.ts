@@ -7,11 +7,10 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { PageEvent } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
-import { MatTableModule } from '@angular/material/table';
-import { MatSortModule, Sort } from '@angular/material/sort';
+import { Sort } from '@angular/material/sort';
 import { RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, Subject, catchError, switchMap, tap } from 'rxjs';
@@ -25,10 +24,12 @@ import { LoteProductoFormularioComponent } from '../lote-producto-formulario/lot
 import { EstadoVacioComponent } from '../../../../shared/components/estado-vacio/estado-vacio.component';
 import { KpiCardComponent } from '../../../../shared/components/kpi-card/kpi-card.component';
 import { TarjetaTablaComponent } from '../../../../shared/components/tarjeta-tabla/tarjeta-tabla.component';
-@Component({selector:'app-lote-producto-lista',standalone:true,imports:[DatePipe,DecimalPipe,ReactiveFormsModule,MatButtonModule,MatCheckboxModule,MatDialogModule,MatFormFieldModule,MatIconModule,MatPaginatorModule,MatProgressBarModule,MatSelectModule,MatTableModule,MatSortModule,RouterLink,SiRolDirective,SemaforoVencimientoComponent,EstadoVacioComponent,KpiCardComponent,TarjetaTablaComponent],templateUrl:'./lote-producto-lista.component.html',styleUrl:'./lote-producto-lista.component.scss'})
+import { ColumnaTabla, TablaPaginadaComponent } from '../../../../shared/components/tabla-paginada/tabla-paginada.component';
+import { TablaColumnaDirective } from '../../../../shared/components/tabla-paginada/tabla-columna.directive';
+@Component({selector:'app-lote-producto-lista',standalone:true,imports:[DatePipe,DecimalPipe,ReactiveFormsModule,MatButtonModule,MatCheckboxModule,MatDialogModule,MatFormFieldModule,MatIconModule,MatProgressBarModule,MatSelectModule,RouterLink,SiRolDirective,SemaforoVencimientoComponent,EstadoVacioComponent,KpiCardComponent,TarjetaTablaComponent,TablaPaginadaComponent,TablaColumnaDirective],templateUrl:'./lote-producto-lista.component.html',styleUrl:'./lote-producto-lista.component.scss'})
 export class LoteProductoListaComponent {
   private readonly fb=inject(FormBuilder);private readonly service=inject(LoteProductoService);private readonly dialog=inject(MatDialog);private readonly notify=inject(NotificacionService);private readonly destroyRef=inject(DestroyRef);
-  readonly columnas=['codigoLote','producto','fechaProduccion','fechaVencimiento','cantidadIngresada','cantidadDisponible','estado','acciones'];
+  readonly columnas:ColumnaTabla[]=[{id:'codigoLote',titulo:'Código',ordenable:true},{id:'producto',titulo:'Producto',ordenable:false},{id:'fechaProduccion',titulo:'Producción',ordenable:true},{id:'fechaVencimiento',titulo:'Vence',ordenable:true},{id:'cantidadIngresada',titulo:'Ingresó',ordenable:false,clase:'numerica'},{id:'cantidadDisponible',titulo:'Disponible',ordenable:false,clase:'numerica'},{id:'estado',titulo:'Estado',ordenable:false},{id:'acciones',titulo:'Acciones',ordenable:false}];
   readonly filtros=this.fb.group({idProducto:this.fb.control<number|null>(null),soloConStock:true,incluirVencidos:true,proximos:false});
   readonly lotes=signal<LoteProducto[]>([]);readonly productos=signal<Producto[]>([]);readonly total=signal(0);readonly pagina=signal(0);readonly tamano=signal(10);readonly sort=signal('fechaVencimiento,asc');readonly cargando=signal(false);readonly error=signal('');private readonly reload$=new Subject<void>();
   readonly vigentes=computed(()=>this.lotes().filter(l=>l.cantidadDisponible>0&&this.dias(l)>=0).length);

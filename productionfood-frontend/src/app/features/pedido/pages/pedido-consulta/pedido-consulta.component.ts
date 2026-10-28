@@ -8,11 +8,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { PageEvent } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
-import { MatSortModule, Sort } from '@angular/material/sort';
-import { MatTableModule } from '@angular/material/table';
+import { Sort } from '@angular/material/sort';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import {
@@ -27,6 +26,13 @@ import {
 } from 'rxjs';
 
 import { AuthService } from '../../../../core/auth/auth.service';
+import { EstadoVacioComponent } from '../../../../shared/components/estado-vacio/estado-vacio.component';
+import {
+  ColumnaTabla,
+  TablaPaginadaComponent
+} from '../../../../shared/components/tabla-paginada/tabla-paginada.component';
+import { TablaColumnaDirective } from '../../../../shared/components/tabla-paginada/tabla-columna.directive';
+import { TablaDetalleDirective } from '../../../../shared/components/tabla-paginada/tabla-detalle.directive';
 import { Cliente } from '../../../cliente/models/cliente.model';
 import { ClienteService } from '../../../cliente/services/cliente.service';
 import { ProductosVendidosTablaComponent } from '../../components/productos-vendidos-tabla/productos-vendidos-tabla.component';
@@ -63,10 +69,11 @@ import { PedidoService } from '../../services/pedido.service';
     MatDatepickerModule,
     MatButtonModule,
     MatIconModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatSortModule,
     MatProgressBarModule,
+    EstadoVacioComponent,
+    TablaPaginadaComponent,
+    TablaColumnaDirective,
+    TablaDetalleDirective,
     ResumenVentasCardsComponent,
     VentasClienteChartComponent,
     ProductosVendidosTablaComponent
@@ -88,16 +95,15 @@ export class PedidoConsultaComponent {
     'VENTAS'
   ]);
 
-  readonly columnas = [
-    'expand',
-    'id',
-    'cliente',
-    'fechaPedido',
-    'fechaEntrega',
-    'totalBruto',
-    'devoluciones',
-    'totalNeto',
-    'estado'
+  readonly columnas: ColumnaTabla[] = [
+    { id: 'id', titulo: 'N.º', ordenable: true },
+    { id: 'cliente', titulo: 'Cliente', ordenable: false },
+    { id: 'fechaPedido', titulo: 'Pedido', ordenable: true },
+    { id: 'fechaEntrega', titulo: 'Entrega', ordenable: true },
+    { id: 'totalBruto', titulo: 'Bruto', ordenable: true, clase: 'numerica' },
+    { id: 'devoluciones', titulo: 'Devol.', ordenable: false, clase: 'numerica' },
+    { id: 'totalNeto', titulo: 'Neto', ordenable: false, clase: 'numerica' },
+    { id: 'estado', titulo: 'Estado', ordenable: true }
   ];
 
   readonly estados: EstadoPedido[] = [
@@ -234,12 +240,13 @@ export class PedidoConsultaComponent {
     });
   }
 
-  esExpandida(idPedido: number): boolean {
-    return this.expandidos().has(idPedido);
+  esExpandida(pedido: PedidoConsulta): boolean {
+    return this.expandidos().has(pedido.idPedido);
   }
 
   /** Carga el detalle del pedido al expandir la fila (R-06), una sola vez. */
-  alternar(idPedido: number): void {
+  alternar(pedido: PedidoConsulta): void {
+    const idPedido = pedido.idPedido;
     const expandidos = new Set(this.expandidos());
 
     if (expandidos.has(idPedido)) {

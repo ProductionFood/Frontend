@@ -5,7 +5,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { PageEvent } from '@angular/material/paginator';
@@ -13,21 +12,22 @@ import { Sort } from '@angular/material/sort';
 import { EMPTY, Subject, catchError, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { NotificacionService } from '../../../../core/ui/notificacion.service';
-import { SiRolDirective } from '../../../../shared/directives/si-rol.directive';
-import { ConfirmarDialogComponent, ConfirmarDialogData } from '../../../../shared/components/confirmar-dialog/confirmar-dialog.component';
-import { ColumnaTabla, TablaPaginadaComponent } from '../../../../shared/components/tabla-paginada/tabla-paginada.component';
-import { TablaColumnaDirective } from '../../../../shared/components/tabla-paginada/tabla-columna.directive';
+import { NotificacionService } from '@core/ui/notificacion.service';
+import { SiRolDirective } from '@shared/directives/si-rol.directive';
+import { ConfirmarDialogComponent, ConfirmarDialogData } from '@shared/components/confirmar-dialog/confirmar-dialog.component';
+import { FiltroBusquedaComponent } from '@shared/components/filtro-busqueda/filtro-busqueda.component';
+import { ColumnaTabla, TablaPaginadaComponent } from '@shared/components/tabla-paginada/tabla-paginada.component';
+import { TablaColumnaDirective } from '@shared/components/tabla-paginada/tabla-columna.directive';
 import { Cliente } from '../../models/cliente.model';
 import { ClienteService } from '../../services/cliente.service';
-import { KpisCatalogoComponent } from '../../../../shared/components/kpis-catalogo/kpis-catalogo.component';
-import { contarCatalogo } from '../../../../shared/utils/conteo-catalogo';
+import { KpisCatalogoComponent } from '@shared/components/kpis-catalogo/kpis-catalogo.component';
+import { contarCatalogo } from '@shared/utils/conteo-catalogo';
 import { ClienteFormularioComponent } from '../cliente-formulario/cliente-formulario.component';
 
 @Component({
   selector: 'app-cliente-lista',
   standalone: true,
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatIconModule, MatMenuModule, TablaPaginadaComponent, TablaColumnaDirective, SiRolDirective, KpisCatalogoComponent],
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatSelectModule, MatButtonModule, MatIconModule, MatMenuModule, TablaPaginadaComponent, TablaColumnaDirective, SiRolDirective, KpisCatalogoComponent, FiltroBusquedaComponent],
   templateUrl: './cliente-lista.component.html',
   styleUrl: './cliente-lista.component.scss'
 })
