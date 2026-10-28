@@ -1,7 +1,7 @@
 import { AgregarProductoDialogComponent } from '../../components/agregar-producto-dialog/agregar-producto-dialog.component';
 import { DetallePedidoTablaComponent } from '../../components/detalle-pedido-tabla/detalle-pedido-tabla.component';
 import { DetallePedidoService } from '../../services/detalle-pedido.service';
-import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   Component,
@@ -42,7 +42,6 @@ import { CancelarPedidoDialogComponent } from '../../components/cancelar-pedido-
   imports: [
     DatePipe,
     CurrencyPipe,
-    DecimalPipe,
     RouterLink,
     MatButtonModule,
     MatIconModule,

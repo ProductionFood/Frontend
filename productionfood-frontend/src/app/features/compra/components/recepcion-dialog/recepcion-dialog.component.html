@@ -143,9 +143,9 @@
       @if (recibiendo()) {
         <mat-spinner diameter="18" />
       } @else {
-        <mat-icon>download_done</mat-icon>
         Confirmar recepción
       }
+      <mat-icon [hidden]="recibiendo()">download_done</mat-icon>
     </button>
   </mat-dialog-actions>
 }

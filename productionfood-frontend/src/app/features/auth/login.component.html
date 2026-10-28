@@ -335,8 +335,8 @@
               <span>Iniciando sesión</span>
             } @else {
               <span>Iniciar sesión</span>
-              <mat-icon class="arrow" aria-hidden="true">arrow_forward</mat-icon>
             }
+            <mat-icon class="arrow" [hidden]="cargando()" aria-hidden="true">arrow_forward</mat-icon>
           </button>
 
         </form>
