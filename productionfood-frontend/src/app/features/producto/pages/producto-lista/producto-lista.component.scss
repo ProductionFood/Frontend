@@ -78,89 +78,8 @@
   @include ui.filtros-tarjeta;
   margin-bottom: 17px;
 
-  .filtro-busqueda {
-    flex: 1;
-    min-width: 260px;
-    max-width: 480px;
-  }
-
   .filtro-select {
     width: 180px;
-  }
-
-  .filtro-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    padding: 10px 14px;
-    border: 1px solid var(--borde);
-    background: var(--superficie-alta);
-    border-radius: var(--radio-s);
-    font-family: var(--fuente-texto);
-    font-size: 11.5px;
-    font-weight: 600;
-    color: var(--tinta-600);
-    cursor: pointer;
-    transition: all var(--transicion-rapida);
-
-    &:hover {
-      border-color: var(--verde-500);
-      color: var(--verde-700);
-    }
-
-    mat-icon {
-      font-size: 13px;
-      width: 13px;
-      height: 13px;
-    }
-  }
-}
-
-.primer-producto {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 18px 24px;
-  background: linear-gradient(90deg, #EAF2EE 0%, #E4F5ED 55%, #F5E9D8 100%);
-  border-radius: var(--radio-l);
-  margin-bottom: 22px;
-  flex-wrap: wrap;
-
-  mat-icon {
-    font-size: 24px;
-    width: 24px;
-    height: 24px;
-    color: var(--verde-700);
-  }
-
-  span {
-    font-size: 13px;
-    color: var(--tinta-600);
-    flex: 1;
-    min-width: 200px;
-  }
-
-  .btn-primary {
-    flex-shrink: 0;
-  }
-}
-
-.estado-vacio {
-  @include ui.estado-vacio;
-  padding: 44px 22px;
-  margin: 16px 0;
-
-  mat-icon {
-    width: 48px;
-    height: 48px;
-    font-size: 48px;
-    color: var(--tinta-400);
-  }
-
-  p {
-    margin: 0;
-    font-size: 12.5px;
   }
 }
 
@@ -284,38 +203,6 @@
   background: currentColor;
 }
 
-.acciones {
-  display: flex;
-  gap: 4px;
-  justify-content: flex-end;
-}
-
-.acciones button {
-  width: 32px;
-  height: 32px;
-  border: 1px solid var(--borde);
-  background: var(--superficie-alta);
-  border-radius: var(--radio-s);
-  color: var(--tinta-600);
-  cursor: pointer;
-  transition: all var(--transicion-rapida);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  &:hover {
-    border-color: var(--verde-500);
-    color: var(--verde-700);
-    background: var(--verde-100);
-  }
-
-  mat-icon {
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
-  }
-}
-
 @media (max-width: 720px) {
   .page-header {
     flex-direction: column;
@@ -337,29 +224,13 @@
     gap: 12px;
   }
 
-  .filtro-busqueda,
   .filtro-select {
     max-width: none;
     width: 100%;
   }
 
-  .primer-producto {
-    flex-direction: column;
-    align-items: stretch;
-    text-align: center;
-  }
-
   .item-cell {
     min-width: 0;
   }
-}
-
-/* Mantiene la tarjeta de bienvenida legible en modo oscuro. */
-:host-context(html[data-theme='dark']) .primer-producto {
-  background: linear-gradient(100deg, #17251e 0%, #1a3025 55%, #29291f 100%);
-
-  span { color: var(--texto-suave); }
-
-  mat-icon { color: var(--verde-700); }
 }
 

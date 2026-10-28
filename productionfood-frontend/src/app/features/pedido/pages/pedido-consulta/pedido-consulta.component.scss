@@ -38,10 +38,7 @@ h1 {
 }
 
 .filtros {
-  display: flex;
-  align-items: center;
-  gap: var(--esp-3);
-  flex-wrap: wrap;
+  @include ui.filtros-tarjeta;
   margin-bottom: var(--esp-4);
 }
 
@@ -114,14 +111,6 @@ mat-progress-bar {
   @include ui.tarjeta-contenedor;
 }
 
-table {
-  @include ui.tabla;
-}
-
-.numerica {
-  text-align: right;
-}
-
 .neto {
   font-weight: 600;
   color: var(--tinta-900);
@@ -134,23 +123,6 @@ table {
 
 .sin-datos {
   color: var(--tinta-400);
-}
-
-.fila-principal {
-  cursor: pointer;
-}
-
-.fila-expandida {
-  background: #f4faf7;
-}
-
-.fila-detalle td {
-  padding: 0;
-  border-bottom: none;
-}
-
-.detalle-contenido {
-  padding: var(--esp-1) var(--esp-5) var(--esp-4) 56px;
 }
 
 .detalle-estado {
@@ -245,9 +217,5 @@ table {
   .linea .cantidad { grid-area: cantidad; text-align: left; }
   .linea .precio { grid-area: precio; }
   .linea .subtotal { grid-area: subtotal; }
-}
-
-:host-context(html[data-theme='dark']) .fila-expandida {
-  background: var(--superficie-suave);
 }
 

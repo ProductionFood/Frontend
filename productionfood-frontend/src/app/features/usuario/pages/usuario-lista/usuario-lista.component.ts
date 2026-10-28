@@ -7,7 +7,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
@@ -38,6 +37,7 @@ import { TablaPaginadaComponent, ColumnaTabla } from '../../../../shared/compone
 import { TablaColumnaDirective } from '../../../../shared/components/tabla-paginada/tabla-columna.directive';
 import { EstadoVacioComponent } from '../../../../shared/components/estado-vacio/estado-vacio.component';
 import { EstadoBadgeComponent } from '../../../../shared/components/estado-badge/estado-badge.component';
+import { FiltroBusquedaComponent } from '../../../../shared/components/filtro-busqueda/filtro-busqueda.component';
 import { Rol, Usuario } from '../../models/usuario.model';
 import { RolService } from '../../services/rol.service';
 import { UsuarioService } from '../../services/usuario.service';
@@ -49,7 +49,6 @@ import { UsuarioEditorComponent } from '../usuario-editor/usuario-editor.compone
   imports: [
     ReactiveFormsModule,
     MatFormFieldModule,
-    MatInputModule,
     MatSelectModule,
     MatButtonModule,
     MatIconModule,
@@ -63,6 +62,7 @@ import { UsuarioEditorComponent } from '../usuario-editor/usuario-editor.compone
     TablaColumnaDirective,
     EstadoVacioComponent,
     EstadoBadgeComponent,
+    FiltroBusquedaComponent,
     UsuarioEditorComponent
   ],
   templateUrl: './usuario-lista.component.html',

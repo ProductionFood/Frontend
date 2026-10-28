@@ -69,6 +69,11 @@ export class ProductoFormularioComponent {
   constructor() {
     this.precioTexto.set(this.form.controls.precioVenta.value === null ? '' : new Intl.NumberFormat('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(this.form.controls.precioVenta.value));
     this.cargarUnidades();
+    // §19: el modal cierra con Esc y con clic en el overlay, pasando siempre por el guard de cambios sin guardar.
+    this.ref.backdropClick().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.cancelar());
+    this.ref.keydownEvents().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(evento => {
+      if (evento.key === 'Escape') this.cancelar();
+    });
   }
 
   get sinUnidades(): boolean { return !this.cargandoUnidades() && this.unidades().length === 0; }
@@ -146,6 +151,7 @@ export class ProductoFormularioComponent {
       mensaje: 'Tienes cambios sin guardar. ¿Quieres cerrar el formulario y descartarlos?',
       textoConfirmar: 'Descartar cambios', textoCancelar: 'Seguir editando', peligro: true
     };
+    // Modal anidado deliberado (§19 lo desaconseja): es el guard que evita descartar cambios sin preguntar.
     this.dialog.open(ConfirmarDialogComponent, { data, width: '420px', autoFocus: 'dialog' })
       .afterClosed().pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(confirmado => { if (confirmado) this.ref.close(false); });

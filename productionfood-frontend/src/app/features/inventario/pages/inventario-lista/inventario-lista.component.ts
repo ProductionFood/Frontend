@@ -1,19 +1,20 @@
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, formatNumber } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, DestroyRef, inject, signal, computed } from '@angular/core';
+import { Component, DestroyRef, inject, signal, computed, LOCALE_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatSelectModule } from '@angular/material/select';
-import { MatSortModule, Sort } from '@angular/material/sort';
-import { MatTableModule } from '@angular/material/table';
+import { RouterLink } from '@angular/router';
 import { EMPTY, Subject, catchError, switchMap, tap } from 'rxjs';
+import { EstadoVacioComponent } from '../../../../shared/components/estado-vacio/estado-vacio.component';
+import { FiltroBusquedaComponent } from '../../../../shared/components/filtro-busqueda/filtro-busqueda.component';
+import { KpiCardComponent } from '../../../../shared/components/kpi-card/kpi-card.component';
+import {
+  ColumnaTabla,
+  TablaPaginadaComponent
+} from '../../../../shared/components/tabla-paginada/tabla-paginada.component';
+import { TablaColumnaDirective } from '../../../../shared/components/tabla-paginada/tabla-columna.directive';
 import { MateriaPrima } from '../../../materia-prima/models/materia-prima.model';
 import { MateriaPrimaService } from '../../../materia-prima/services/materia-prima.service';
 import { EstadoStock, InventarioMateriaPrima } from '../../models/inventario.model';
@@ -24,17 +25,15 @@ import { InventarioService } from '../../services/inventario.service';
   standalone: true,
   imports: [
     DecimalPipe,
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatCardModule,
     MatCheckboxModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatPaginatorModule,
     MatProgressBarModule,
-    MatSelectModule,
-    MatSortModule,
-    MatTableModule
+    ReactiveFormsModule,
+    RouterLink,
+    EstadoVacioComponent,
+    FiltroBusquedaComponent,
+    KpiCardComponent,
+    TablaPaginadaComponent,
+    TablaColumnaDirective
   ],
   templateUrl: './inventario-lista.component.html',
   styleUrl: './inventario-lista.component.scss'
@@ -44,8 +43,13 @@ export class InventarioListaComponent {
   private readonly service = inject(InventarioService);
   private readonly materiaService = inject(MateriaPrimaService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly locale = inject(LOCALE_ID);
 
-  readonly columnas = ['categoria', 'cantidad', 'porcentaje'];
+  readonly columnas: ColumnaTabla[] = [
+    { id: 'categoria', titulo: 'Categoría', ordenable: false },
+    { id: 'cantidad', titulo: 'Cantidad', ordenable: false },
+    { id: 'porcentaje', titulo: '% del total', ordenable: false }
+  ];
 
   readonly filtros = this.fb.group({
     busqueda: this.fb.nonNullable.control(''),
@@ -67,7 +71,10 @@ export class InventarioListaComponent {
   readonly kpiAlertasActivas = signal(0);
   readonly cargandoKpis = signal(true);
 
-  readonly totalPaginas = computed(() => Math.ceil(this.total() / this.tamano()) || 1);
+  /** Inventario total formateado con el locale de la app y su unidad. */
+  readonly kpiTotalTexto = computed(
+    () => `${formatNumber(this.kpiInventarioTotal(), this.locale, '1.2-2')} kg`
+  );
 
   readonly existenciasPorCategoria = computed(() => {
     const categorias: Record<string, { cantidad: number; count: number }> = {};
@@ -165,9 +172,6 @@ export class InventarioListaComponent {
       }
     });
   }
-
-  onPagina(e: PageEvent): void { this.pagina.set(e.pageIndex); this.tamano.set(e.pageSize); this.recargar(); }
-  onOrden(e: Sort): void { if (!e.direction) return; this.ordenCampo.set(e.active); this.ordenDireccion.set(e.direction); this.pagina.set(0); this.recargar(); }
 
   nombre(fila: InventarioMateriaPrima): string { return fila.materiaPrima?.nombre ?? fila.nombreMateriaPrima ?? fila.nombre ?? 'Materia prima'; }
   unidad(fila: InventarioMateriaPrima): string { return fila.materiaPrima?.unidad?.abreviatura ?? fila.unidad?.abreviatura ?? ''; }

@@ -1,4 +1,4 @@
-<div class="tabla-contenedor">
+<div class="tabla-contenedor" [class.tabla-contenedor--expandible]="expandible()">
   @if (cargando()) {
     <app-skeleton [lineas]="6" alto="18px" />
   } @else if (error()) {
@@ -19,11 +19,32 @@
       <table
         mat-table
         [dataSource]="datos()"
+        [multiTemplateDataRows]="expandible()"
         matSort
         (matSortChange)="cambiarOrden.emit($event)"
       >
+        @if (expandible() && plantillaDetalle()) {
+          <ng-container matColumnDef="expand">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let fila">
+              <button
+                mat-icon-button
+                type="button"
+                [attr.aria-expanded]="esExpandida(fila)"
+                [attr.aria-label]="esExpandida(fila) ? 'Ocultar detalle' : 'Ver detalle'"
+                (click)="alternar(fila); $event.stopPropagation()"
+              >
+                <mat-icon>{{ esExpandida(fila) ? 'expand_more' : 'chevron_right' }}</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+        }
+
         @for (col of columnas(); track col.id) {
-          <ng-container [matColumnDef]="col.id">
+          <ng-container
+            *appColumnaVisible="col.visible; fila: null"
+            [matColumnDef]="col.id"
+          >
             <th
               mat-header-cell
               *matHeaderCellDef
@@ -45,8 +66,33 @@
           </ng-container>
         }
 
+        @if (expandible() && plantillaDetalle(); as detalle) {
+          <ng-container matColumnDef="detalle">
+            <td
+              mat-cell
+              *matCellDef="let fila"
+              [attr.colspan]="columnasIds().length"
+            >
+              <div class="detalle-contenido" [class.abierto]="esExpandida(fila)">
+                <ng-container
+                  *ngTemplateOutlet="detalle; context: { $implicit: fila }"
+                />
+              </div>
+            </td>
+          </ng-container>
+        }
+
         <tr mat-header-row *matHeaderRowDef="columnasIds()"></tr>
-        <tr mat-row *matRowDef="let fila; columns: columnasIds()"></tr>
+        <tr
+          mat-row
+          class="fila-dato"
+          *matRowDef="let fila; columns: columnasIds()"
+          [class.fila-expandida]="esExpandida(fila)"
+          (click)="alternar(fila)"
+        ></tr>
+        @if (expandible() && plantillaDetalle()) {
+          <tr mat-detail-row *matRowDef="let fila; columns: ['detalle']"></tr>
+        }
       </table>
     </div>
 
@@ -56,6 +102,7 @@
         [pageIndex]="page()"
         [pageSize]="size()"
         [pageSizeOptions]="opcionesTamano()"
+        [showFirstLastButtons]="primeraUltima()"
         (page)="cambiarPagina.emit($event)"
       />
     }

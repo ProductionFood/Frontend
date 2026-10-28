@@ -1,0 +1,62 @@
+.action-card {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 120px;
+    height: 40px;
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+
+    &.mat-mdc-icon-button {
+      min-width: 40px;
+      padding: 0 8px;
+    }
+  }
+
+  &__vacio {
+    font-size: 12px;
+    color: var(--texto-tenue);
+    font-style: italic;
+    padding: 4px 8px;
+  }
+}
+
+.action-card--toolbar {
+  gap: 8px;
+
+  button {
+    min-width: auto;
+    padding: 0 16px;
+  }
+}
+
+.action-card--compacto {
+  gap: 6px;
+
+  button {
+    height: 36px;
+    font-size: 13px;
+    min-width: 100px;
+  }
+}

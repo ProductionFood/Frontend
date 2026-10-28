@@ -9,15 +9,18 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { PageEvent } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
-import { MatTableModule } from '@angular/material/table';
-import { MatSortModule, Sort } from '@angular/material/sort';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, Subject, catchError, switchMap, tap } from 'rxjs';
 import { SiRolDirective } from '../../../../shared/directives/si-rol.directive';
 import { NotificacionService } from '../../../../core/ui/notificacion.service';
+import {
+  ColumnaTabla,
+  TablaPaginadaComponent
+} from '../../../../shared/components/tabla-paginada/tabla-paginada.component';
+import { TablaColumnaDirective } from '../../../../shared/components/tabla-paginada/tabla-columna.directive';
+import { TarjetaTablaComponent } from '../../../../shared/components/tarjeta-tabla/tarjeta-tabla.component';
 import { MateriaPrima } from '../../../materia-prima/models/materia-prima.model';
 import { LoteMateriaPrima, ResultadoRegistroLote } from '../../models/lote.model';
 import { LoteMateriaPrimaService } from '../../services/lote-materia-prima.service';
@@ -25,7 +28,7 @@ import { LoteMpFormularioComponent } from '../lote-mp-formulario/lote-mp-formula
 
 @Component({
   selector: 'app-lote-mp-lista', standalone: true,
-  imports: [ReactiveFormsModule, DatePipe, DecimalPipe, MatButtonModule, MatCardModule, MatCheckboxModule, MatChipsModule, MatDialogModule, MatFormFieldModule, MatIconModule, MatPaginatorModule, MatProgressBarModule, MatSelectModule, MatTableModule, MatSortModule, SiRolDirective],
+  imports: [ReactiveFormsModule, DatePipe, DecimalPipe, MatButtonModule, MatCardModule, MatCheckboxModule, MatChipsModule, MatDialogModule, MatFormFieldModule, MatIconModule, MatSelectModule, SiRolDirective, TablaPaginadaComponent, TablaColumnaDirective, TarjetaTablaComponent],
   templateUrl: './lote-mp-lista.component.html', styleUrl: './lote-mp-lista.component.scss'
 })
 export class LoteMpListaComponent {
@@ -34,7 +37,14 @@ export class LoteMpListaComponent {
   private readonly dialog = inject(MatDialog);
   private readonly notify = inject(NotificacionService);
   private readonly destroyRef = inject(DestroyRef);
-  readonly columnas = ['codigoLote', 'materiaPrima', 'fechaProduccion', 'fechaVencimiento', 'cantidad', 'estado'];
+  readonly columnas: ColumnaTabla[] = [
+    { id: 'codigoLote', titulo: 'Código', ordenable: false },
+    { id: 'materiaPrima', titulo: 'Materia prima', ordenable: false },
+    { id: 'fechaProduccion', titulo: 'Producción', ordenable: false },
+    { id: 'fechaVencimiento', titulo: 'Vencimiento', ordenable: false },
+    { id: 'cantidad', titulo: 'Cantidad', ordenable: false },
+    { id: 'estado', titulo: 'Estado', ordenable: false }
+  ];
   readonly filtros = this.fb.group({ idMateriaPrima: this.fb.control<number | null>(null), soloVencidos: false, vencenEn7Dias: false });
   readonly lotes = signal<LoteMateriaPrima[]>([]);
   readonly materias = signal<MateriaPrima[]>([]);

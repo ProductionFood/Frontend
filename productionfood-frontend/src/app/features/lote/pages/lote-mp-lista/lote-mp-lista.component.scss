@@ -27,45 +27,6 @@
   min-width: 240px;
 }
 
-.tabla-card {
-  @include ui.tarjeta-contenedor;
-}
-
-.tabla-scroll {
-  overflow-x: auto;
-}
-
-table {
-  @include ui.tabla;
-  min-width: 760px;
-}
-
-th.mat-mdc-header-cell {
-  white-space: nowrap;
-}
-
-.estado {
-  @include ui.estado-vacio;
-  min-height: 220px;
-  padding: 44px 22px;
-
-  h2 {
-    margin: var(--esp-2) 0 0;
-    font-family: var(--fuente-display);
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--verde-900);
-  }
-
-  p {
-    margin: 0 0 var(--esp-2);
-  }
-}
-
-.estado.error {
-  color: var(--peligro-texto);
-}
-
 .estado-chip {
   font-size: 12px;
   font-weight: 600;

@@ -1,0 +1,42 @@
+<div class="action-card" role="group" aria-label="Acciones disponibles">
+  @for (accion of acciones(); track accion.label) {
+    @if (!accion.roles?.length) {
+      <button
+        mat-button
+        [matButton]="accion.variante || 'elevated'"
+        [color]="accion.color || 'primary'"
+        [disabled]="accion.deshabilitado"
+        [matTooltip]="accion.tooltip"
+        [routerLink]="accion.ruta"
+        (click)="accion.handler?.(); $event.stopPropagation()"
+        [class]="accion.clase"
+        type="button">
+        <mat-icon aria-hidden="true">{{ accion.icono }}</mat-icon>
+        @if (!accion.soloIcono) {
+          <span>{{ accion.label }}</span>
+        }
+      </button>
+    } @else {
+      <button
+        *siRol="accion.roles"
+        mat-button
+        [matButton]="accion.variante || 'elevated'"
+        [color]="accion.color || 'primary'"
+        [disabled]="accion.deshabilitado"
+        [matTooltip]="accion.tooltip"
+        [routerLink]="accion.ruta"
+        (click)="accion.handler?.(); $event.stopPropagation()"
+        [class]="accion.clase"
+        type="button">
+        <mat-icon aria-hidden="true">{{ accion.icono }}</mat-icon>
+        @if (!accion.soloIcono) {
+          <span>{{ accion.label }}</span>
+        }
+      </button>
+    }
+  }
+
+  @if (acciones().length === 0) {
+    <span class="action-card__vacio" aria-hidden="true">Sin acciones disponibles</span>
+  }
+</div>

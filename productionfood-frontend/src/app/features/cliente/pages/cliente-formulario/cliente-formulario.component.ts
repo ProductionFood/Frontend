@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ConfirmarDialogComponent, ConfirmarDialogData } from '../../../../shared/components/confirmar-dialog/confirmar-dialog.component';
+import { ConfirmarDialogComponent, ConfirmarDialogData } from '@shared/components/confirmar-dialog/confirmar-dialog.component';
 import { Cliente, CrearClienteDto } from '../../models/cliente.model';
 import { ClienteService } from '../../services/cliente.service';
 
@@ -38,6 +38,14 @@ export class ClienteFormularioComponent {
     contacto: this.fb.nonNullable.control(this.datos.cliente?.contacto ?? '', [Validators.maxLength(100)]),
     telefono: this.fb.nonNullable.control(this.datos.cliente?.telefono ?? '', [Validators.maxLength(20)])
   });
+
+  constructor() {
+    // §19: el modal cierra con Esc y con clic en el overlay, pasando siempre por el guard de cambios sin guardar.
+    this.ref.backdropClick().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.cancelar());
+    this.ref.keydownEvents().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(evento => {
+      if (evento.key === 'Escape') this.cancelar();
+    });
+  }
 
   guardar(): void {
     if (this.form.invalid || this.guardando()) {
@@ -78,6 +86,7 @@ export class ClienteFormularioComponent {
       textoCancelar: 'Seguir editando',
       peligro: true
     };
+    // Modal anidado deliberado (§19 lo desaconseja): es el guard que evita descartar cambios sin preguntar.
     this.dialog.open(ConfirmarDialogComponent, { data, width: '420px', autoFocus: 'dialog' })
       .afterClosed().pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(confirmado => { if (confirmado) this.ref.close(false); });

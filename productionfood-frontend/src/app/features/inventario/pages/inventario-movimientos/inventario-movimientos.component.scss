@@ -46,19 +46,6 @@
   color: var(--tinta-900);
 }
 
-.tabla-card {
-  @include ui.tarjeta-contenedor;
-}
-
-.tabla-scroll {
-  overflow-x: auto;
-}
-
-table {
-  @include ui.tabla;
-  min-width: 760px;
-}
-
 .movimiento {
   display: flex;
   align-items: flex-start;
@@ -101,23 +88,6 @@ table {
 .salida-texto {
   color: var(--peligro-texto);
   font-weight: 600;
-}
-
-.estado {
-  @include ui.estado-vacio;
-  padding: 48px 16px;
-
-  h2 {
-    margin: 0;
-    font-family: var(--fuente-display);
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--verde-900);
-  }
-}
-
-.estado.error > mat-icon {
-  color: var(--rojo-500);
 }
 
 @media (max-width: 720px) {

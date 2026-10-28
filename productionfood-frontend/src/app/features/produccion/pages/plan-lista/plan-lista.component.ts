@@ -7,18 +7,19 @@ import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { PageEvent } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
-import { MatTableModule } from '@angular/material/table';
-import { MatSortModule, Sort } from '@angular/material/sort';
+import { Sort } from '@angular/material/sort';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { EstadoPlan, PlanProduccion } from '../../models/plan-produccion.model';
 import { PlanProduccionService } from '../../services/plan-produccion.service';
 import { EstadoVacioComponent } from '../../../../shared/components/estado-vacio/estado-vacio.component';
+import { FiltroBusquedaComponent } from '../../../../shared/components/filtro-busqueda/filtro-busqueda.component';
 import { TarjetaTablaComponent } from '../../../../shared/components/tarjeta-tabla/tarjeta-tabla.component';
 import { KpiCardComponent } from '../../../../shared/components/kpi-card/kpi-card.component';
+import { ColumnaTabla, TablaPaginadaComponent } from '../../../../shared/components/tabla-paginada/tabla-paginada.component';
+import { TablaColumnaDirective } from '../../../../shared/components/tabla-paginada/tabla-columna.directive';
 import { SiRolDirective } from '../../../../shared/directives/si-rol.directive';
 
 @Component({
@@ -31,15 +32,14 @@ import { SiRolDirective } from '../../../../shared/directives/si-rol.directive';
     MatButtonModule,
     MatFormFieldModule,
     MatIconModule,
-    MatInputModule,
-    MatPaginatorModule,
     MatProgressBarModule,
     MatSelectModule,
-    MatTableModule,
-    MatSortModule,
     EstadoVacioComponent,
+    FiltroBusquedaComponent,
     TarjetaTablaComponent,
     KpiCardComponent,
+    TablaPaginadaComponent,
+    TablaColumnaDirective,
     SiRolDirective
   ],
   templateUrl: './plan-lista.component.html',
@@ -56,7 +56,16 @@ export class PlanListaComponent {
     estado: this.fb.control<EstadoPlan | null>(null)
   });
 
-  readonly columnas = ['plan', 'producto', 'fechaPlanificacion', 'fechaProduccion', 'cantidad', 'progreso', 'estado', 'acciones'];
+  readonly columnas: ColumnaTabla[] = [
+    { id: 'plan', titulo: 'Plan', ordenable: false },
+    { id: 'productoPrincipal', titulo: 'Producto', ordenable: true },
+    { id: 'fechaPlanificacion', titulo: 'Fecha planificación', ordenable: true },
+    { id: 'fechaProduccion', titulo: 'Producción', ordenable: true },
+    { id: 'cantidad', titulo: 'Cantidad', ordenable: false },
+    { id: 'progreso', titulo: 'Progreso', ordenable: false },
+    { id: 'estado', titulo: 'Estado', ordenable: true },
+    { id: 'acciones', titulo: 'Acciones', ordenable: false }
+  ];
 
   readonly datos = signal<PlanProduccion[]>([]);
   readonly cargando = signal(false);

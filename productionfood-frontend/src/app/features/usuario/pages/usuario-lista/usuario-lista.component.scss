@@ -68,11 +68,6 @@
   @include ui.filtros-tarjeta;
   margin-bottom: var(--esp-5);
 
-  .filtro-busqueda {
-    flex: 1;
-    min-width: 240px;
-  }
-
   mat-form-field {
     width: 180px;
   }

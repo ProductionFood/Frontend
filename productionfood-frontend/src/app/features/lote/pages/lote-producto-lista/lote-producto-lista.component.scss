@@ -45,19 +45,6 @@
   min-width: 220px;
 }
 
-.estado-error {
-  @include ui.panel-error;
-}
-
-.tabla-scroll {
-  overflow: auto;
-}
-
-table {
-  @include ui.tabla;
-  min-width: 900px;
-}
-
 .codigo {
   color: var(--verde-700);
   font-weight: 700;
@@ -68,17 +55,9 @@ table {
   font-weight: 600;
 }
 
-.numerica {
-  text-align: right;
-}
-
 .cantidad {
   font-weight: 700;
   color: var(--tinta-900);
-}
-
-.fila-vencida {
-  background: var(--peligro-fondo);
 }
 
 .retirar {
@@ -87,10 +66,6 @@ table {
   font-size: 10.5px;
   font-weight: 700;
   color: var(--peligro-texto);
-}
-
-mat-paginator {
-  border-top: 1px solid var(--linea);
 }
 
 @media (max-width: 1100px) {
