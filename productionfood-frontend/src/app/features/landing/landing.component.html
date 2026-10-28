@@ -45,30 +45,9 @@
   </div>
 </header>
 
-<!-- ============ HERO ============ -->
-<section class="hero" id="inicio" tabindex="-1">
-  <div class="hero-leaves" aria-hidden="true">
-    <img src="img/hoja-clara.svg" alt="" class="leaf leaf-1" width="240" height="240" loading="lazy">
-    <img src="img/hoja-salvia.svg" alt="" class="leaf leaf-2" width="320" height="310" loading="lazy">
-    <img src="img/hoja-clara.svg" alt="" class="leaf leaf-3" width="240" height="240" loading="lazy">
-  </div>
-  <img class="hero-backdrop" src="img/cultivo.jpg" alt="" aria-hidden="true" width="800" height="602" loading="lazy">
-  <img class="hero-visual" src="img/mockup-dispositivos.webp" alt="Vista de la plataforma ProductionFood: módulo de productos" width="6000" height="3210" fetchpriority="high">
-  <img class="hero-basket" src="img/canasta-de-frutas.png" alt="" aria-hidden="true" width="2500" height="2500" loading="lazy">
-  <div class="container">
-    <div class="hero-inner">
-      <p class="eyebrow">Tu producción, en buenas manos</p>
-      <h1 class="hero-title">Planifica. Produce.<br><span class="accent">Crece.</span></h1>
-      <p class="hero-text">ProductionFood es una solución para la planificación y gestión de la producción, diseñada para facilitar el control de procesos, recursos y operaciones en un solo lugar.</p>
-      <div class="hero-actions">
-        <a href="#caracteristicas" class="btn btn-primary btn-lg">Conocer la plataforma
-          <svg class="ic" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </a>
-        <a routerLink="/login" class="btn btn-outline btn-lg">Iniciar sesión</a>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- Hero extraído a componente independiente -->
+<app-landing-hero />
+
 
 <!-- ============ EL PROBLEMA ============ -->
 <section class="problem" id="problema" appReveal>
@@ -110,68 +89,9 @@
   </div>
 </section>
 
-<!-- ============ ¿QUÉ ES + FUNCIONALIDADES ============ -->
-<section class="about" id="caracteristicas" appReveal>
-  <div class="container about-grid">
-    <div class="about-text reveal-delay-1" appReveal>
-      <p class="eyebrow">¿Qué es ProductionFood?</p>
-      <h2 class="section-title">Una plataforma integral para tu producción</h2>
-      <p>ProductionFood te permite organizar, controlar y optimizar cada etapa de tu producción, desde la planificación hasta el análisis de resultados. Todo en un solo lugar, de forma simple, segura y eficiente.</p>
-      <div class="about-badge">
-        <img src="img/green_heart_with_leaf.jpg" alt="" width="58" height="58" loading="lazy">
-        <span>Más eficiencia, mejores resultados.</span>
-      </div>
-    </div>
+<!-- Funcionalidades y módulos extraídos a componente independiente -->
+<app-landing-modules />
 
-    <div class="features reveal-delay-2" appReveal>
-      <h3 class="section-title section-title--sm">Funcionalidades</h3>
-      <div class="cards-grid cards-grid--3">
-        <article class="card card--icon reveal-delay-3" appReveal>
-          <div class="card-icon card-icon--verde" aria-hidden="true">
-            <svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          </div>
-          <h4 class="card-title">Planificación de producción</h4>
-          <p class="card-text">Organiza y programa tus procesos.</p>
-        </article>
-        <article class="card card--icon reveal-delay-4" appReveal>
-          <div class="card-icon card-icon--verde" aria-hidden="true">
-            <svg class="ic" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-          </div>
-          <h4 class="card-title">Gestión de recursos</h4>
-          <p class="card-text">Controla inventarios, insumos y maquinaria.</p>
-        </article>
-        <article class="card card--icon reveal-delay-5" appReveal>
-          <div class="card-icon card-icon--verde" aria-hidden="true">
-            <svg class="ic" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-          </div>
-          <h4 class="card-title">Control y seguimiento</h4>
-          <p class="card-text">Monitorea cada etapa en tiempo real.</p>
-        </article>
-        <article class="card card--icon reveal-delay-6" appReveal>
-          <div class="card-icon card-icon--verde" aria-hidden="true">
-            <svg class="ic" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-          </div>
-          <h4 class="card-title">Reportes</h4>
-          <p class="card-text">Obtén información clave para decidir.</p>
-        </article>
-        <article class="card card--icon reveal-delay-1" appReveal>
-          <div class="card-icon card-icon--verde" aria-hidden="true">
-            <svg class="ic" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          </div>
-          <h4 class="card-title">Gestión de usuarios</h4>
-          <p class="card-text">Asigna roles y permisos según tu equipo.</p>
-        </article>
-        <article class="card card--icon reveal-delay-2" appReveal>
-          <div class="card-icon card-icon--verde" aria-hidden="true">
-            <svg class="ic" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-          </div>
-          <h4 class="card-title">Notificaciones</h4>
-          <p class="card-text">Mantente al día con alertas importantes.</p>
-        </article>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- ============ CÓMO FUNCIONA ============ -->
 <section class="steps" id="como-funciona" appReveal>
@@ -263,8 +183,10 @@
   </div>
 </section>
 
-<!-- ============ FAQ ============ -->
-<app-landing-faq />
+<!-- FAQ diferida: se carga cuando el navegador queda libre, fuera del render inicial de la landing. -->
+@defer (on idle) {
+  <app-landing-faq />
+}
 
 <!-- ============ INDUSTRIAS / CASOS DE USO ============ -->
 <section class="industries" id="industrias" appReveal>
