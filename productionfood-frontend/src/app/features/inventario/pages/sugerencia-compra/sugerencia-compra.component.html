@@ -29,7 +29,7 @@
     <p>No hay materias primas por debajo del mínimo: no hace falta reponer</p>
   </section>
 } @else {
-  @for (grupo of datos(); track $index) {
+  @for (grupo of datos(); track grupo.proveedor?.idProveedor ?? grupo.items[0]?.idMateriaPrima ?? grupo.items[0]?.materiaPrima ?? $index) {
     <mat-expansion-panel class="grupo" [expanded]="true">
       <mat-expansion-panel-header>
         <mat-panel-title>
