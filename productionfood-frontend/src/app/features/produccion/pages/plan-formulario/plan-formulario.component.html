@@ -1,12 +1,95 @@
-<mat-card><mat-card-header><mat-card-title>Nuevo plan de producción</mat-card-title></mat-card-header><mat-card-content>
-<form [formGroup]="form" (ngSubmit)="guardar()" class="formulario">
-<div class="fechas"><mat-form-field><mat-label>Fecha planificación</mat-label><input matInput [matDatepicker]="cal1" formControlName="fechaPlanificacion" required><mat-datepicker-toggle matIconSuffix [for]="cal1"/><mat-datepicker #cal1/><mat-error>Indique la fecha de planificación</mat-error></mat-form-field>
-<mat-form-field><mat-label>Fecha producción</mat-label><input matInput [matDatepicker]="cal2" [min]="minProduccion" formControlName="fechaProduccion" required><mat-datepicker-toggle matIconSuffix [for]="cal2"/><mat-datepicker #cal2/><mat-error>Indique una fecha no anterior a la planificación</mat-error></mat-form-field></div>
-@if(fechaIncorrecta){<p class="error" role="alert">La fecha de producción no puede ser anterior a la planificación.</p>}
-@if(fieldErrors()['fechaProduccion']){<p class="error" role="alert">{{fieldErrors()['fechaProduccion']}}</p>}
-<mat-form-field><mat-label>Responsable</mat-label><input matInput [value]="nombreResponsable" readonly><mat-hint>Se asigna desde su sesión. El backend valida el responsable.</mat-hint></mat-form-field>
-<mat-form-field><mat-label>Observaciones</mat-label><textarea matInput rows="4" formControlName="observaciones" maxlength="255"></textarea><mat-hint align="end">{{form.controls.observaciones.value.length}} / 255</mat-hint><mat-error>Máximo 255 caracteres</mat-error></mat-form-field>
-@if(fieldErrors()['observaciones']){<p class="error">{{fieldErrors()['observaciones']}}</p>}
-@if(error()){<p class="error" role="alert">{{error()}}</p>}
-<div class="actions"><button mat-button type="button" (click)="cancelar()">Cancelar</button><button mat-flat-button type="submit" [disabled]="form.invalid||fechaIncorrecta||guardando()">{{guardando()?'Guardando…':'Crear plan'}}</button></div>
-</form></mat-card-content></mat-card>
+<form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+  <header class="formulario-cabecera">
+    <div>
+      <button mat-button type="button" [disabled]="guardando()" (click)="cancelar()">
+        <mat-icon>arrow_back</mat-icon>
+        Volver a planes
+      </button>
+      <h1>Nuevo plan de producción</h1>
+      <p>Define la fecha de planificación, la de producción y el responsable.</p>
+    </div>
+    <span class="formulario-estado">Borrador</span>
+  </header>
+
+  @if (error()) {
+    <div class="formulario-alerta formulario-alerta--error" role="alert">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ error() }}</span>
+    </div>
+  }
+
+  <section class="formulario-seccion">
+    <div class="formulario-seccion__titulo">
+      <h3>Programación</h3>
+      <p>La fecha de producción no puede ser anterior a la planificación.</p>
+    </div>
+
+    <div class="formulario-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Fecha planificación</mat-label>
+        <input matInput [matDatepicker]="cal1" formControlName="fechaPlanificacion" required />
+        <mat-datepicker-toggle matIconSuffix [for]="cal1" />
+        <mat-datepicker #cal1 />
+        <mat-error>Indique la fecha de planificación</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Fecha producción</mat-label>
+        <input matInput [matDatepicker]="cal2" [min]="minProduccion" formControlName="fechaProduccion" required />
+        <mat-datepicker-toggle matIconSuffix [for]="cal2" />
+        <mat-datepicker #cal2 />
+        <mat-error>Indique una fecha no anterior a la planificación</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="ancho-completo">
+        <mat-label>Responsable</mat-label>
+        <input matInput [value]="nombreResponsable" readonly />
+        <mat-hint>Se asigna desde su sesión. El backend valida el responsable.</mat-hint>
+      </mat-form-field>
+
+      @if (fechaIncorrecta) {
+        <div class="formulario-alerta formulario-alerta--error ancho-completo" role="alert">
+          <mat-icon>error_outline</mat-icon>
+          <span>La fecha de producción no puede ser anterior a la planificación.</span>
+        </div>
+      }
+
+      @if (fieldErrors()['fechaProduccion']) {
+        <div class="formulario-alerta formulario-alerta--error ancho-completo" role="alert">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ fieldErrors()['fechaProduccion'] }}</span>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="formulario-seccion">
+    <div class="formulario-seccion__titulo">
+      <h3>Observaciones</h3>
+      <p>Notas opcionales para el equipo de producción.</p>
+    </div>
+
+    <div class="formulario-grid">
+      <mat-form-field appearance="outline" class="ancho-completo">
+        <mat-label>Observaciones</mat-label>
+        <textarea matInput rows="4" formControlName="observaciones" maxlength="255"></textarea>
+        <mat-hint align="end">{{ form.controls.observaciones.value.length }} / 255</mat-hint>
+        <mat-error>Máximo 255 caracteres</mat-error>
+      </mat-form-field>
+
+      @if (fieldErrors()['observaciones']) {
+        <div class="formulario-alerta formulario-alerta--error ancho-completo" role="alert">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ fieldErrors()['observaciones'] }}</span>
+        </div>
+      }
+    </div>
+  </section>
+
+  <div class="formulario-acciones">
+    <button mat-button type="button" (click)="cancelar()" [disabled]="guardando()">Cancelar</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || fechaIncorrecta || guardando()">
+      {{ guardando() ? 'Guardando…' : 'Crear plan' }}
+    </button>
+  </div>
+</form>

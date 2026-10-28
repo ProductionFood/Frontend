@@ -1,35 +1,69 @@
-<div class="dialogo-cliente">
-  <header class="dialogo-header">
-    <h2 mat-dialog-title>{{ esEdicion ? 'Editar cliente' : 'Nuevo cliente' }}</h2>
-    <button mat-icon-button type="button" aria-label="Cerrar formulario" [disabled]="guardando()" (click)="cancelar()"><mat-icon>close</mat-icon></button>
+<form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+  <header class="formulario-cabecera">
+    <div>
+      <h2 mat-dialog-title>{{ esEdicion ? 'Editar cliente' : 'Nuevo cliente' }}</h2>
+      <p>Datos de contacto para pedidos y facturación.</p>
+    </div>
+    <button mat-icon-button type="button" aria-label="Cerrar formulario" [disabled]="guardando()" (click)="cancelar()">
+      <mat-icon>close</mat-icon>
+    </button>
   </header>
-  <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
-    <mat-dialog-content>
-      @if (errorGeneral()) { <p class="error-general" role="alert">{{ errorGeneral() }}</p> }
-      <mat-form-field appearance="outline" class="campo">
-        <mat-label>Nombre</mat-label>
-        <input matInput formControlName="nombre" maxlength="100" autocomplete="organization" required />
-        <mat-hint align="end">{{ form.controls.nombre.value.length }} / 100</mat-hint>
-        @if (form.controls.nombre.touched && form.controls.nombre.invalid) { <mat-error>{{ nombreError }}</mat-error> }
-      </mat-form-field>
-      <p class="aviso-duplicado"><mat-icon>info</mat-icon> El nombre puede coincidir con el de otro cliente.</p>
-      <mat-form-field appearance="outline" class="campo">
-        <mat-label>Persona de contacto</mat-label>
-        <input matInput formControlName="contacto" maxlength="100" autocomplete="name" />
-        @if (form.controls.contacto.touched && form.controls.contacto.invalid) { <mat-error>{{ contactoError }}</mat-error> }
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="campo">
-        <mat-label>Teléfono</mat-label>
-        <input matInput formControlName="telefono" maxlength="20" autocomplete="tel" />
-        @if (form.controls.telefono.touched && form.controls.telefono.invalid) { <mat-error>{{ telefonoError }}</mat-error> }
-      </mat-form-field>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-stroked-button type="button" [disabled]="guardando()" (click)="cancelar()">Cancelar</button>
-      <button mat-flat-button type="submit" [disabled]="guardando() || form.invalid">
-        @if (guardando()) { <mat-spinner diameter="18" aria-label="Guardando"></mat-spinner> }
-        {{ guardando() ? 'Guardando…' : 'Guardar' }}
-      </button>
-    </mat-dialog-actions>
-  </form>
-</div>
+
+  <mat-dialog-content class="formulario-cuerpo">
+    @if (errorGeneral()) {
+      <div class="formulario-alerta formulario-alerta--error" role="alert">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ errorGeneral() }}</span>
+      </div>
+    }
+
+    <section class="formulario-seccion">
+      <div class="formulario-seccion__titulo">
+        <h3>Datos del cliente</h3>
+        <p>El nombre es obligatorio; el contacto y el teléfono son opcionales.</p>
+      </div>
+
+      <div class="formulario-grid">
+        <mat-form-field appearance="outline" class="ancho-completo">
+          <mat-label>Nombre</mat-label>
+          <input matInput formControlName="nombre" maxlength="100" autocomplete="organization" required />
+          <mat-hint align="end">{{ form.controls.nombre.value.length }} / 100</mat-hint>
+          @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
+            <mat-error>{{ nombreError }}</mat-error>
+          }
+        </mat-form-field>
+
+        <div class="formulario-alerta formulario-alerta--info ancho-completo">
+          <mat-icon>info</mat-icon>
+          <span>El nombre puede coincidir con el de otro cliente.</span>
+        </div>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Persona de contacto</mat-label>
+          <input matInput formControlName="contacto" maxlength="100" autocomplete="name" />
+          @if (form.controls.contacto.touched && form.controls.contacto.invalid) {
+            <mat-error>{{ contactoError }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Teléfono</mat-label>
+          <input matInput formControlName="telefono" maxlength="20" autocomplete="tel" />
+          @if (form.controls.telefono.touched && form.controls.telefono.invalid) {
+            <mat-error>{{ telefonoError }}</mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </section>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="formulario-acciones" align="end">
+    <button mat-button type="button" [disabled]="guardando()" (click)="cancelar()">Cancelar</button>
+    <button mat-flat-button type="submit" [disabled]="guardando() || form.invalid">
+      @if (guardando()) {
+        <mat-spinner diameter="18" aria-label="Guardando"></mat-spinner>
+      }
+      {{ guardando() ? 'Guardando…' : 'Guardar' }}
+    </button>
+  </mat-dialog-actions>
+</form>

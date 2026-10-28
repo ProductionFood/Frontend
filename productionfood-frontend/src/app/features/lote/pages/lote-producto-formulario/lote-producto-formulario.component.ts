@@ -8,12 +8,13 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Producto } from '../../../producto/models/producto.model';
 import { LoteProductoService } from '../../services/lote-producto.service';
 import { CrearLoteProductoDto } from '../../models/lote-producto.model';
-@Component({selector:'app-lote-producto-formulario',standalone:true,imports:[ReactiveFormsModule,MatDialogModule,MatButtonModule,MatFormFieldModule,MatInputModule,MatSelectModule,MatDatepickerModule,MatCardModule,MatProgressBarModule],templateUrl:'./lote-producto-formulario.component.html',styleUrl:'./lote-producto-formulario.component.scss'})
+@Component({selector:'app-lote-producto-formulario',standalone:true,imports:[ReactiveFormsModule,MatDialogModule,MatButtonModule,MatFormFieldModule,MatInputModule,MatSelectModule,MatDatepickerModule,MatCardModule,MatIconModule,MatProgressBarModule],templateUrl:'./lote-producto-formulario.component.html',styleUrl:'./lote-producto-formulario.component.scss'})
 export class LoteProductoFormularioComponent {
   private readonly fb=inject(FormBuilder);
   private readonly service=inject(LoteProductoService);
