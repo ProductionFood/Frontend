@@ -3,7 +3,9 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, DestroyRef, inject, signal, computed, LOCALE_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterLink } from '@angular/router';
 import { EMPTY, Subject, catchError, switchMap, tap } from 'rxjs';
@@ -25,7 +27,9 @@ import { InventarioService } from '../../services/inventario.service';
   standalone: true,
   imports: [
     DecimalPipe,
+    MatButtonModule,
     MatCheckboxModule,
+    MatIconModule,
     MatProgressBarModule,
     ReactiveFormsModule,
     RouterLink,

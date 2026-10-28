@@ -1,7 +1,6 @@
-import { DevolucionFormularioComponent } from '../../../devolucion/pages/devolucion-formulario/devolucion-formulario.component';
-import { AgregarProductoDialogComponent } from '../../components/agregar-producto-dialog/agregar-producto-dialog.component';
-import { DetallePedidoTablaComponent } from '../../components/detalle-pedido-tabla/detalle-pedido-tabla.component';
 import { DetallePedidoService } from '../../services/detalle-pedido.service';
+import { DetallePedidoTablaComponent } from '../../components/detalle-pedido-tabla/detalle-pedido-tabla.component';
+import { AgregarProductoDialogComponent } from '../../components/agregar-producto-dialog/agregar-producto-dialog.component';
 import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
@@ -11,7 +10,7 @@ import {
   signal
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -57,6 +56,7 @@ import { PedidoFormularioComponent } from '../pedido-formulario/pedido-formulari
   styleUrl: './pedido-detalle.component.scss'
 })
 export class PedidoDetalleComponent {
+  private readonly router = inject(Router);
   private readonly detalleService = inject(DetallePedidoService);
   private readonly route = inject(ActivatedRoute);
   private readonly pedidoService = inject(PedidoService);
@@ -227,7 +227,7 @@ export class PedidoDetalleComponent {
   registrarDevolucion(linea: LineaPedido): void {
     const pedido=this.pedido();
     if(!pedido||pedido.estado!=='ENTREGADO')return;
-    this.dialog.open(DevolucionFormularioComponent,{data:{pedido,linea},width:'560px',maxWidth:'95vw',disableClose:true}).afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(ok=>{if(ok){this.notificacion.exito('Devolución registrada, pendiente de aprobación.');this.recargar();}});
+    void this.router.navigate(['/app/devoluciones/nueva'],{state:{pedido,linea}});
   }
   agregarProducto(): void {
     if (!this.pedido()?.editable) return;

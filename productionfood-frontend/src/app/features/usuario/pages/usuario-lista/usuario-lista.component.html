@@ -3,8 +3,8 @@
     <h1>Usuarios</h1>
     <p>Administra los usuarios que tienen acceso al sistema, sus roles y permisos.</p>
   </div>
-  <button class="btn-primary" type="button" *siRol="['ADMIN']" routerLink="/app/usuarios/nuevo">
-    <mat-icon>add</mat-icon>
+  <button class="btn-primary" type="button" *siRol="['ADMIN']" (click)="nueva()">
+    <svg class="ic" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
     Agregar usuario
   </button>
 </header>

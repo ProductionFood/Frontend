@@ -7,24 +7,20 @@ import {
 } from '@angular/forms';
 
 import { HttpErrorResponse } from '@angular/common/http';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import {
-  MAT_DIALOG_DATA,
-  MatDialog,
-  MatDialogModule,
-  MatDialogRef
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-
 import { concatMap, finalize, from } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import {
   ConfirmarDialogComponent,
@@ -40,12 +36,7 @@ import {
 } from '../../models/compra.model';
 import { CompraService } from '../../services/compra.service';
 import { DetalleCompraService } from '../../services/detalle-compra.service';
-
-export interface CompraFormularioData {
-  compra?: Compra;
-  /** Ítems sugeridos por HU-27: se agregan al detalle tras crear la cabecera. */
-  prefill?: CompraPrefill;
-}
+import { NotificacionService } from '../../../../core/ui/notificacion.service';
 
 interface CuerpoError {
   code?: string;
@@ -54,15 +45,17 @@ interface CuerpoError {
 }
 
 /**
- * Formulario de compra (HU-13) en `MatDialog`, para crear y editar la
+ * Formulario de compra (HU-13) como página con router, para crear y editar la
  * cabecera. El estado no es editable: al crear siempre es `PENDIENTE` y los
  * cambios posteriores pasan por el flujo de estados del detalle (R-02).
+ * Los ítems sugeridos de HU-27 se leen del estado del router.
  */
 @Component({
   selector: 'app-compra-formulario',
   standalone: true,
   imports: [
     ReactiveFormsModule,
+    MatCardModule,
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
@@ -77,27 +70,29 @@ interface CuerpoError {
 })
 export class CompraFormularioComponent {
   private readonly fb = inject(FormBuilder);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly compraService = inject(CompraService);
   private readonly detalleService = inject(DetalleCompraService);
   private readonly proveedorService = inject(ProveedorService);
   private readonly dialog = inject(MatDialog);
+  private readonly notificacion = inject(NotificacionService);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly datos = inject<CompraFormularioData>(MAT_DIALOG_DATA);
+  readonly idCompra = Number(this.route.snapshot.paramMap.get('id')) || null;
+  readonly esEdicion = this.idCompra !== null;
 
-  private readonly ref =
-    inject<MatDialogRef<CompraFormularioComponent>>(MatDialogRef);
-
-  readonly esEdicion = !!this.datos.compra;
   readonly guardando = signal(false);
   readonly errorGeneral = signal<string | null>(null);
+
+  readonly compra = signal<Compra | null>(null);
 
   readonly proveedores = signal<Proveedor[]>([]);
   readonly cargandoProveedores = signal(true);
   readonly errorProveedores = signal<string | null>(null);
 
   /** Ítems de la sugerencia de compra (HU-27); vacío en el flujo normal. */
-  readonly itemsSugeridos: CompraPrefillItem[] = this.datos.prefill?.items ?? [];
+  readonly itemsSugeridos: CompraPrefillItem[] = this.leerPrefill()?.items ?? [];
 
   /** Cabecera ya creada cuando fallaron los ítems sugeridos. */
   private compraCreada: Compra | null = null;
@@ -106,27 +101,44 @@ export class CompraFormularioComponent {
   readonly maxFecha = new Date();
 
   readonly form = this.fb.group({
-    idProveedor: this.fb.control<number | null>(
-      this.datos.compra?.proveedor.idProveedor ??
-        this.datos.prefill?.idProveedor ??
-        null,
-      [Validators.required]
-    ),
-    fecha: this.fb.control<Date | null>(
-      this.aFecha(this.datos.compra?.fecha) ??
-        (this.datos.prefill ? new Date() : null),
-      [Validators.required]
-    )
+    idProveedor: this.fb.control<number | null>(null, [Validators.required]),
+    fecha: this.fb.control<Date | null>(null, [Validators.required])
   });
 
   constructor() {
+    const prefill = this.leerPrefill();
+    this.form.controls.idProveedor.setValue(prefill?.idProveedor ?? null);
+    this.form.controls.fecha.setValue(prefill ? new Date() : null);
+
     this.cargarProveedores();
+    if (this.esEdicion) {
+      this.cargarCompra(this.idCompra!);
+    }
+  }
+
+  private leerPrefill(): CompraPrefill | null {
+    const navigation = this.router.getCurrentNavigation();
+    const estado = navigation?.extras.state as { compraSugerida?: CompraPrefill } | null;
+    return estado?.compraSugerida ?? null;
+  }
+
+  cargarCompra(id: number): void {
+    this.compraService.obtener(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: c => {
+        this.compra.set(c);
+        this.form.patchValue({
+          idProveedor: c.proveedor.idProveedor,
+          fecha: this.aFecha(c.fecha)
+        });
+      },
+      error: (e: HttpErrorResponse) => {
+        this.errorGeneral.set(e.error?.message ?? 'No se pudo cargar la compra.');
+      }
+    });
   }
 
   get sinProveedores(): boolean {
-    return (
-      !this.cargandoProveedores() && this.proveedores().length === 0
-    );
+    return !this.cargandoProveedores() && this.proveedores().length === 0;
   }
 
   guardar(): void {
@@ -151,8 +163,8 @@ export class CompraFormularioComponent {
     this.guardando.set(true);
     this.errorGeneral.set(null);
 
-    const peticion = this.datos.compra
-      ? this.compraService.actualizar(this.datos.compra.idCompra, {
+    const peticion = this.esEdicion
+      ? this.compraService.actualizar(this.idCompra!, {
           idProveedor: valor.idProveedor,
           fecha
         })
@@ -164,13 +176,16 @@ export class CompraFormularioComponent {
 
     peticion.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: compra => {
-        if (!this.datos.compra && this.itemsSugeridos.length > 0) {
+        if (!this.esEdicion && this.itemsSugeridos.length > 0) {
           this.compraCreada = compra;
           this.agregarItems(compra);
           return;
         }
 
-        this.ref.close(true);
+        this.notificacion.exito(
+          this.esEdicion ? 'Compra actualizada correctamente.' : 'Compra registrada correctamente.'
+        );
+        void this.router.navigate(['/app/compras']);
       },
       error: (error: HttpErrorResponse) => {
         this.guardando.set(false);
@@ -195,7 +210,10 @@ export class CompraFormularioComponent {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe({
-        complete: () => this.ref.close(true),
+        complete: () => {
+          this.notificacion.exito('Compra registrada correctamente.');
+          void this.router.navigate(['/app/compras']);
+        },
         error: () =>
           this.errorGeneral.set(
             `La compra #${compra.idCompra} se creó, pero no se pudieron agregar los ítems sugeridos. Reintente o agréguelos desde su detalle.`
@@ -203,18 +221,14 @@ export class CompraFormularioComponent {
       });
   }
 
-  cancelar(): void {
-    if (this.guardando()) {
-      return;
-    }
-
+  volver(): void {
     if (this.compraCreada) {
-      this.ref.close(true);
+      void this.router.navigate(['/app/compras']);
       return;
     }
 
     if (!this.form.dirty) {
-      this.ref.close(false);
+      void this.router.navigate(['/app/compras']);
       return;
     }
 
@@ -237,7 +251,7 @@ export class CompraFormularioComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(confirmado => {
         if (confirmado) {
-          this.ref.close(false);
+          void this.router.navigate(['/app/compras']);
         }
       });
   }
@@ -282,8 +296,7 @@ export class CompraFormularioComponent {
         error: (error: HttpErrorResponse) => {
           this.cargandoProveedores.set(false);
           this.errorProveedores.set(
-            this.mensajeError(error) ??
-              'No se pudo cargar el catálogo de proveedores.'
+            this.mensajeError(error) ?? 'No se pudo cargar el catálogo de proveedores.'
           );
         }
       });

@@ -1,0 +1,78 @@
+<mat-toolbar class="toolbar">
+  <button mat-icon-button (click)="volver()">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span>{{ esEdicion() ? 'Editar producto' : 'Nuevo producto' }}</span>
+</mat-toolbar>
+
+<div class="pagina">
+  <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+    <div class="formulario">
+      @if (errorGeneral()) {
+        <div class="error-general" role="alert"><mat-icon>error_outline</mat-icon>{{ errorGeneral() }}</div>
+      }
+
+      <mat-form-field appearance="outline" class="ancho-completo">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="nombre" maxlength="100" autocomplete="off" required />
+        @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
+          <mat-error>{{ errorCampo('nombre') }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="ancho-completo">
+        <mat-label>Descripción</mat-label>
+        <textarea matInput formControlName="descripcion" maxlength="150" rows="3"></textarea>
+        <mat-hint align="end">{{ form.controls.descripcion.value.length }} / 150</mat-hint>
+        @if (form.controls.descripcion.touched && form.controls.descripcion.invalid) {
+          <mat-error>{{ errorCampo('descripcion') }}</mat-error>
+        }
+      </mat-form-field>
+
+      <div class="fila-campos">
+        <mat-form-field appearance="outline">
+          <mat-label>Precio de venta</mat-label>
+          <span matPrefix>$&nbsp;</span>
+          <input matInput type="text" inputmode="decimal" [value]="precioTexto()" (focus)="alEnfocarPrecio()" (input)="cambiarPrecio($event)" (blur)="formatearPrecio()" aria-describedby="ayuda-precio" required />
+          <mat-hint id="ayuda-precio">Pesos colombianos (COP)</mat-hint>
+          @if (form.controls.precioVenta.touched && form.controls.precioVenta.invalid) {
+            <mat-error>{{ errorCampo('precioVenta') }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Unidad de venta</mat-label>
+          <mat-select formControlName="idUnidad" required>
+            @for (unidad of unidades(); track unidad.idUnidad) {
+              <mat-option [value]="unidad.idUnidad">{{ unidad.nombre }} ({{ unidad.abreviatura }})</mat-option>
+            }
+          </mat-select>
+          <mat-hint>Cómo se vende, no cómo se produce.</mat-hint>
+          @if (form.controls.idUnidad.touched && form.controls.idUnidad.invalid) {
+            <mat-error>{{ errorCampo('idUnidad') }}</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      @if (cargandoUnidades()) {
+        <div class="estado-unidades"><mat-spinner diameter="22"></mat-spinner><span>Cargando unidades de venta…</span></div>
+      } @else if (errorUnidades()) {
+        <div class="error-general" role="alert"><mat-icon>error_outline</mat-icon><span>{{ errorUnidades() }}</span><button mat-button type="button" (click)="cargarUnidades()">Reintentar</button></div>
+      } @else if (sinUnidades) {
+        <div class="aviso-unidades" role="status">
+          <mat-icon>info</mat-icon>
+          <span>No hay unidades disponibles. Registra una unidad antes de crear productos.</span>
+          <button mat-stroked-button type="button" (click)="irAUnidades()">Ir a unidades de medida</button>
+        </div>
+      }
+    </div>
+
+    <div class="acciones">
+      <button mat-button type="button" (click)="volver()" [disabled]="guardando()">Volver</button>
+      <button mat-flat-button type="submit" [disabled]="guardando() || cargandoUnidades() || sinUnidades">
+        @if (guardando()) { <mat-spinner diameter="18"></mat-spinner> }
+        {{ guardando() ? 'Guardando…' : 'Guardar' }}
+      </button>
+    </div>
+  </form>
+</div>

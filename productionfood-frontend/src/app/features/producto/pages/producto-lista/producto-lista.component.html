@@ -3,7 +3,7 @@
     <h1>Productos</h1>
     <p>Administra los productos que ofrece tu empresa. Aquí puedes crear, editar, eliminar y ver el detalle de cada producto.</p>
   </div>
-  <button *siRol="['ADMIN']" mat-flat-button class="btn-primary" type="button" (click)="abrirFormulario()">
+  <button *siRol="['ADMIN']" mat-flat-button class="btn-primary" type="button" routerLink="nuevo">
     <mat-icon>add</mat-icon>
     Agregar producto
   </button>
@@ -62,7 +62,7 @@
     @if (filtroAplicado()) {
       <button mat-stroked-button type="button" (click)="limpiarFiltros()">Limpiar filtros</button>
     } @else {
-      <button *siRol="['ADMIN']" mat-flat-button class="btn-primary" type="button" (click)="abrirFormulario()">Registrar el primero</button>
+      <button *siRol="['ADMIN']" mat-flat-button class="btn-primary" type="button" routerLink="nuevo">Registrar el primero</button>
     }
   </app-estado-vacio>
 } @else {
@@ -116,7 +116,7 @@
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #menuProducto="matMenu">
-      <button mat-menu-item type="button" *siRol="['ADMIN']" (click)="abrirFormulario(producto)">
+      <button mat-menu-item type="button" *siRol="['ADMIN']" [routerLink]="['/app/productos', producto.idProducto, 'editar']">
         <mat-icon>edit</mat-icon>
         <span>Editar</span>
       </button>

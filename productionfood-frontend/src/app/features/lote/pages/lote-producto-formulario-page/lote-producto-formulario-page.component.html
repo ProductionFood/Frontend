@@ -1,0 +1,96 @@
+<header class="page-header">
+  <div>
+    <button mat-button type="button" (click)="volver()"><mat-icon>arrow_back</mat-icon> Volver a lotes</button>
+    <h1>Nuevo lote de producto terminado</h1>
+    <p>Registra un lote de producto terminado con sus fechas de producción y vencimiento.</p>
+  </div>
+</header>
+
+<form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+  <mat-card class="sección">
+    <mat-card-header>
+      <mat-card-title>Datos del lote</mat-card-title>
+      <mat-card-subtitle>Define el código, producto, fechas y cantidad producida.</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="cabecera-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Código de lote</mat-label>
+          <input matInput formControlName="codigoLote" maxlength="30" />
+          <mat-hint>Prefijo del producto + fecha (sugerencia editable)</mat-hint>
+          @if (form.controls.codigoLote.hasError('required')) {
+            <mat-error>El código es obligatorio</mat-error>
+          }
+          @if (form.controls.codigoLote.hasError('maxlength')) {
+            <mat-error>Máximo 30 caracteres</mat-error>
+          }
+          <mat-hint class="servidor">{{ errorCampo('codigoLote') }}</mat-hint>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Producto</mat-label>
+          <mat-select formControlName="idProducto">
+            @for (p of productos(); track p.idProducto) {
+              <mat-option [value]="p.idProducto">{{ p.nombre }} ({{ p.unidad.abreviatura }})</mat-option>
+            }
+          </mat-select>
+          @if (form.controls.idProducto.hasError('required')) {
+            <mat-error>Seleccione un producto</mat-error>
+          }
+          <mat-hint>{{ errorCampo('idProducto') }}</mat-hint>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Fecha de producción</mat-label>
+          <input matInput [matDatepicker]="produccion" formControlName="fechaProduccion" />
+          <mat-datepicker-toggle matIconSuffix [for]="produccion" />
+          <mat-datepicker #produccion />
+          @if (form.controls.fechaProduccion.hasError('required')) {
+            <mat-error>Indique la fecha de producción</mat-error>
+          }
+          <mat-hint>{{ errorCampo('fechaProduccion') }}</mat-hint>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Fecha de vencimiento</mat-label>
+          <input matInput [matDatepicker]="vencimiento" [min]="fechaMinima" formControlName="fechaVencimiento" />
+          <mat-datepicker-toggle matIconSuffix [for]="vencimiento" />
+          <mat-datepicker #vencimiento />
+          @if (form.controls.fechaVencimiento.hasError('required')) {
+            <mat-error>Indique la fecha de vencimiento</mat-error>
+          }
+          <mat-hint>{{ errorCampo('fechaVencimiento') }}</mat-hint>
+        </mat-form-field>
+      </div>
+      @if (vencimientoInvalido) {
+        <p role="alert" class="error">No puede registrar un lote ya vencido o con vencimiento anterior a producción.</p>
+      }
+      <mat-form-field appearance="outline" style="grid-column: 1 / -1;">
+        <mat-label>Cantidad producida</mat-label>
+        <input matInput type="number" min="0.000001" step="any" formControlName="cantidad" />
+        @if (form.controls.cantidad.hasError('min')) {
+          <mat-error>Debe ser mayor que cero</mat-error>
+        }
+        @if (form.controls.cantidad.hasError('required')) {
+          <mat-error>Indique la cantidad</mat-error>
+        }
+        <mat-hint>{{ errorCampo('cantidad') }}</mat-hint>
+      </mat-form-field>
+      @if (seleccionado; as producto) {
+        <mat-card class="impacto">
+          <mat-card-content>
+            Este lote quedará disponible para la venta.
+            <p>Stock de <strong>{{ producto.nombre }}</strong>: {{ producto.stockDisponible }} → <strong>{{ stockResultante }}</strong> {{ producto.unidad.abreviatura }}</p>
+          </mat-card-content>
+        </mat-card>
+      }
+      @if (error()) {
+        <p role="alert" class="error">{{ error() }}</p>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <div class="acciones-finales">
+    <button mat-button type="button" (click)="volver()" [disabled]="guardando()">Cancelar</button>
+    <button mat-flat-button type="submit" [disabled]="guardando() || cargando() || form.invalid || vencimientoInvalido">
+      {{ guardando() ? 'Registrando…' : 'Registrar lote' }}
+    </button>
+  </div>
+</form>

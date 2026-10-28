@@ -6,7 +6,7 @@
     mat-flat-button
     color="primary"
     type="button"
-    (click)="abrirFormulario()"
+    (click)="nueva()"
   >
     <mat-icon>add</mat-icon>
     Nueva unidad
@@ -43,7 +43,7 @@
     </button>
 
     <mat-menu #menuUnidad="matMenu">
-      <button mat-menu-item type="button" (click)="abrirFormulario(unidad)">
+      <button mat-menu-item type="button" (click)="abrir(unidad)">
         <mat-icon>edit</mat-icon>
         <span>Editar</span>
       </button>

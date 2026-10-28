@@ -14,7 +14,7 @@
       mat-flat-button
       color="primary"
       type="button"
-      (click)="abrirFormulario()"
+      (click)="nueva()"
     >
       <mat-icon>add</mat-icon>
       Nuevo pedido
@@ -147,7 +147,7 @@
           *siRol="['ADMIN', 'VENTAS']"
           mat-menu-item
           type="button"
-          (click)="abrirFormulario(pedido)"
+          (click)="editar(pedido)"
         >
           <mat-icon>edit</mat-icon>
           <span>Editar</span>

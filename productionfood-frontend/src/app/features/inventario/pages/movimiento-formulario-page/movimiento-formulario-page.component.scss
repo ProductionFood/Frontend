@@ -1,0 +1,49 @@
+@use '../../../../shared/styles/ui' as ui;
+
+:host {
+  display: block;
+}
+
+.toolbar {
+  width: 100%;
+  background: var(--superficie-alta);
+  border-bottom: 1px solid var(--borde);
+}
+
+.pagina {
+  padding: var(--esp-5);
+  background: var(--fondo);
+  min-height: 100vh;
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  padding-top: var(--esp-2);
+  min-width: 0;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.mat-form-field { width: 100%; }
+
+.error {
+  color: var(--peligro-texto);
+  font-size: 12.5px;
+  margin: 0;
+}
+
+.acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--esp-2);
+  padding: var(--esp-3) 0 0;
+  border-top: 1px solid var(--borde);
+}
+
+@media (max-width: 560px) {
+  .pagina { padding: var(--esp-3); }
+  .formulario { max-width: 100%; }
+  .acciones { flex-wrap: wrap; }
+}

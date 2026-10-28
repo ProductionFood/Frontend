@@ -9,6 +9,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
+import { Router } from '@angular/router';
 import { EMPTY, Subject, catchError, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -22,7 +23,6 @@ import { Proveedor } from '../../models/proveedor.model';
 import { ProveedorService } from '../../services/proveedor.service';
 import { KpisCatalogoComponent } from '@shared/components/kpis-catalogo/kpis-catalogo.component';
 import { contarCatalogo } from '@shared/utils/conteo-catalogo';
-import { ProveedorFormularioComponent } from '../proveedor-formulario/proveedor-formulario.component';
 
 @Component({
   selector: 'app-proveedor-lista',
@@ -36,6 +36,7 @@ export class ProveedorListaComponent {
   private readonly proveedorService = inject(ProveedorService);
   private readonly notificacion = inject(NotificacionService);
   private readonly dialog = inject(MatDialog);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly columnas: ColumnaTabla[] = [
@@ -129,15 +130,12 @@ export class ProveedorListaComponent {
     this.recargar();
   }
 
-  abrirFormulario(proveedor?: Proveedor): void {
-    this.dialog.open(ProveedorFormularioComponent, {
-      data: { proveedor }, width: '560px', maxWidth: '95vw', autoFocus: 'first-tabbable', disableClose: true
-    }).afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(resultado => {
-      if (resultado === true) {
-        this.notificacion.exito(proveedor ? 'Proveedor actualizado correctamente.' : 'Proveedor registrado correctamente.');
-        this.recargarConKpis();
-      }
-    });
+  nueva(): void {
+    void this.router.navigate(['/app/proveedores/nueva']);
+  }
+
+  abrir(proveedor: Proveedor): void {
+    void this.router.navigate(['/app/proveedores', proveedor.idProveedor]);
   }
 
   cambiarEstado(proveedor: Proveedor): void {
@@ -151,7 +149,7 @@ export class ProveedorListaComponent {
       peligro: !activar
     };
     this.dialog.open(ConfirmarDialogComponent, { data, width: '440px', autoFocus: 'dialog' })
-      .afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(confirmado => {
+      .afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((confirmado: boolean) => {
         if (!confirmado) return;
         this.proveedorService.cambiarEstado(proveedor.idProveedor, activar)
           .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({

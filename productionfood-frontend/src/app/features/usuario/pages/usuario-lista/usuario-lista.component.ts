@@ -24,6 +24,7 @@ import {
   tap
 } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Router, RouterLink } from '@angular/router';
 
 import { NotificacionService } from '../../../../core/ui/notificacion.service';
 import { SiRolDirective } from '../../../../shared/directives/si-rol.directive';
@@ -41,7 +42,6 @@ import { FiltroBusquedaComponent } from '../../../../shared/components/filtro-bu
 import { Rol, Usuario } from '../../models/usuario.model';
 import { RolService } from '../../services/rol.service';
 import { UsuarioService } from '../../services/usuario.service';
-import { UsuarioEditorComponent } from '../usuario-editor/usuario-editor.component';
 
 @Component({
   selector: 'app-usuario-lista',
@@ -63,7 +63,7 @@ import { UsuarioEditorComponent } from '../usuario-editor/usuario-editor.compone
     EstadoVacioComponent,
     EstadoBadgeComponent,
     FiltroBusquedaComponent,
-    UsuarioEditorComponent
+    RouterLink
   ],
   templateUrl: './usuario-lista.component.html',
   styleUrl: './usuario-lista.component.scss'
@@ -73,6 +73,7 @@ export class UsuarioListaComponent {
   private readonly usuarioService = inject(UsuarioService);
   private readonly rolService = inject(RolService);
   private readonly notificacion = inject(NotificacionService);
+  private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -206,20 +207,11 @@ export class UsuarioListaComponent {
   }
 
   editar(usuario: Usuario): void {
-    this.dialog
-      .open(UsuarioEditorComponent, {
-        data: { usuario },
-        width: '460px',
-        autoFocus: 'first-tabbable'
-      })
-      .afterClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(actualizado => {
-        if (actualizado) {
-          this.notificacion.exito('Usuario actualizado correctamente.');
-          this.recargar();
-        }
-      });
+    void this.router.navigate(['/app/usuarios/editar', usuario.idUsuario]);
+  }
+
+  nueva(): void {
+    void this.router.navigate(['/app/usuarios/nuevo']);
   }
 
   cambiarEstado(usuario: Usuario): void {
