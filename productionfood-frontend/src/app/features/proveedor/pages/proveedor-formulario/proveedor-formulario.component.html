@@ -1,15 +1,21 @@
 <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
   <header class="formulario-cabecera">
     <div>
-      <h2 mat-dialog-title>{{ esEdicion ? 'Editar proveedor' : 'Nuevo proveedor' }}</h2>
+      <button mat-button type="button" [disabled]="guardando()" (click)="cancelar()">
+        <mat-icon>arrow_back</mat-icon>
+        Volver a proveedores
+      </button>
+      <h1>{{ esEdicion ? 'Editar proveedor' : 'Nuevo proveedor' }}</h1>
       <p>Datos de contacto para compras y abastecimiento.</p>
     </div>
-    <button mat-icon-button type="button" aria-label="Cerrar formulario" [disabled]="guardando()" (click)="cancelar()">
-      <mat-icon>close</mat-icon>
-    </button>
+    @if (esEdicion && proveedor(); as p) {
+      <span class="formulario-estado" [class.inactiva]="!p.activo">{{ p.activo ? 'Activo' : 'Inactivo' }}</span>
+    }
   </header>
 
-  <mat-dialog-content class="formulario-cuerpo">
+  @if (cargando()) {
+    <div class="estado-carga"><mat-spinner diameter="24"></mat-spinner><span>Cargando proveedor…</span></div>
+  } @else {
     @if (errorGeneral()) {
       <div class="formulario-alerta formulario-alerta--error" role="alert">
         <mat-icon>error_outline</mat-icon>
@@ -58,15 +64,15 @@
         </mat-form-field>
       </div>
     </section>
-  </mat-dialog-content>
 
-  <mat-dialog-actions class="formulario-acciones" align="end">
-    <button mat-button type="button" [disabled]="guardando()" (click)="cancelar()">Cancelar</button>
-    <button mat-flat-button type="submit" [disabled]="guardando() || form.invalid">
-      @if (guardando()) {
-        <mat-spinner diameter="18" aria-label="Guardando"></mat-spinner>
-      }
-      {{ guardando() ? 'Guardando…' : 'Guardar' }}
-    </button>
-  </mat-dialog-actions>
+    <div class="formulario-acciones">
+      <button mat-button type="button" [disabled]="guardando()" (click)="cancelar()">Cancelar</button>
+      <button mat-flat-button type="submit" [disabled]="guardando() || form.invalid">
+        @if (guardando()) {
+          <mat-spinner diameter="18" aria-label="Guardando"></mat-spinner>
+        }
+        {{ guardando() ? 'Guardando…' : 'Guardar' }}
+      </button>
+    </div>
+  }
 </form>

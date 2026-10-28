@@ -1,15 +1,21 @@
 <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
   <header class="formulario-cabecera">
     <div>
-      <h2 mat-dialog-title>{{ esEdicion ? 'Editar materia prima' : 'Nueva materia prima' }}</h2>
+      <button mat-button type="button" [disabled]="guardando()" (click)="cancelar()">
+        <mat-icon>arrow_back</mat-icon>
+        Volver a materias primas
+      </button>
+      <h1>{{ esEdicion ? 'Editar materia prima' : 'Nueva materia prima' }}</h1>
       <p>Insumo que se compra y se consume en las recetas.</p>
     </div>
-    <button mat-icon-button type="button" aria-label="Cerrar formulario" [disabled]="guardando()" (click)="cancelar()">
-      <mat-icon>close</mat-icon>
-    </button>
+    @if (esEdicion && materia(); as m) {
+      <span class="formulario-estado" [class.inactiva]="!m.activo">{{ m.activo ? 'Activa' : 'Inactiva' }}</span>
+    }
   </header>
 
-  <mat-dialog-content class="formulario-cuerpo">
+  @if (cargando()) {
+    <div class="estado-carga"><mat-spinner diameter="24"></mat-spinner><span>Cargando materia prima…</span></div>
+  } @else {
     @if (errorGeneral()) {
       <div class="formulario-alerta formulario-alerta--error" role="alert">
         <mat-icon>error_outline</mat-icon>
@@ -98,16 +104,16 @@
         </mat-form-field>
       </div>
     </section>
-  </mat-dialog-content>
 
-  <mat-dialog-actions class="formulario-acciones" align="end">
-    <button mat-button type="button" (click)="cancelar()" [disabled]="guardando()">Cancelar</button>
-    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || guardando() || sinUnidades">
-      @if (guardando()) {
-        <mat-spinner diameter="18" />
-      } @else {
-        {{ esEdicion ? 'Guardar cambios' : 'Registrar materia prima' }}
-      }
-    </button>
-  </mat-dialog-actions>
+    <div class="formulario-acciones">
+      <button mat-button type="button" (click)="cancelar()" [disabled]="guardando()">Cancelar</button>
+      <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || guardando() || sinUnidades">
+        @if (guardando()) {
+          <mat-spinner diameter="18" />
+        } @else {
+          {{ esEdicion ? 'Guardar cambios' : 'Registrar materia prima' }}
+        }
+      </button>
+    </div>
+  }
 </form>

@@ -1,4 +1,3 @@
-import { DevolucionFormularioComponent } from '../../../devolucion/pages/devolucion-formulario/devolucion-formulario.component';
 import { AgregarProductoDialogComponent } from '../../components/agregar-producto-dialog/agregar-producto-dialog.component';
 import { DetallePedidoTablaComponent } from '../../components/detalle-pedido-tabla/detalle-pedido-tabla.component';
 import { DetallePedidoService } from '../../services/detalle-pedido.service';
@@ -11,7 +10,7 @@ import {
   signal
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -30,7 +29,6 @@ import {
 import { EstadoPedido, LineaPedido, Pedido } from '../../models/pedido.model';
 import { PedidoService } from '../../services/pedido.service';
 import { CancelarPedidoDialogComponent } from '../../components/cancelar-pedido-dialog/cancelar-pedido-dialog.component';
-import { PedidoFormularioComponent } from '../pedido-formulario/pedido-formulario.component';
 
 /**
  * Detalle de un pedido (HU-16): cabecera con estado, acciones de la máquina
@@ -62,6 +60,7 @@ export class PedidoDetalleComponent {
   private readonly pedidoService = inject(PedidoService);
   private readonly notificacion = inject(NotificacionService);
   private readonly dialog = inject(MatDialog);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly idPedido = Number(this.route.snapshot.paramMap.get('id'));
@@ -139,22 +138,7 @@ export class PedidoDetalleComponent {
       return;
     }
 
-    this.dialog
-      .open(PedidoFormularioComponent, {
-        data: { pedido },
-        width: '520px',
-        maxWidth: '95vw',
-        autoFocus: 'first-tabbable',
-        disableClose: true
-      })
-      .afterClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(resultado => {
-        if (resultado === true) {
-          this.notificacion.exito('Pedido actualizado correctamente.');
-          this.recargar();
-        }
-      });
+    void this.router.navigate(['/app/pedidos', pedido.idPedido, 'editar']);
   }
 
   iniciarPreparacion(): void {
@@ -227,7 +211,7 @@ export class PedidoDetalleComponent {
   registrarDevolucion(linea: LineaPedido): void {
     const pedido=this.pedido();
     if(!pedido||pedido.estado!=='ENTREGADO')return;
-    this.dialog.open(DevolucionFormularioComponent,{data:{pedido,linea},width:'560px',maxWidth:'95vw',disableClose:true}).afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(ok=>{if(ok){this.notificacion.exito('Devolución registrada, pendiente de aprobación.');this.recargar();}});
+    void this.router.navigate(['/app/devoluciones','nueva',pedido.idPedido,linea.idDetallePedido]);
   }
   agregarProducto(): void {
     if (!this.pedido()?.editable) return;

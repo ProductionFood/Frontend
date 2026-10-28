@@ -1,15 +1,18 @@
 <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
   <header class="formulario-cabecera">
     <div>
-      <h2 mat-dialog-title>Editar usuario</h2>
+      <button mat-button type="button" [disabled]="guardando()" (click)="cancelar()">
+        <mat-icon>arrow_back</mat-icon>
+        Volver a usuarios
+      </button>
+      <h1>Editar usuario</h1>
       <p>Actualiza los datos de acceso y el rol del usuario.</p>
     </div>
-    <button mat-icon-button type="button" aria-label="Cerrar formulario" [disabled]="guardando()" (click)="cancelar()">
-      <mat-icon>close</mat-icon>
-    </button>
   </header>
 
-  <mat-dialog-content class="formulario-cuerpo">
+  @if (cargando()) {
+    <div class="estado-carga"><mat-spinner diameter="24"></mat-spinner><span>Cargando usuario…</span></div>
+  } @else {
     @if (errorGeneral()) {
       <div class="formulario-alerta formulario-alerta--error" role="alert">
         <mat-icon>error_outline</mat-icon>
@@ -60,16 +63,16 @@
         </mat-form-field>
       </div>
     </section>
-  </mat-dialog-content>
 
-  <mat-dialog-actions class="formulario-acciones" align="end">
-    <button mat-button type="button" (click)="cancelar()" [disabled]="guardando()">Cancelar</button>
-    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || guardando()">
-      @if (guardando()) {
-        <mat-spinner diameter="18" />
-      } @else {
-        Guardar cambios
-      }
-    </button>
-  </mat-dialog-actions>
+    <div class="formulario-acciones">
+      <button mat-button type="button" (click)="cancelar()" [disabled]="guardando()">Cancelar</button>
+      <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || guardando()">
+        @if (guardando()) {
+          <mat-spinner diameter="18" />
+        } @else {
+          Guardar cambios
+        }
+      </button>
+    </div>
+  }
 </form>

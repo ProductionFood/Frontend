@@ -41,7 +41,7 @@ import { KpisCatalogoComponent } from '../../../../shared/components/kpis-catalo
 import { MateriaPrima } from '../../models/materia-prima.model';
 import { MateriaPrimaService } from '../../services/materia-prima.service';
 import { contarCatalogo } from '../../../../shared/utils/conteo-catalogo';
-import { MateriaPrimaFormularioComponent } from '../materia-prima-formulario/materia-prima-formulario.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-materia-prima-lista',
@@ -56,7 +56,6 @@ import { MateriaPrimaFormularioComponent } from '../materia-prima-formulario/mat
     MatMenuModule,
     MatProgressBarModule,
     SiRolDirective,
-    MateriaPrimaFormularioComponent,
     KpisCatalogoComponent,
     TablaPaginadaComponent,
     TablaColumnaDirective,
@@ -70,6 +69,7 @@ export class MateriaPrimaListaComponent {
   private readonly materiaPrimaService = inject(MateriaPrimaService);
   private readonly notificacion = inject(NotificacionService);
   private readonly dialog = inject(MatDialog);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly columnas: ColumnaTabla[] = [
@@ -202,26 +202,8 @@ export class MateriaPrimaListaComponent {
   }
 
   abrirFormulario(materia?: MateriaPrima): void {
-    this.dialog
-      .open(MateriaPrimaFormularioComponent, {
-        data: { materia },
-        width: '600px',
-        maxWidth: '95vw',
-        autoFocus: 'first-tabbable',
-        disableClose: true
-      })
-      .afterClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((resultado) => {
-        if (resultado === true) {
-          this.notificacion.exito(
-            materia
-              ? 'Materia prima actualizada correctamente.'
-              : 'Materia prima registrada correctamente.'
-          );
-          this.recargar();
-        }
-      });
+    const ruta = materia ? ['/app/materias-primas', materia.idMateriaPrima, 'editar'] : ['/app/materias-primas', 'nuevo'];
+    void this.router.navigate(ruta);
   }
 
   cambiarEstado(materia: MateriaPrima): void {

@@ -1,3 +1,23 @@
 @use '../../../../shared/styles/ui' as ui;
 
-@include ui.formulario-dialogo;
+@include ui.formulario-pagina;
+
+:host {
+  width: min(100% - 2rem, 820px);
+  margin: clamp(1rem, 3vw, 2rem) auto;
+}
+
+.estado-carga {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 1rem 0.2rem;
+  color: var(--formulario-texto-secundario);
+}
+
+@media (max-width: 600px) {
+  :host {
+    width: min(100% - 1rem, 820px);
+    margin: 0.5rem auto;
+  }
+}

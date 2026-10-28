@@ -22,7 +22,7 @@ import { TablaColumnaDirective } from '../../../../shared/components/tabla-pagin
 import { EstadoVacioComponent } from '../../../../shared/components/estado-vacio/estado-vacio.component';
 import { Producto } from '../../models/producto.model';
 import { ProductoService } from '../../services/producto.service';
-import { ProductoFormularioComponent } from '../producto-formulario/producto-formulario.component';
+import { Router } from '@angular/router';
 import { KpiCardComponent } from '../../../../shared/components/kpi-card/kpi-card.component';
 import { contarCatalogo } from '../../../../shared/utils/conteo-catalogo';
 
@@ -38,6 +38,7 @@ export class ProductoListaComponent {
   private readonly productoService = inject(ProductoService);
   private readonly notificacion = inject(NotificacionService);
   private readonly dialog = inject(MatDialog);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly columnas: ColumnaTabla[] = [
@@ -166,14 +167,8 @@ export class ProductoListaComponent {
   }
 
   abrirFormulario(producto?: Producto): void {
-    this.dialog.open(ProductoFormularioComponent, {
-      data: { producto }, width: '620px', maxWidth: '95vw', autoFocus: 'first-tabbable', disableClose: true
-    }).afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(resultado => {
-      if (resultado === true) {
-        this.notificacion.exito(producto ? 'Producto actualizado correctamente.' : 'Producto registrado correctamente.');
-        this.recargarConKpis();
-      }
-    });
+    const ruta = producto ? ['/app/productos', producto.idProducto, 'editar'] : ['/app/productos', 'nuevo'];
+    void this.router.navigate(ruta);
   }
 
   cambiarEstado(producto: Producto): void {

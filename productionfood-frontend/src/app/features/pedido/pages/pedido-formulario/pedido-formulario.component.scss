@@ -1,9 +1,33 @@
 @use '../../../../shared/styles/ui' as ui;
 
-@include ui.formulario-dialogo;
+@include ui.formulario-pagina;
+
+:host {
+  width: min(100% - 2rem, 960px);
+  margin: clamp(1rem, 3vw, 2rem) auto;
+}
+
+.formulario-estado {
+  @include ui.formulario-estado;
+}
 
 .formulario-alerta a {
   color: inherit;
   font-weight: 700;
   text-underline-offset: 3px;
+}
+
+.estado-carga {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 1rem 0.2rem;
+  color: var(--formulario-texto-secundario);
+}
+
+@media (max-width: 600px) {
+  :host {
+    width: min(100% - 1rem, 960px);
+    margin: 0.5rem auto;
+  }
 }

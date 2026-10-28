@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 import { rolGuard } from '../../core/auth/rol.guard';
 import { PedidoConsultaComponent } from './pages/pedido-consulta/pedido-consulta.component';
 import { PedidoDetalleComponent } from './pages/pedido-detalle/pedido-detalle.component';
+import { PedidoFormularioComponent } from './pages/pedido-formulario/pedido-formulario.component';
 import { PedidoListaComponent } from './pages/pedido-lista/pedido-lista.component';
 
 const ROLES_CONSULTA = ['ADMIN', 'VENTAS', 'PRODUCCION', 'CONSULTA'] as const;
@@ -15,10 +16,20 @@ export const PEDIDO_ROUTES: Routes = [
     canActivate: [rolGuard([...ROLES_CONSULTA])]
   },
   {
+    path: 'nuevo',
+    component: PedidoFormularioComponent,
+    canActivate: [rolGuard(['ADMIN', 'VENTAS'])]
+  },
+  {
     // Antes de ':id' para que "consulta" no se interprete como un id.
     path: 'consulta',
     component: PedidoConsultaComponent,
     canActivate: [rolGuard([...ROLES_CONSULTA])]
+  },
+  {
+    path: ':id/editar',
+    component: PedidoFormularioComponent,
+    canActivate: [rolGuard(['ADMIN', 'VENTAS'])]
   },
   {
     path: ':id',

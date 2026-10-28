@@ -1,134 +1,136 @@
-<form [formGroup]="form" (ngSubmit)="guardar()" id="lote-form" novalidate>
+<form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
   <header class="formulario-cabecera">
     <div>
-      <h2 mat-dialog-title>Nuevo lote de materia prima</h2>
+      <button mat-button type="button" [disabled]="guardando()" (click)="cancelar()">
+        <mat-icon>arrow_back</mat-icon>
+        Volver a lotes
+      </button>
+      <h1>Nuevo lote de materia prima</h1>
       <p>Registra la entrada de un lote con su código, fechas y cantidad.</p>
     </div>
-    <button mat-icon-button type="button" aria-label="Cerrar formulario" [disabled]="guardando()" (click)="cancelar()">
-      <mat-icon>close</mat-icon>
-    </button>
   </header>
 
   @if (guardando()) {
     <mat-progress-bar mode="indeterminate" aria-label="Registrando lote" />
   }
 
-  <mat-dialog-content class="formulario-cuerpo">
-    @if (errorGeneral()) {
-      <div class="formulario-alerta formulario-alerta--error" role="alert">
-        <mat-icon>error_outline</mat-icon>
-        <span>{{ errorGeneral() }}</span>
-      </div>
-    }
-
-    <section class="formulario-seccion">
-      <div class="formulario-seccion__titulo">
-        <h3>Identificación del lote</h3>
-        <p>El código identifica el lote en inventario y trazabilidad.</p>
-      </div>
-
-      <div class="formulario-grid">
-        <mat-form-field appearance="outline">
-          <mat-label>Código de lote</mat-label>
-          <input matInput formControlName="codigoLote" maxlength="30" autocomplete="off" required />
-          @if (form.controls.codigoLote.hasError('required')) {
-            <mat-error>El código es obligatorio</mat-error>
-          }
-          @if (form.controls.codigoLote.hasError('maxlength')) {
-            <mat-error>Máximo 30 caracteres</mat-error>
-          }
-          @if (errorCampo('codigoLote')) {
-            <mat-error>{{ errorCampo('codigoLote') }}</mat-error>
-          }
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Materia prima</mat-label>
-          <mat-select formControlName="idMateriaPrima" required>
-            <mat-option [value]="null">Seleccione una materia prima</mat-option>
-            @for (m of materias(); track m.idMateriaPrima) {
-              <mat-option [value]="m.idMateriaPrima">{{ m.nombre }} ({{ m.unidad.abreviatura }})</mat-option>
-            }
-          </mat-select>
-          @if (form.controls.idMateriaPrima.hasError('required')) {
-            <mat-error>Seleccione una materia prima</mat-error>
-          }
-          @if (errorCampo('idMateriaPrima')) {
-            <mat-error>{{ errorCampo('idMateriaPrima') }}</mat-error>
-          }
-        </mat-form-field>
-      </div>
-    </section>
-
-    <section class="formulario-seccion">
-      <div class="formulario-seccion__titulo">
-        <h3>Fechas y cantidad</h3>
-        <p>El vencimiento no puede ser anterior a la fecha de producción.</p>
-      </div>
-
-      <div class="formulario-grid">
-        <mat-form-field appearance="outline">
-          <mat-label>Fecha de producción</mat-label>
-          <input matInput [matDatepicker]="produccionPicker" formControlName="fechaProduccion" required />
-          <mat-datepicker-toggle matIconSuffix [for]="produccionPicker" />
-          <mat-datepicker #produccionPicker />
-          @if (form.controls.fechaProduccion.hasError('required')) {
-            <mat-error>Indique la fecha de producción</mat-error>
-          }
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Fecha de vencimiento</mat-label>
-          <input matInput [matDatepicker]="vencimientoPicker" [min]="fechaMinimaVencimiento" formControlName="fechaVencimiento" required />
-          <mat-datepicker-toggle matIconSuffix [for]="vencimientoPicker" />
-          <mat-datepicker #vencimientoPicker />
-          @if (form.controls.fechaVencimiento.hasError('required')) {
-            <mat-error>Indique la fecha de vencimiento</mat-error>
-          }
-          @if (errorCampo('fechaVencimiento')) {
-            <mat-error>{{ errorCampo('fechaVencimiento') }}</mat-error>
-          }
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="ancho-completo">
-          <mat-label>Cantidad</mat-label>
-          <input matInput type="number" min="0.000001" step="any" formControlName="cantidad" required />
-          <span matTextSuffix>{{ materiaSeleccionada?.unidad?.abreviatura ?? 'unidad' }}</span>
-          @if (form.controls.cantidad.hasError('required')) {
-            <mat-error>La cantidad es obligatoria</mat-error>
-          }
-          @if (form.controls.cantidad.hasError('min')) {
-            <mat-error>Debe ser mayor que cero</mat-error>
-          }
-          @if (errorCampo('cantidad')) {
-            <mat-error>{{ errorCampo('cantidad') }}</mat-error>
-          }
-        </mat-form-field>
-
-        @if (vencido) {
-          <div class="formulario-alerta formulario-alerta--aviso ancho-completo" role="status">
-            <mat-icon>warning</mat-icon>
-            <span>La fecha de vencimiento ya pasó. El lote se registrará igualmente, pero quedará marcado como vencido.</span>
-          </div>
-        }
-      </div>
-    </section>
-
-    <div class="formulario-alerta formulario-alerta--info">
-      <mat-icon>inventory_2</mat-icon>
-      <div>
-        <strong>Impacto en el inventario</strong>
-        <p>{{ impacto }}</p>
-        <small>Verifique que esta entrada no haya sido sumada previamente desde una compra.</small>
-      </div>
+  @if (errorGeneral()) {
+    <div class="formulario-alerta formulario-alerta--error" role="alert">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ errorGeneral() }}</span>
     </div>
-  </mat-dialog-content>
+  }
 
-  <mat-dialog-actions class="formulario-acciones" align="end">
+  <section class="formulario-seccion">
+    <div class="formulario-seccion__titulo">
+      <h3>Identificación del lote</h3>
+      <p>El código identifica el lote en inventario y trazabilidad.</p>
+    </div>
+
+    <div class="formulario-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Código de lote</mat-label>
+        <input matInput formControlName="codigoLote" maxlength="30" autocomplete="off" required />
+        @if (form.controls.codigoLote.hasError('required')) {
+          <mat-error>El código es obligatorio</mat-error>
+        }
+        @if (form.controls.codigoLote.hasError('maxlength')) {
+          <mat-error>Máximo 30 caracteres</mat-error>
+        }
+        @if (errorCampo('codigoLote')) {
+          <mat-error>{{ errorCampo('codigoLote') }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Materia prima</mat-label>
+        <mat-select formControlName="idMateriaPrima" required>
+          <mat-option [value]="null">Seleccione una materia prima</mat-option>
+          @for (m of materias(); track m.idMateriaPrima) {
+            <mat-option [value]="m.idMateriaPrima">{{ m.nombre }} ({{ m.unidad.abreviatura }})</mat-option>
+          }
+        </mat-select>
+        @if (form.controls.idMateriaPrima.hasError('required')) {
+          <mat-error>Seleccione una materia prima</mat-error>
+        }
+        @if (errorCampo('idMateriaPrima')) {
+          <mat-error>{{ errorCampo('idMateriaPrima') }}</mat-error>
+        }
+      </mat-form-field>
+    </div>
+  </section>
+
+  <section class="formulario-seccion">
+    <div class="formulario-seccion__titulo">
+      <h3>Fechas y cantidad</h3>
+      <p>El vencimiento no puede ser anterior a la fecha de producción.</p>
+    </div>
+
+    <div class="formulario-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Fecha de producción</mat-label>
+        <input matInput [matDatepicker]="produccionPicker" formControlName="fechaProduccion" required />
+        <mat-datepicker-toggle matIconSuffix [for]="produccionPicker" />
+        <mat-datepicker #produccionPicker />
+        @if (form.controls.fechaProduccion.hasError('required')) {
+          <mat-error>Indique la fecha de producción</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Fecha de vencimiento</mat-label>
+        <input matInput [matDatepicker]="vencimientoPicker" [min]="fechaMinimaVencimiento" formControlName="fechaVencimiento" required />
+        <mat-datepicker-toggle matIconSuffix [for]="vencimientoPicker" />
+        <mat-datepicker #vencimientoPicker />
+        @if (form.controls.fechaVencimiento.hasError('required')) {
+          <mat-error>Indique la fecha de vencimiento</mat-error>
+        }
+        @if (errorCampo('fechaVencimiento')) {
+          <mat-error>{{ errorCampo('fechaVencimiento') }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="ancho-completo">
+        <mat-label>Cantidad</mat-label>
+        <input matInput type="number" min="0.000001" step="any" formControlName="cantidad" required />
+        <span matTextSuffix>{{ materiaSeleccionada?.unidad?.abreviatura ?? 'unidad' }}</span>
+        @if (form.controls.cantidad.hasError('required')) {
+          <mat-error>La cantidad es obligatoria</mat-error>
+        }
+        @if (form.controls.cantidad.hasError('min')) {
+          <mat-error>Debe ser mayor que cero</mat-error>
+        }
+        @if (errorCampo('cantidad')) {
+          <mat-error>{{ errorCampo('cantidad') }}</mat-error>
+        }
+      </mat-form-field>
+
+      @if (vencido) {
+        <div class="formulario-alerta formulario-alerta--aviso ancho-completo" role="status">
+          <mat-icon>warning</mat-icon>
+          <span>La fecha de vencimiento ya pasó. El lote se registrará igualmente, pero quedará marcado como vencido.</span>
+        </div>
+      }
+    </div>
+  </section>
+
+  <div class="formulario-alerta formulario-alerta--info">
+    <mat-icon>inventory_2</mat-icon>
+    <div>
+      <strong>Impacto en el inventario</strong>
+      <p>{{ impacto }}</p>
+      <small>Verifique que esta entrada no haya sido sumada previamente desde una compra.</small>
+    </div>
+  </div>
+
+  <div class="formulario-acciones">
     <button mat-button type="button" (click)="cancelar()" [disabled]="guardando()">Cancelar</button>
-    <button mat-flat-button color="primary" type="submit" form="lote-form" [disabled]="guardando()">
-      <mat-icon>save</mat-icon>
-      Registrar lote
+    <button mat-flat-button color="primary" type="submit" [disabled]="guardando()">
+      @if (guardando()) {
+        <mat-spinner diameter="18" />
+      } @else {
+        Registrar lote
+      }
     </button>
-  </mat-dialog-actions>
+  </div>
 </form>

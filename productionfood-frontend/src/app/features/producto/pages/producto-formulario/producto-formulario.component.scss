@@ -1,15 +1,35 @@
 @use '../../../../shared/styles/ui' as ui;
 
-@include ui.formulario-dialogo;
+@include ui.formulario-pagina;
 
+:host {
+  width: min(100% - 2rem, 960px);
+  margin: clamp(1rem, 3vw, 2rem) auto;
+}
+
+.formulario-estado {
+  @include ui.formulario-estado;
+}
+
+.estado-carga,
 .estado-unidades {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
-  padding: 0.8rem 0.9rem;
-  border-radius: var(--radio-m, 10px);
-  background: var(--superficie-suave);
+  gap: 0.7rem;
+  padding: 1rem 0.2rem;
   color: var(--formulario-texto-secundario);
   font-size: 0.85rem;
-  line-height: 1.5;
+}
+
+.estado-unidades {
+  padding: 0.8rem 0.9rem;
+  border-radius: var(--radio-m);
+  background: var(--superficie-suave);
+}
+
+@media (max-width: 600px) {
+  :host {
+    width: min(100% - 1rem, 960px);
+    margin: 0.5rem auto;
+  }
 }

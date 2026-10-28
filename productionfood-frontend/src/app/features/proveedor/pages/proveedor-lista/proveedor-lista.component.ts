@@ -22,7 +22,7 @@ import { Proveedor } from '../../models/proveedor.model';
 import { ProveedorService } from '../../services/proveedor.service';
 import { KpisCatalogoComponent } from '@shared/components/kpis-catalogo/kpis-catalogo.component';
 import { contarCatalogo } from '@shared/utils/conteo-catalogo';
-import { ProveedorFormularioComponent } from '../proveedor-formulario/proveedor-formulario.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-proveedor-lista',
@@ -36,6 +36,7 @@ export class ProveedorListaComponent {
   private readonly proveedorService = inject(ProveedorService);
   private readonly notificacion = inject(NotificacionService);
   private readonly dialog = inject(MatDialog);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly columnas: ColumnaTabla[] = [
@@ -130,14 +131,8 @@ export class ProveedorListaComponent {
   }
 
   abrirFormulario(proveedor?: Proveedor): void {
-    this.dialog.open(ProveedorFormularioComponent, {
-      data: { proveedor }, width: '560px', maxWidth: '95vw', autoFocus: 'first-tabbable', disableClose: true
-    }).afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(resultado => {
-      if (resultado === true) {
-        this.notificacion.exito(proveedor ? 'Proveedor actualizado correctamente.' : 'Proveedor registrado correctamente.');
-        this.recargarConKpis();
-      }
-    });
+    const ruta = proveedor ? ['/app/proveedores', proveedor.idProveedor, 'editar'] : ['/app/proveedores', 'nuevo'];
+    void this.router.navigate(ruta);
   }
 
   cambiarEstado(proveedor: Proveedor): void {

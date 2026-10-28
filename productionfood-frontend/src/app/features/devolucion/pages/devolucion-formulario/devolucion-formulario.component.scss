@@ -1,6 +1,19 @@
 @use '../../../../shared/styles/ui' as ui;
 
-@include ui.formulario-dialogo;
+@include ui.formulario-pagina;
+
+:host {
+  width: min(100% - 2rem, 900px);
+  margin: clamp(1rem, 3vw, 2rem) auto;
+}
+
+.estado-carga {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 1rem 0.2rem;
+  color: var(--formulario-texto-secundario);
+}
 
 .resumen {
   padding-bottom: 0.35rem;
@@ -25,4 +38,11 @@
   color: var(--texto);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  :host {
+    width: min(100% - 1rem, 900px);
+    margin: 0.5rem auto;
+  }
 }

@@ -14,7 +14,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import {
   EMPTY,
@@ -36,7 +36,6 @@ import { Proveedor } from '../../../proveedor/models/proveedor.model';
 import { ProveedorService } from '../../../proveedor/services/proveedor.service';
 import { Compra, CompraPrefill, EstadoCompra } from '../../models/compra.model';
 import { CompraService } from '../../services/compra.service';
-import { CompraFormularioComponent } from '../compra-formulario/compra-formulario.component';
 
 /**
  * Listado de compras (HU-13). Número, proveedor, fecha, ítems, total y
@@ -71,6 +70,7 @@ export class CompraListaComponent {
   private readonly proveedorService = inject(ProveedorService);
   private readonly notificacion = inject(NotificacionService);
   private readonly dialog = inject(MatDialog);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly columnas: ColumnaTabla[] = [
@@ -156,26 +156,12 @@ export class CompraListaComponent {
   }
 
   abrirFormulario(compra?: Compra, prefill?: CompraPrefill): void {
-    this.dialog
-      .open(CompraFormularioComponent, {
-        data: { compra, prefill },
-        width: '520px',
-        maxWidth: '95vw',
-        autoFocus: 'first-tabbable',
-        disableClose: true
-      })
-      .afterClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(resultado => {
-        if (resultado === true) {
-          this.notificacion.exito(
-            compra
-              ? 'Compra actualizada correctamente.'
-              : 'Compra registrada correctamente.'
-          );
-          this.recargar();
-        }
-      });
+    if (compra) {
+      void this.router.navigate(['/app/compras', compra.idCompra, 'editar']);
+      return;
+    }
+    const extras = prefill ? { state: { compraPrefill: prefill } } : {};
+    void this.router.navigate(['/app/compras', 'nuevo'], extras);
   }
 
   /**

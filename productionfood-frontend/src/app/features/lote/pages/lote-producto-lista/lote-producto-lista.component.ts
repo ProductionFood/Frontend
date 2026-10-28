@@ -4,31 +4,28 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { PageEvent } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { Sort } from '@angular/material/sort';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, Subject, catchError, switchMap, tap } from 'rxjs';
 import { Producto } from '../../../producto/models/producto.model';
 import { SiRolDirective } from '../../../../shared/directives/si-rol.directive';
-import { NotificacionService } from '../../../../core/ui/notificacion.service';
-import { LoteProducto, ResultadoLoteProducto } from '../../models/lote-producto.model';
+import { LoteProducto } from '../../models/lote-producto.model';
 import { LoteProductoService } from '../../services/lote-producto.service';
 import { SemaforoVencimientoComponent } from '../../components/semaforo-vencimiento/semaforo-vencimiento.component';
-import { LoteProductoFormularioComponent } from '../lote-producto-formulario/lote-producto-formulario.component';
 import { EstadoVacioComponent } from '../../../../shared/components/estado-vacio/estado-vacio.component';
 import { KpiCardComponent } from '../../../../shared/components/kpi-card/kpi-card.component';
 import { TarjetaTablaComponent } from '../../../../shared/components/tarjeta-tabla/tarjeta-tabla.component';
 import { ColumnaTabla, TablaPaginadaComponent } from '../../../../shared/components/tabla-paginada/tabla-paginada.component';
 import { TablaColumnaDirective } from '../../../../shared/components/tabla-paginada/tabla-columna.directive';
-@Component({selector:'app-lote-producto-lista',standalone:true,imports:[DatePipe,DecimalPipe,ReactiveFormsModule,MatButtonModule,MatCheckboxModule,MatDialogModule,MatFormFieldModule,MatIconModule,MatProgressBarModule,MatSelectModule,RouterLink,SiRolDirective,SemaforoVencimientoComponent,EstadoVacioComponent,KpiCardComponent,TarjetaTablaComponent,TablaPaginadaComponent,TablaColumnaDirective],templateUrl:'./lote-producto-lista.component.html',styleUrl:'./lote-producto-lista.component.scss'})
+@Component({selector:'app-lote-producto-lista',standalone:true,imports:[DatePipe,DecimalPipe,ReactiveFormsModule,MatButtonModule,MatCheckboxModule,MatFormFieldModule,MatIconModule,MatProgressBarModule,MatSelectModule,RouterLink,SiRolDirective,SemaforoVencimientoComponent,EstadoVacioComponent,KpiCardComponent,TarjetaTablaComponent,TablaPaginadaComponent,TablaColumnaDirective],templateUrl:'./lote-producto-lista.component.html',styleUrl:'./lote-producto-lista.component.scss'})
 export class LoteProductoListaComponent {
-  private readonly fb=inject(FormBuilder);private readonly service=inject(LoteProductoService);private readonly dialog=inject(MatDialog);private readonly notify=inject(NotificacionService);private readonly destroyRef=inject(DestroyRef);
+  private readonly fb=inject(FormBuilder);private readonly service=inject(LoteProductoService);private readonly router=inject(Router);private readonly destroyRef=inject(DestroyRef);
   readonly columnas:ColumnaTabla[]=[{id:'codigoLote',titulo:'Código',ordenable:true},{id:'producto',titulo:'Producto',ordenable:false},{id:'fechaProduccion',titulo:'Producción',ordenable:true},{id:'fechaVencimiento',titulo:'Vence',ordenable:true},{id:'cantidadIngresada',titulo:'Ingresó',ordenable:false,clase:'numerica'},{id:'cantidadDisponible',titulo:'Disponible',ordenable:false,clase:'numerica'},{id:'estado',titulo:'Estado',ordenable:false},{id:'acciones',titulo:'Acciones',ordenable:false}];
   readonly filtros=this.fb.group({idProducto:this.fb.control<number|null>(null),soloConStock:true,incluirVencidos:true,proximos:false});
   readonly lotes=signal<LoteProducto[]>([]);readonly productos=signal<Producto[]>([]);readonly total=signal(0);readonly pagina=signal(0);readonly tamano=signal(10);readonly sort=signal('fechaVencimiento,asc');readonly cargando=signal(false);readonly error=signal('');private readonly reload$=new Subject<void>();
@@ -43,5 +40,5 @@ export class LoteProductoListaComponent {
  recargar():void{this.reload$.next();}
   cambiarPagina(e:PageEvent):void{this.pagina.set(e.pageIndex);this.tamano.set(e.pageSize);this.recargar();}
   ordenar(e:Sort):void{this.sort.set(e.direction?`${e.active},${e.direction}`:'fechaVencimiento,asc');this.recargar();}
-  abrirFormulario():void{this.dialog.open(LoteProductoFormularioComponent,{width:'680px',maxWidth:'96vw',disableClose:true}).afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((r:ResultadoLoteProducto|undefined)=>{if(r){const mensaje=r.saldoAnterior!==undefined&&r.saldoPosterior!==undefined?` Stock: ${r.saldoAnterior} → ${r.saldoPosterior}.`:'';this.notify.exito(`Lote registrado correctamente.${mensaje}`);this.recargar();}});}
+  abrirFormulario():void{void this.router.navigate(['/app/lotes-producto','nuevo']);}
 }

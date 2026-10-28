@@ -41,7 +41,7 @@ import { FiltroBusquedaComponent } from '../../../../shared/components/filtro-bu
 import { Rol, Usuario } from '../../models/usuario.model';
 import { RolService } from '../../services/rol.service';
 import { UsuarioService } from '../../services/usuario.service';
-import { UsuarioEditorComponent } from '../usuario-editor/usuario-editor.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-usuario-lista',
@@ -63,7 +63,6 @@ import { UsuarioEditorComponent } from '../usuario-editor/usuario-editor.compone
     EstadoVacioComponent,
     EstadoBadgeComponent,
     FiltroBusquedaComponent,
-    UsuarioEditorComponent
   ],
   templateUrl: './usuario-lista.component.html',
   styleUrl: './usuario-lista.component.scss'
@@ -74,6 +73,7 @@ export class UsuarioListaComponent {
   private readonly rolService = inject(RolService);
   private readonly notificacion = inject(NotificacionService);
   private readonly dialog = inject(MatDialog);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly columnas: ColumnaTabla[] = [
@@ -206,20 +206,7 @@ export class UsuarioListaComponent {
   }
 
   editar(usuario: Usuario): void {
-    this.dialog
-      .open(UsuarioEditorComponent, {
-        data: { usuario },
-        width: '460px',
-        autoFocus: 'first-tabbable'
-      })
-      .afterClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(actualizado => {
-        if (actualizado) {
-          this.notificacion.exito('Usuario actualizado correctamente.');
-          this.recargar();
-        }
-      });
+    void this.router.navigate(['/app/usuarios', usuario.idUsuario, 'editar']);
   }
 
   cambiarEstado(usuario: Usuario): void {

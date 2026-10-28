@@ -22,7 +22,7 @@ import { Cliente } from '../../models/cliente.model';
 import { ClienteService } from '../../services/cliente.service';
 import { KpisCatalogoComponent } from '@shared/components/kpis-catalogo/kpis-catalogo.component';
 import { contarCatalogo } from '@shared/utils/conteo-catalogo';
-import { ClienteFormularioComponent } from '../cliente-formulario/cliente-formulario.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-cliente-lista',
@@ -36,6 +36,7 @@ export class ClienteListaComponent {
   private readonly clienteService = inject(ClienteService);
   private readonly notificacion = inject(NotificacionService);
   private readonly dialog = inject(MatDialog);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly columnas: ColumnaTabla[] = [
@@ -128,14 +129,8 @@ export class ClienteListaComponent {
   }
 
   abrirFormulario(cliente?: Cliente): void {
-    this.dialog.open(ClienteFormularioComponent, {
-      data: { cliente }, width: '520px', maxWidth: '95vw', autoFocus: 'first-tabbable', disableClose: true
-    }).afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(resultado => {
-      if (resultado === true) {
-        this.notificacion.exito(cliente ? 'Cliente actualizado correctamente.' : 'Cliente registrado correctamente.');
-        this.recargar();
-      }
-    });
+    const ruta = cliente ? ['/app/clientes', cliente.idCliente, 'editar'] : ['/app/clientes', 'nuevo'];
+    void this.router.navigate(ruta);
   }
 
   cambiarEstado(cliente: Cliente): void {

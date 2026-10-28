@@ -14,7 +14,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import {
   EMPTY,
@@ -36,7 +36,6 @@ import { Cliente } from '../../../cliente/models/cliente.model';
 import { ClienteService } from '../../../cliente/services/cliente.service';
 import { EstadoPedido, Pedido } from '../../models/pedido.model';
 import { PedidoService } from '../../services/pedido.service';
-import { PedidoFormularioComponent } from '../pedido-formulario/pedido-formulario.component';
 
 /**
  * Listado de pedidos (HU-16). Número, cliente, fechas, ítems, total y
@@ -72,6 +71,7 @@ export class PedidoListaComponent {
   private readonly clienteService = inject(ClienteService);
   private readonly notificacion = inject(NotificacionService);
   private readonly dialog = inject(MatDialog);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly columnas: ColumnaTabla[] = [
@@ -171,26 +171,8 @@ export class PedidoListaComponent {
   }
 
   abrirFormulario(pedido?: Pedido): void {
-    this.dialog
-      .open(PedidoFormularioComponent, {
-        data: { pedido },
-        width: '520px',
-        maxWidth: '95vw',
-        autoFocus: 'first-tabbable',
-        disableClose: true
-      })
-      .afterClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(resultado => {
-        if (resultado === true) {
-          this.notificacion.exito(
-            pedido
-              ? 'Pedido actualizado correctamente.'
-              : 'Pedido creado correctamente.'
-          );
-          this.recargar();
-        }
-      });
+    const ruta = pedido ? ['/app/pedidos', pedido.idPedido, 'editar'] : ['/app/pedidos', 'nuevo'];
+    void this.router.navigate(ruta);
   }
 
   /** Entrega de un pedido aún no cerrado con fecha ya superada (🔴). */
