@@ -1,18 +1,21 @@
-import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, signal } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, ViewEncapsulation, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { RevealDirective } from './reveal.directive';
+import { LandingFaqComponent } from './components/faq/faq.component';
+import { LandingPricingComponent } from './components/pricing/pricing.component';
 
 const SECCIONES = ['inicio', 'caracteristicas', 'beneficios', 'precios', 'contacto'];
 
 @Component({
   selector: 'app-landing',
-  imports: [RouterLink, RevealDirective],
+  imports: [RouterLink, RevealDirective, LandingFaqComponent, LandingPricingComponent],
   templateUrl: './landing.component.html',
-  styleUrl: './landing.component.scss'
+  styleUrl: './landing.component.scss',
+  encapsulation: ViewEncapsulation.None,
+  host: { class: 'landing-page' }
 })
 export class LandingComponent implements AfterViewInit, OnDestroy {
-  readonly anual = signal(false);
   readonly menuAbierto = signal(false);
   readonly seccionActiva = signal('inicio');
   readonly suscrito = signal<string | null>(null);

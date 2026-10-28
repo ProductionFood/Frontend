@@ -1,7 +1,7 @@
+.landing-page {
 /* =========================================================
    ProductionFood — Landing
    ========================================================= */
-:host {
   display: block;
   font-family: var(--fuente-texto);
   background: var(--color-bg);
@@ -72,16 +72,15 @@
   /* Focus */
   --focus-ring: 2px solid var(--color-primary);
   --focus-ring-offset: 2px;
-}
 
 /* Reset scoped al componente */
-:host * { margin:0; padding:0; box-sizing:border-box; }
-:host img { max-width:100%; display:block; }
-:host a { text-decoration:none; }
-:host a:not([class]) { color:inherit; }
-:host ul { list-style:none; }
+* { margin:0; padding:0; box-sizing:border-box; }
+img { max-width:100%; display:block; }
+a { text-decoration:none; }
+a:not([class]) { color:inherit; }
+ul { list-style:none; }
 
-:host svg.ic {
+svg.ic {
   fill:none; stroke:currentColor; stroke-width:2;
   stroke-linecap:round; stroke-linejoin:round;
   width:16px; height:16px; flex-shrink:0;
@@ -95,7 +94,7 @@
 }
 
 /* Focus visible */
-:host :focus-visible {
+:focus-visible {
   outline:var(--focus-ring);
   outline-offset:var(--focus-ring-offset);
 }
@@ -922,4 +921,5 @@ section[id], footer[id] { scroll-margin-top:96px; }
     transition-duration:0.01ms !important;
     scroll-behavior:auto !important;
   }
+}
 }
