@@ -1,6 +1,7 @@
 import { bootstrapApplication } from '@angular/platform-browser';
-import { appConfig } from './app/app.config';
 import { App } from './app/app';
+import { appConfig } from './app/app.config';
 
-bootstrapApplication(App, appConfig)
-  .catch((err) => console.error(err));
+// Los errores globales se canalizan mediante provideBrowserGlobalErrorListeners()
+// configurado en app.config.ts; evitamos registrar errores con console.error.
+void bootstrapApplication(App, appConfig);

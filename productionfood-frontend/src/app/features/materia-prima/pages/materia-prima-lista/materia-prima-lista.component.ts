@@ -158,10 +158,16 @@ export class MateriaPrimaListaComponent {
       });
 
     this.recargar();
+    this.cargarKpis();
   }
 
   recargar(): void {
     this.recargar$.next();
+  }
+
+  /** Actualiza tabla e indicadores cuando cambian los datos del catálogo. */
+  private recargarConKpis(): void {
+    this.recargar();
     this.cargarKpis();
   }
 
@@ -241,7 +247,7 @@ export class MateriaPrimaListaComponent {
                   ? 'Materia prima activada.'
                   : 'Materia prima desactivada.'
               );
-              this.recargar();
+              this.recargarConKpis();
             },
             error: (error: HttpErrorResponse) => {
               if (error.status === 409) {

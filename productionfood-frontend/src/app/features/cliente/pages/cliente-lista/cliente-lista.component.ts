@@ -93,9 +93,16 @@ export class ClienteListaComponent {
     this.filtros.controls.activo.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => { this.pagina.set(0); this.recargar(); });
     this.recargar();
+    this.cargarKpis();
   }
 
-  recargar(): void { this.recargar$.next(); this.cargarKpis(); }
+  recargar(): void { this.recargar$.next(); }
+
+  /** Actualiza tabla e indicadores cuando cambian los datos del catálogo. */
+  private recargarConKpis(): void {
+    this.recargar();
+    this.cargarKpis();
+  }
 
   private cargarKpis(): void {
     this.cargandoKpis.set(true);
@@ -148,7 +155,7 @@ export class ClienteListaComponent {
         if (!confirmado) return;
         this.clienteService.cambiarEstado(cliente.idCliente, activar)
           .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-            next: () => { this.notificacion.exito(activar ? 'Cliente activado.' : 'Cliente desactivado.'); this.recargar(); },
+            next: () => { this.notificacion.exito(activar ? 'Cliente activado.' : 'Cliente desactivado.'); this.recargarConKpis(); },
             error: (error: HttpErrorResponse) => this.notificacion.error(this.mensajeError(error))
           });
       });

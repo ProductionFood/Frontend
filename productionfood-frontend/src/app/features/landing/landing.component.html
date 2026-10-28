@@ -45,30 +45,9 @@
   </div>
 </header>
 
-<!-- ============ HERO ============ -->
-<section class="hero" id="inicio" tabindex="-1">
-  <div class="hero-leaves" aria-hidden="true">
-    <img src="img/hoja-clara.svg" alt="" class="leaf leaf-1" width="240" height="240" loading="lazy">
-    <img src="img/hoja-salvia.svg" alt="" class="leaf leaf-2" width="320" height="310" loading="lazy">
-    <img src="img/hoja-clara.svg" alt="" class="leaf leaf-3" width="240" height="240" loading="lazy">
-  </div>
-  <img class="hero-backdrop" src="img/cultivo.jpg" alt="" aria-hidden="true" width="800" height="602" loading="lazy">
-  <img class="hero-visual" src="img/mockup-dispositivos.webp" alt="Vista de la plataforma ProductionFood: módulo de productos" width="6000" height="3210" fetchpriority="high">
-  <img class="hero-basket" src="img/canasta-de-frutas.png" alt="" aria-hidden="true" width="2500" height="2500" loading="lazy">
-  <div class="container">
-    <div class="hero-inner">
-      <p class="eyebrow">Tu producción, en buenas manos</p>
-      <h1 class="hero-title">Planifica. Produce.<br><span class="accent">Crece.</span></h1>
-      <p class="hero-text">ProductionFood es una solución para la planificación y gestión de la producción, diseñada para facilitar el control de procesos, recursos y operaciones en un solo lugar.</p>
-      <div class="hero-actions">
-        <a href="#caracteristicas" class="btn btn-primary btn-lg">Conocer la plataforma
-          <svg class="ic" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </a>
-        <a routerLink="/login" class="btn btn-outline btn-lg">Iniciar sesión</a>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- Hero extraído a componente independiente -->
+<app-landing-hero />
+
 
 <!-- ============ EL PROBLEMA ============ -->
 <section class="problem" id="problema" appReveal>
@@ -110,68 +89,9 @@
   </div>
 </section>
 
-<!-- ============ ¿QUÉ ES + FUNCIONALIDADES ============ -->
-<section class="about" id="caracteristicas" appReveal>
-  <div class="container about-grid">
-    <div class="about-text reveal-delay-1" appReveal>
-      <p class="eyebrow">¿Qué es ProductionFood?</p>
-      <h2 class="section-title">Una plataforma integral para tu producción</h2>
-      <p>ProductionFood te permite organizar, controlar y optimizar cada etapa de tu producción, desde la planificación hasta el análisis de resultados. Todo en un solo lugar, de forma simple, segura y eficiente.</p>
-      <div class="about-badge">
-        <img src="img/green_heart_with_leaf.jpg" alt="" width="58" height="58" loading="lazy">
-        <span>Más eficiencia, mejores resultados.</span>
-      </div>
-    </div>
+<!-- Funcionalidades y módulos extraídos a componente independiente -->
+<app-landing-modules />
 
-    <div class="features reveal-delay-2" appReveal>
-      <h3 class="section-title section-title--sm">Funcionalidades</h3>
-      <div class="cards-grid cards-grid--3">
-        <article class="card card--icon reveal-delay-3" appReveal>
-          <div class="card-icon card-icon--verde" aria-hidden="true">
-            <svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          </div>
-          <h4 class="card-title">Planificación de producción</h4>
-          <p class="card-text">Organiza y programa tus procesos.</p>
-        </article>
-        <article class="card card--icon reveal-delay-4" appReveal>
-          <div class="card-icon card-icon--verde" aria-hidden="true">
-            <svg class="ic" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-          </div>
-          <h4 class="card-title">Gestión de recursos</h4>
-          <p class="card-text">Controla inventarios, insumos y maquinaria.</p>
-        </article>
-        <article class="card card--icon reveal-delay-5" appReveal>
-          <div class="card-icon card-icon--verde" aria-hidden="true">
-            <svg class="ic" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-          </div>
-          <h4 class="card-title">Control y seguimiento</h4>
-          <p class="card-text">Monitorea cada etapa en tiempo real.</p>
-        </article>
-        <article class="card card--icon reveal-delay-6" appReveal>
-          <div class="card-icon card-icon--verde" aria-hidden="true">
-            <svg class="ic" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-          </div>
-          <h4 class="card-title">Reportes</h4>
-          <p class="card-text">Obtén información clave para decidir.</p>
-        </article>
-        <article class="card card--icon reveal-delay-1" appReveal>
-          <div class="card-icon card-icon--verde" aria-hidden="true">
-            <svg class="ic" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          </div>
-          <h4 class="card-title">Gestión de usuarios</h4>
-          <p class="card-text">Asigna roles y permisos según tu equipo.</p>
-        </article>
-        <article class="card card--icon reveal-delay-2" appReveal>
-          <div class="card-icon card-icon--verde" aria-hidden="true">
-            <svg class="ic" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-          </div>
-          <h4 class="card-title">Notificaciones</h4>
-          <p class="card-text">Mantente al día con alertas importantes.</p>
-        </article>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- ============ CÓMO FUNCIONA ============ -->
 <section class="steps" id="como-funciona" appReveal>
@@ -263,78 +183,10 @@
   </div>
 </section>
 
-<!-- ============ FAQ ============ -->
-<section class="faq" id="faq" appReveal>
-  <div class="container">
-    <header class="section-header reveal-delay-1" appReveal>
-      <p class="eyebrow">Preguntas frecuentes</p>
-      <h2 class="section-title">Todo lo que necesitas saber</h2>
-      <p class="section-sub">Respuestas rápidas. Si no encuentras la tuya, <a href="#contacto">contáctanos</a>.</p>
-    </header>
-
-    <div class="cards-grid cards-grid--2">
-      <details class="card faq-item reveal-delay-2" appReveal>
-        <summary class="faq-question">
-          <span>¿ProductionFood sirve para cualquier tipo de industria alimentaria?</span>
-          <svg class="ic faq-icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-        </summary>
-        <div class="faq-answer">
-          <p>Sí. ProductionFood está diseñado para adaptarse a panaderías, lácteos, cárnicas, conservas, repostería, bebidas y más. Los flujos se configuran según tu proceso productivo.</p>
-        </div>
-      </details>
-
-      <details class="card faq-item reveal-delay-3" appReveal>
-        <summary class="faq-question">
-          <span>¿Cuánto tarda la implementación?</span>
-          <svg class="ic faq-icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-        </summary>
-        <div class="faq-answer">
-          <p>Entre 2 y 6 semanas según la complejidad. Incluye migración de datos, capacitación del equipo y puesta en marcha asistida. Empezás a ver valor desde la primera semana.</p>
-        </div>
-      </details>
-
-      <details class="card faq-item reveal-delay-4" appReveal>
-        <summary class="faq-question">
-          <span>¿Se integra con mi ERP o contabilidad actual?</span>
-          <svg class="ic faq-icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-        </summary>
-        <div class="faq-answer">
-          <p>Sí. Contamos con API REST y conectores listos para SAP Business One, Siigo, Alegra, Odoo y otros. También exportamos a Excel/CSV para integraciones manuales.</p>
-        </div>
-      </details>
-
-      <details class="card faq-item reveal-delay-5" appReveal>
-        <summary class="faq-question">
-          <span>¿Cómo funciona el modelo de precios?</span>
-          <svg class="ic faq-icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-        </summary>
-        <div class="faq-answer">
-          <p>Suscripción mensual por plan: los usuarios, sedes y módulos van incluidos según el nivel. Facturación anual con 20% de descuento. Usuarios, sedes o módulos adicionales se cobran aparte. Prueba gratuita de 14 días con todas las funcionalidades.</p>
-        </div>
-      </details>
-
-      <details class="card faq-item reveal-delay-6" appReveal>
-        <summary class="faq-question">
-          <span>¿Qué soporte incluye?</span>
-          <svg class="ic faq-icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-        </summary>
-        <div class="faq-answer">
-          <p>Depende del plan: Starter por correo (48 h), Profesional por correo y chat (24 h), y Enterprise con soporte prioritario, SLA 99,9% y onboarding asistido. Horario L-V 8am-6pm COT.</p>
-        </div>
-      </details>
-
-      <details class="card faq-item reveal-delay-1" appReveal>
-        <summary class="faq-question">
-          <span>¿Mis datos están seguros?</span>
-          <svg class="ic faq-icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-        </summary>
-        <div class="faq-answer">
-          <p>Certificación ISO 27001, encriptación AES-256 en tránsito y reposo, backups automáticos cada 6h, y alojamiento en AWS con cumplimiento SOC 2 Type II.</p>
-        </div>
-      </details>
-    </div>
-  </div>
-</section>
+<!-- FAQ diferida: se carga cuando el navegador queda libre, fuera del render inicial de la landing. -->
+@defer (on idle) {
+  <app-landing-faq />
+}
 
 <!-- ============ INDUSTRIAS / CASOS DE USO ============ -->
 <section class="industries" id="industrias" appReveal>
@@ -428,121 +280,7 @@
 </section>
 
 <!-- ============ PRECIOS / PLANES ============ -->
-<section class="pricing" id="precios" appReveal>
-  <div class="container">
-    <header class="section-header reveal-delay-1" appReveal>
-      <p class="eyebrow">Planes</p>
-      <h2 class="section-title">Precios transparentes, sin sorpresas</h2>
-      <p class="section-sub">Todos los planes incluyen implementación guiada, capacitación y soporte. Probá 14 días gratis.</p>
-    </header>
-
-    <div class="pricing-toggle">
-      <span>Mensual</span>
-      <label class="toggle-switch" for="billing-toggle">
-        <input type="checkbox" id="billing-toggle"
-               [checked]="anual()"
-               (change)="anual.set($any($event.target).checked)"
-               [attr.aria-label]="anual() ? 'Cambiar a facturación mensual' : 'Cambiar a facturación anual'">
-        <span class="toggle-slider"></span>
-      </label>
-      <span class="annual-badge">Anual <em>20% de descuento</em></span>
-    </div>
-
-    <div class="cards-grid cards-grid--3" role="list">
-      <article class="card pricing-card reveal-delay-2" role="listitem" appReveal>
-        <header class="pricing-header">
-          <h3 class="card-title">Starter</h3>
-          <p class="pricing-desc">Para quien empieza a ordenar inventario y ventas.</p>
-        </header>
-        <div class="pricing-price">
-          <span class="currency">$</span>
-          @if (anual()) {
-            <span class="amount">48.000</span>
-          } @else {
-            <span class="amount">60.000</span>
-          }
-          <span class="period">/mes</span>
-        </div>
-        <ul class="pricing-features">
-          <li><svg class="ic" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Hasta 3 usuarios y 1 sede</li>
-          <li><svg class="ic" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Login, roles y bitácora de auditoría</li>
-          <li><svg class="ic" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Clientes, proveedores y unidades de medida</li>
-          <li><svg class="ic" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Materias primas, lotes e inventario</li>
-          <li><svg class="ic" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Productos y recetas (hasta 30)</li>
-          <li><svg class="ic" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Pedidos: creación, detalle y consulta</li>
-          <li><svg class="ic" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Dashboard y alertas de stock (histórico 3 meses)</li>
-          <li><svg class="ic" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Soporte por correo (48 h)</li>
-          <li class="disabled"><svg class="ic" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Compras, devoluciones y producción</li>
-        </ul>
-        <a href="#contacto" class="btn btn-outline btn-block">Empezar gratis</a>
-      </article>
-
-      <!-- Profesional -->
-      <article class="card pricing-card pricing-card--featured reveal-delay-3" role="listitem" appReveal>
-        <div class="popular-badge">Recomendado</div>
-        <header class="pricing-header">
-          <h3 class="card-title">Profesional</h3>
-          <p class="pricing-desc">Pyme con producción continua — el sistema completo.</p>
-        </header>
-        <div class="pricing-price">
-          <span class="currency">$</span>
-          @if (anual()) {
-            <span class="amount">120.000</span>
-          } @else {
-            <span class="amount">150.000</span>
-          }
-          <span class="period">/mes</span>
-        </div>
-        <ul class="pricing-features">
-          <li><svg class="ic" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Hasta 15 usuarios y 1 sede</li>
-          <li><svg class="ic" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Todo lo de Starter</li>
-          <li><svg class="ic" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Compras: registro, detalle e historial</li>
-          <li><svg class="ic" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Devoluciones y lotes de producto terminado</li>
-          <li><svg class="ic" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Plan de producción y consumo automático</li>
-          <li><svg class="ic" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Dashboard, eficiencia y alertas de stock</li>
-          <li><svg class="ic" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Productos y recetas ilimitados</li>
-          <li><svg class="ic" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Histórico de reportes: 12 meses</li>
-          <li><svg class="ic" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Soporte por correo y chat (24 h)</li>
-        </ul>
-        <a href="#contacto" class="btn btn-primary btn-block">Empezar gratis</a>
-      </article>
-
-      <!-- Enterprise -->
-      <article class="card pricing-card reveal-delay-4" role="listitem" appReveal>
-        <header class="pricing-header">
-          <h3 class="card-title">Enterprise</h3>
-          <p class="pricing-desc">Varias sedes o grupo empresarial: todo + capa corporativa.</p>
-        </header>
-        <div class="pricing-price">
-          <span class="currency">$</span>
-          @if (anual()) {
-            <span class="amount">280.000</span>
-          } @else {
-            <span class="amount">350.000</span>
-          }
-          <span class="period">/mes</span>
-        </div>
-        <ul class="pricing-features">
-          <li><svg class="ic" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Usuarios, sedes y plantas ilimitados</li>
-          <li><svg class="ic" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Todo lo de Profesional</li>
-          <li><svg class="ic" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Multi-sede con reportes consolidados</li>
-          <li><svg class="ic" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Roles ilimitados + SSO opcional</li>
-          <li><svg class="ic" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Bitácora y respaldos con retención ilimitada</li>
-          <li><svg class="ic" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Despliegue dedicado en AWS/RDS</li>
-          <li><svg class="ic" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> SLA 99,9% y soporte prioritario</li>
-          <li><svg class="ic" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Onboarding y capacitación del equipo</li>
-          <li><svg class="ic" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Histórico de reportes ilimitado</li>
-        </ul>
-        <a href="#contacto" class="btn btn-ghost btn-block">Contactar ventas</a>
-      </article>
-    </div>
-
-    <div class="pricing-footnote">
-      <p><strong>Incluido en todos los planes:</strong> migración de datos asistida, onboarding de 2 semanas, academia online, app móvil iOS/Android, backups automáticos, certificación ISO 27001.</p>
-      <p>Precios en COP, impuestos no incluidos. Facturación anual con <strong>20% de descuento</strong> (ahorro de $144.000 a $840.000 según el plan).</p>
-    </div>
-  </div>
-</section>
+<app-landing-pricing />
 
 <!-- ============ NEWSLETTER / LEAD CAPTURE ============ -->
 <section class="newsletter" id="newsletter" appReveal>
