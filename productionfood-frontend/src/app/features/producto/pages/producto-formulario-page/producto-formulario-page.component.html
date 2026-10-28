@@ -1,18 +1,19 @@
-<mat-toolbar class="toolbar">
-  <button mat-icon-button (click)="volver()">
-    <mat-icon>arrow_back</mat-icon>
-  </button>
-  <span>{{ esEdicion() ? 'Editar producto' : 'Nuevo producto' }}</span>
-</mat-toolbar>
+<header class="page-header">
+  <div>
+    <button mat-button type="button" (click)="volver()"><mat-icon>arrow_back</mat-icon> Volver a productos</button>
+    <h1>{{ esEdicion() ? 'Editar producto' : 'Nuevo producto' }}</h1>
+    <p>Define cómo se vende el producto terminado.</p>
+  </div>
+</header>
 
-<div class="pagina">
-  <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
-    <div class="formulario">
-      @if (errorGeneral()) {
-        <div class="error-general" role="alert"><mat-icon>error_outline</mat-icon>{{ errorGeneral() }}</div>
-      }
-
-      <mat-form-field appearance="outline" class="ancho-completo">
+<form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+  <mat-card class="sección">
+    <mat-card-header>
+      <mat-card-title>Datos del producto</mat-card-title>
+      <mat-card-subtitle>Nombre, descripción, precio de venta y unidad de venta.</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-form-field appearance="outline" class="full-width">
         <mat-label>Nombre</mat-label>
         <input matInput formControlName="nombre" maxlength="100" autocomplete="off" required />
         @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
@@ -20,7 +21,7 @@
         }
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="ancho-completo">
+      <mat-form-field appearance="outline" class="full-width">
         <mat-label>Descripción</mat-label>
         <textarea matInput formControlName="descripcion" maxlength="150" rows="3"></textarea>
         <mat-hint align="end">{{ form.controls.descripcion.value.length }} / 150</mat-hint>
@@ -29,7 +30,7 @@
         }
       </mat-form-field>
 
-      <div class="fila-campos">
+      <div class="cabecera-grid">
         <mat-form-field appearance="outline">
           <mat-label>Precio de venta</mat-label>
           <span matPrefix>$&nbsp;</span>
@@ -65,14 +66,18 @@
           <button mat-stroked-button type="button" (click)="irAUnidades()">Ir a unidades de medida</button>
         </div>
       }
-    </div>
 
-    <div class="acciones">
-      <button mat-button type="button" (click)="volver()" [disabled]="guardando()">Volver</button>
-      <button mat-flat-button type="submit" [disabled]="guardando() || cargandoUnidades() || sinUnidades">
-        @if (guardando()) { <mat-spinner diameter="18"></mat-spinner> }
-        {{ guardando() ? 'Guardando…' : 'Guardar' }}
-      </button>
-    </div>
-  </form>
-</div>
+      @if (errorGeneral()) {
+        <p role="alert" class="error">{{ errorGeneral() }}</p>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <div class="acciones-finales">
+    <button mat-button type="button" (click)="volver()" [disabled]="guardando()">Cancelar</button>
+    <button mat-flat-button type="submit" [disabled]="guardando() || cargandoUnidades() || sinUnidades">
+      @if (guardando()) { <mat-spinner diameter="18"></mat-spinner> }
+      {{ guardando() ? 'Guardando…' : 'Guardar' }}
+    </button>
+  </div>
+</form>

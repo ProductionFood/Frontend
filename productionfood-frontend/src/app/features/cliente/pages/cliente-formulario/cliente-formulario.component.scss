@@ -1,33 +1,107 @@
-:host { display: block; }
-.dialogo-cliente { min-width: 0; }
-.dialogo-header {
-  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-  padding: 1.35rem 1.5rem .5rem;
+:host {
+  display: block;
+  --formulario-borde: var(--mat-sys-outline-variant, var(--borde, #e2e8e3));
+  --formulario-texto-secundario: var(--mat-sys-on-surface-variant, #607168);
 }
-.dialogo-header h2 {
-  margin: 0; color: var(--verde-900); font-family: var(--fuente-display);
-  font-size: 1.5rem; font-weight: 600; line-height: 1.25;
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
-mat-dialog-content { padding: .7rem 1.5rem 1.25rem; }
-.campo { display: block; width: 100%; margin-top: 8px; }
+
+.page-header > div { min-width: 0; }
+.page-header > div > button { margin-left: -0.5rem; }
+.page-header h1 {
+  margin: .35rem 0 .4rem;
+  color: var(--mat-sys-primary, #0e3b2a);
+  font-size: clamp(1.55rem, 2.4vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -.025em;
+  line-height: 1.2;
+}
+.page-header p {
+  max-width: 720px;
+  margin: 0;
+  color: var(--formulario-texto-secundario);
+  line-height: 1.55;
+}
+
+.sección {
+  margin-bottom: 1.15rem;
+  overflow: hidden;
+  border: 1px solid var(--formulario-borde);
+  border-radius: 1rem;
+  box-shadow: 0 3px 12px rgb(20 50 35 / 4%);
+}
+.sección mat-card-header {
+  align-items: center;
+  gap: .75rem;
+  margin-bottom: .75rem;
+  padding-bottom: .85rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--formulario-borde) 72%, transparent);
+}
+.sección mat-card-title {
+  color: var(--mat-sys-primary, #0e3b2a);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.campo { width: 100%; min-width: 0; }
+.campo mat-form-field { width: 100%; }
+
 .aviso-duplicado {
-  display: flex; align-items: center; gap: 8px; margin: 0 0 8px; padding: 10px 12px;
-  border-radius: var(--radio-m, 10px); color: var(--aviso-texto, #795400);
-  background: var(--aviso-fondo, #FFF4D6); font-size: 12px; line-height: 1.45;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 1rem;
+  padding: 10px 12px;
+  border-radius: var(--radio-m, 10px);
+  color: var(--aviso-texto, #795400);
+  background: var(--aviso-fondo, #FFF4D6);
+  font-size: 12px;
+  line-height: 1.45;
 }
 .aviso-duplicado mat-icon { flex: 0 0 auto; font-size: 18px; width: 18px; height: 18px; }
+
 .error-general {
-  margin: 0 0 10px; padding: 11px 13px; border-radius: var(--radio-m, 10px);
-  color: var(--peligro-texto); background: var(--peligro-fondo);
-  border: 1px solid color-mix(in srgb, var(--peligro-texto) 16%, transparent); line-height: 1.5;
+  display: flex;
+  align-items: flex-start;
+  gap: .7rem;
+  margin: .65rem 0 1rem;
+  padding: .9rem 1rem;
+  border-radius: .8rem;
+  line-height: 1.45;
+  border: 1px solid #f2c8c8;
+  background: #fff1f1;
+  color: var(--peligro-texto, #a12626);
+  font-size: .875rem;
 }
-mat-dialog-actions { gap: 10px; padding: 14px 24px 22px; border-top: 1px solid var(--borde, #E2E8E3); }
-mat-dialog-actions button { min-width: 104px; min-height: 40px; border-radius: var(--radio-m, 10px); }
-mat-spinner { display: inline-block; margin-right: 8px; }
-@media (max-width: 600px) {
-  .dialogo-header { padding: 1.1rem 1.15rem .4rem; }
-  .dialogo-header h2 { font-size: 1.3rem; }
-  mat-dialog-content { padding: .5rem 1.15rem 1rem; }
-  mat-dialog-actions { padding: 12px 1.15rem 18px; flex-wrap: wrap; }
-  mat-dialog-actions button { flex: 1 1 auto; }
+.error-general mat-icon { flex: 0 0 auto; width: 20px; height: 20px; font-size: 20px; }
+
+.acciones-finales {
+  display: flex;
+  justify-content: flex-end;
+  gap: .75rem;
+  margin: 1.5rem 0 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--formulario-borde);
+}
+.acciones-finales button { min-height: 42px; }
+.acciones-finales button[type='submit'] { min-width: 160px; }
+
+@media (max-width: 720px) {
+  .page-header { flex-direction: column; }
+  .acciones-finales { flex-direction: column-reverse; }
+  .acciones-finales button { width: 100%; }
+}
+
+:host-context(html[data-theme='dark']) {
+  .error-general {
+    border-color: var(--borde);
+    background: var(--peligro-fondo);
+    color: var(--peligro-texto);
+  }
 }

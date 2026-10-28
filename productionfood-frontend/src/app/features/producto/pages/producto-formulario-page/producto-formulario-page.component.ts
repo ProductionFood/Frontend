@@ -15,7 +15,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { UnidadMedida } from '../../../unidad-medida/models/unidad-medida.model';
@@ -43,8 +42,7 @@ function maxDosDecimales(control: AbstractControl): ValidationErrors | null {
     MatIconModule,
     MatInputModule,
     MatProgressSpinnerModule,
-    MatSelectModule,
-    MatToolbarModule
+    MatSelectModule
   ],
   templateUrl: './producto-formulario-page.component.html',
   styleUrl: './producto-formulario-page.component.scss'
