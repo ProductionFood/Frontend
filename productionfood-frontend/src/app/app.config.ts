@@ -16,6 +16,8 @@ import { authInterceptor } from './core/auth/auth.interceptor';
 
 import { errorInterceptor } from './core/http/error.interceptor';
 
+import { conexionInterceptor } from './core/http/conexion.interceptor';
+
 registerLocaleData(localeEsCO);
 
 export const appConfig: ApplicationConfig = {
@@ -26,7 +28,7 @@ export const appConfig: ApplicationConfig = {
 
     provideRouter(routes, withComponentInputBinding()),
 
-    provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, conexionInterceptor, errorInterceptor])),
 
     {
       provide: MAT_DATE_LOCALE,

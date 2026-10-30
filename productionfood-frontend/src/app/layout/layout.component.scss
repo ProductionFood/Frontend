@@ -12,8 +12,8 @@
    SIDEBAR — Navy 900 (guía §06)
    ========================================================= */
 .sidenav {
-  width: 260px;
-  max-width: 260px;
+  width: var(--ancho-sidebar, 260px);
+  max-width: var(--ancho-sidebar, 260px);
   box-sizing: border-box;
   background:
     radial-gradient(ellipse at 0% 0%, rgba(44, 178, 123, 0.09), transparent 38%),
@@ -329,6 +329,14 @@
   margin-inline: 0;
 }
 
+/* Iconos lineales (Lucide): trazo fino y tamaño fijo dentro de su caja.
+   El SVG lo inserta MatIcon en tiempo de ejecución, por eso ::ng-deep. */
+.sidenav mat-icon ::ng-deep svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 1.75;
+}
+
 /* ---------------------------------------------------------
    Contadores de pendientes por módulo
    --------------------------------------------------------- */
@@ -367,6 +375,109 @@
 .sidenav ::ng-deep .mdc-list-item__end {
   margin-inline-start: auto;
   padding-left: 8px;
+}
+
+/* ---------------------------------------------------------
+   Ítem activo: un solo fondo que se desliza entre ítems
+   --------------------------------------------------------- */
+.nav {
+  position: relative;
+}
+
+.sidenav .nav a {
+  z-index: 1;
+}
+
+.indicador-activo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  box-sizing: border-box;
+  border: 1px solid rgba(148, 238, 190, 0.16);
+  border-radius: 10px;
+  background: linear-gradient(105deg, rgba(35, 160, 105, 0.98), rgba(39, 178, 117, 0.92));
+  box-shadow: 0 5px 14px rgba(18, 140, 87, 0.19), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  pointer-events: none;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    bottom: 8px;
+    width: 3px;
+    border-radius: 0 4px 4px 0;
+    background: #d5ffe6;
+    box-shadow: 0 0 10px rgba(213, 255, 230, 0.35);
+  }
+}
+
+.indicador-activo.animar {
+  transition:
+    transform 0.3s cubic-bezier(0.2, 0.75, 0.25, 1),
+    width 0.28s ease,
+    height 0.28s ease;
+}
+
+/* Con el indicador, el ítem activo deja de pintar su propio fondo. */
+.nav.con-indicador a.activo,
+.nav.con-indicador a.activo:hover {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+
+  &::before {
+    display: none;
+  }
+}
+
+.sidenav.colapsado .indicador-activo {
+  background: rgba(39, 178, 117, 0.15);
+  border-color: rgba(131, 224, 177, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(131, 224, 177, 0.025);
+
+  &::before {
+    left: 1px;
+    top: 12px;
+    bottom: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .indicador-activo.animar {
+    transition: none;
+  }
+}
+
+/* ---------------------------------------------------------
+   Indicador de "hay más módulos abajo"
+   --------------------------------------------------------- */
+.mas-abajo {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  height: 40px;
+  margin-top: -40px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 2px;
+  background: linear-gradient(to bottom, rgba(16, 27, 39, 0), var(--navy-900) 85%);
+  color: #8fd6b4;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.mas-abajo.visible {
+  opacity: 1;
 }
 
 /* ---------------------------------------------------------
@@ -470,10 +581,46 @@
     color: #e3f2ea;
   }
 
-  span {
+  > span:not(.conexion) {
     font-size: 11px;
     color: #8fa6a8;
     letter-spacing: 0.01em;
+  }
+}
+
+/* Estado de conexión: punto + texto (nunca solo color, guía §13). */
+.lema .conexion {
+  margin-top: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #8fd6b4;
+}
+
+.conexion-punto {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--verde-500);
+  box-shadow: 0 0 0 3px rgba(31, 170, 112, 0.18);
+}
+
+.lema .conexion.sin-servidor,
+.lema .conexion.sin-internet {
+  color: #ffd38a;
+
+  .conexion-punto {
+    background: #f5a623;
+    box-shadow: 0 0 0 3px rgba(245, 166, 35, 0.2);
+    animation: conexion-latido 1.6s ease-in-out infinite;
+  }
+}
+
+@keyframes conexion-latido {
+  50% {
+    opacity: 0.45;
   }
 }
 
@@ -505,6 +652,19 @@
 .sidenav.colapsado .lema,
 .sidenav.colapsado .lema-fondo {
   display: none;
+}
+
+/* Colapsado: si se pierde la conexión, un punto ámbar sobre la hoja. */
+.sidenav.colapsado .sidebar-bottom.desconectado .lema-icono::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 9px;
+  height: 9px;
+  border: 2px solid var(--navy-900);
+  border-radius: 50%;
+  background: #f5a623;
 }
 
 .sidenav.colapsado .sidebar-bottom {
@@ -593,8 +753,44 @@ mat-sidenav-content {
   transition: margin-left 0.28s cubic-bezier(0.2, 0.75, 0.25, 1);
 }
 
+/* Modo lateral: el contenido acompaña el ancho elegido para el sidebar. */
+.shell.lateral mat-sidenav-content {
+  margin-left: var(--ancho-sidebar, 260px) !important;
+}
+
 .shell.colapsado mat-sidenav-content {
   margin-left: 80px !important;
+}
+
+/* Mientras se arrastra, el ancho sigue al cursor sin animación. */
+.shell.arrastrando,
+.shell.arrastrando * {
+  cursor: col-resize !important;
+  user-select: none;
+}
+
+.shell.arrastrando .sidenav,
+.shell.arrastrando mat-sidenav-content {
+  transition: none !important;
+}
+
+/* Barra para arrastrar el borde derecho del sidebar. */
+.redimensionar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 5;
+  width: 6px;
+  cursor: col-resize;
+  transition: background 0.2s ease;
+}
+
+.redimensionar:hover,
+.redimensionar:focus-visible,
+.shell.arrastrando .redimensionar {
+  background: linear-gradient(to right, transparent 2px, rgba(131, 224, 177, 0.55) 2px);
+  outline: none;
 }
 
 /* FIX: el host real es <mat-sidenav>; aseguramos box-sizing */

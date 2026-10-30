@@ -1,22 +1,38 @@
 import { IndicadorAlertasComponent } from './components/indicador-alertas/indicador-alertas.component';
 import { MigasComponent } from './components/migas/migas.component';
 import { BuscadorModulosComponent, ModuloBuscable } from './components/buscador-modulos/buscador-modulos.component';
-import { Component, computed, inject, signal, ViewChild } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  ElementRef,
+  afterNextRender,
+  computed,
+  inject,
+  signal,
+  viewChild,
+  ViewChild,
+} from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
+import { DomSanitizer } from '@angular/platform-browser';
 import { MatMenuModule } from '@angular/material/menu';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter, fromEvent, merge } from 'rxjs';
 
 import { AuthService } from '../core/auth/auth.service';
 import { TemaService } from '../core/ui/tema.service';
+import { ConexionService } from '../core/http/conexion.service';
 import { ContadoresNav, ContadoresNavService } from './contadores-nav.service';
+import { registrarIconosNavegacion } from './iconos-navegacion';
 import { MODULOS_REALES, NavGrupo, NavItem, NAV_GRUPOS } from './nav-items';
+
+/** Clave del ancho del sidebar elegido por el usuario (preferencia local). */
+const CLAVE_ANCHO = 'productionfood_ancho_sidebar';
 
 /** Espera mínima entre recargas de contadores al navegar. */
 const REFRESCO_CONTADORES_MS = 30_000;
@@ -44,6 +60,18 @@ const REFRESCO_CONTADORES_MS = 30_000;
 export class LayoutComponent {
   readonly authService = inject(AuthService);
   readonly tema = inject(TemaService);
+  readonly conexion = inject(ConexionService);
+
+  readonly textoConexion = computed(() => {
+    switch (this.conexion.estado()) {
+      case 'sin-internet':
+        return 'Sin internet';
+      case 'sin-servidor':
+        return 'Sin conexión con el servidor';
+      default:
+        return 'Sincronizado';
+    }
+  });
   private readonly breakpoint = inject(BreakpointObserver);
   private readonly router = inject(Router);
   private readonly contadoresService = inject(ContadoresNavService);
@@ -77,8 +105,25 @@ export class LayoutComponent {
   });
 
   @ViewChild('sidenav') private sidenav?: MatSidenav;
+  private readonly navLista = viewChild<string, ElementRef<HTMLElement>>('navLista', { read: ElementRef });
+
+  /** Hay módulos ocultos bajo el borde del menú (muestra el degradado). */
+  readonly hayMasAbajo = signal(false);
+
+  readonly anchoMin = 220;
+  readonly anchoMax = 360;
+  readonly anchoPorDefecto = 260;
+  readonly anchoSidebar = signal(this.leerAnchoGuardado());
+  readonly arrastrando = signal(false);
+
+  /** Fondo verde compartido que se desliza hasta el ítem activo. */
+  readonly indicador = signal<{ x: number; y: number; ancho: number; alto: number } | null>(null);
+  /** La primera ubicación no se anima; las siguientes sí. */
+  readonly animarIndicador = signal(false);
 
   constructor() {
+    registrarIconosNavegacion(inject(MatIconRegistry), inject(DomSanitizer));
+
     this.breakpoint
       .observe([Breakpoints.Handset, Breakpoints.TabletPortrait])
       .pipe(takeUntilDestroyed())
@@ -93,6 +138,97 @@ export class LayoutComponent {
       .pipe(takeUntilDestroyed())
       .subscribe(() => this.cargarContadores());
     this.cargarContadores(true);
+
+    // El menú cambia de alto al redimensionar la ventana o colapsar el sidebar.
+    const destroyRef = inject(DestroyRef);
+    afterNextRender(() => {
+      const nav = this.navLista()?.nativeElement;
+      if (!nav) return;
+      const observador = new ResizeObserver(() => {
+        this.revisarScroll();
+        this.actualizarIndicador();
+      });
+      observador.observe(nav);
+
+      // routerLinkActive cambia la clase `activo` cuando termina la navegación:
+      // se reubica el indicador justo cuando eso ocurre.
+      const cambiosDeClase = new MutationObserver(() => this.actualizarIndicador());
+      cambiosDeClase.observe(nav, { subtree: true, attributes: true, attributeFilter: ['class'] });
+      this.actualizarIndicador();
+
+      destroyRef.onDestroy(() => {
+        observador.disconnect();
+        cambiosDeClase.disconnect();
+      });
+    });
+  }
+
+  private actualizarIndicador(): void {
+    const activo = this.navLista()?.nativeElement.querySelector<HTMLElement>('a.activo');
+    if (!activo) {
+      this.indicador.set(null);
+      return;
+    }
+    const nuevo = {
+      x: activo.offsetLeft,
+      y: activo.offsetTop,
+      ancho: activo.offsetWidth,
+      alto: activo.offsetHeight,
+    };
+    const actual = this.indicador();
+    const igual =
+      actual &&
+      actual.x === nuevo.x &&
+      actual.y === nuevo.y &&
+      actual.ancho === nuevo.ancho &&
+      actual.alto === nuevo.alto;
+    if (!igual) this.indicador.set(nuevo);
+    // Habilita la animación después de la primera ubicación.
+    if (!this.animarIndicador()) setTimeout(() => this.animarIndicador.set(true));
+  }
+
+  iniciarArrastre(evento: PointerEvent): void {
+    evento.preventDefault();
+    this.arrastrando.set(true);
+    const mover = (e: PointerEvent) => this.cambiarAncho(e.clientX, false);
+    const soltar = () => {
+      this.arrastrando.set(false);
+      this.guardarAncho();
+      document.removeEventListener('pointermove', mover);
+      document.removeEventListener('pointerup', soltar);
+    };
+    document.addEventListener('pointermove', mover);
+    document.addEventListener('pointerup', soltar);
+  }
+
+  cambiarAncho(ancho: number, guardar = true): void {
+    this.anchoSidebar.set(Math.round(Math.min(this.anchoMax, Math.max(this.anchoMin, ancho))));
+    if (guardar) this.guardarAncho();
+    // Al arrastrar no hay animación; con teclado o doble clic se espera a que termine (0,28 s).
+    setTimeout(() => this.actualizarIndicador(), this.arrastrando() ? 0 : 320);
+  }
+
+  private leerAnchoGuardado(): number {
+    try {
+      const guardado = Number(localStorage.getItem(CLAVE_ANCHO));
+      return guardado >= this.anchoMin && guardado <= this.anchoMax ? guardado : this.anchoPorDefecto;
+    } catch {
+      return this.anchoPorDefecto;
+    }
+  }
+
+  private guardarAncho(): void {
+    try {
+      localStorage.setItem(CLAVE_ANCHO, String(this.anchoSidebar()));
+    } catch {
+      // Sin almacenamiento disponible: el ancho vale solo para esta sesión.
+    }
+  }
+
+  revisarScroll(): void {
+    const nav = this.navLista()?.nativeElement;
+    if (!nav) return;
+    this.hayMasAbajo.set(nav.scrollHeight - nav.scrollTop - nav.clientHeight > 8);
   }
 
   private cargarContadores(forzar = false): void {
@@ -175,6 +311,8 @@ export class LayoutComponent {
     }
 
     this.colapsado.update((valor) => !valor);
+    // Al terminar la animación del ancho (0.28 s) los ítems ya tienen su posición final.
+    setTimeout(() => this.actualizarIndicador(), 320);
   }
 
   cerrarSesion(): void {

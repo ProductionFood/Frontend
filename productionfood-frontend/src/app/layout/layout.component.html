@@ -1,6 +1,9 @@
 <mat-sidenav-container
   class="shell"
   [class.colapsado]="colapsado() && !modoCompacto()"
+  [class.lateral]="!modoCompacto()"
+  [class.arrastrando]="arrastrando()"
+  [style.--ancho-sidebar]="anchoSidebar() + 'px'"
 >
   <mat-sidenav
     #sidenav
@@ -9,6 +12,24 @@
     class="sidenav"
     [class.colapsado]="colapsado() && !modoCompacto()"
   >
+    @if (!modoCompacto() && !colapsado()) {
+      <div
+        class="redimensionar"
+        role="separator"
+        aria-orientation="vertical"
+        aria-label="Ajustar el ancho del menú"
+        [attr.aria-valuenow]="anchoSidebar()"
+        [attr.aria-valuemin]="anchoMin"
+        [attr.aria-valuemax]="anchoMax"
+        tabindex="0"
+        title="Arrastra para ajustar el ancho · doble clic para restablecer"
+        (pointerdown)="iniciarArrastre($event)"
+        (dblclick)="cambiarAncho(anchoPorDefecto)"
+        (keydown.arrowleft)="cambiarAncho(anchoSidebar() - 16)"
+        (keydown.arrowright)="cambiarAncho(anchoSidebar() + 16)"
+      ></div>
+    }
+
     <div class="brand">
       <div class="brand-icon">
         <img src="/logos/isotipo-oscuro.svg" alt="">
@@ -26,12 +47,29 @@
       [attr.title]="colapsado() ? 'Buscar módulo (Ctrl+K)' : null"
       aria-label="Buscar módulo (Ctrl+K)"
     >
-      <mat-icon>search</mat-icon>
+      <mat-icon svgIcon="nav:search"></mat-icon>
       <span class="buscar-texto">Buscar módulo</span>
       <kbd class="buscar-atajo">Ctrl K</kbd>
     </button>
 
-    <mat-nav-list class="nav" aria-label="Navegación principal">
+    <mat-nav-list
+      #navLista
+      class="nav"
+      [class.con-indicador]="indicador()"
+      aria-label="Navegación principal"
+      (scroll)="revisarScroll()"
+    >
+      @if (indicador(); as pos) {
+        <span
+          class="indicador-activo"
+          [class.animar]="animarIndicador()"
+          [style.transform]="'translate(' + pos.x + 'px, ' + pos.y + 'px)'"
+          [style.width.px]="pos.ancho"
+          [style.height.px]="pos.alto"
+          aria-hidden="true"
+        ></span>
+      }
+
       <a
         mat-list-item
         routerLink="/app/dashboard"
@@ -39,7 +77,7 @@
         (click)="cerrarEnMovil()"
         [attr.title]="colapsado() ? 'Dashboard' : null"
       >
-        <mat-icon matListItemIcon>dashboard</mat-icon>
+        <mat-icon matListItemIcon svgIcon="nav:dashboard"></mat-icon>
         <span class="item-titulo" matListItemTitle>Dashboard</span>
       </a>
 
@@ -54,7 +92,7 @@
             (click)="cerrarEnMovil()"
             [attr.title]="tituloColapsado(item)"
           >
-            <mat-icon matListItemIcon>{{ item.icono }}</mat-icon>
+            <mat-icon matListItemIcon [svgIcon]="'nav:' + item.icono"></mat-icon>
             <span class="item-titulo" matListItemTitle>{{ item.titulo }}</span>
             @if (contadores()[item.ruta]; as contador) {
               <span
@@ -69,14 +107,18 @@
       }
     </mat-nav-list>
 
+    <div class="mas-abajo" [class.visible]="hayMasAbajo()" aria-hidden="true">
+      <mat-icon>keyboard_arrow_down</mat-icon>
+    </div>
+
     <div class="separator"></div>
 
-    <div class="sidebar-bottom" aria-hidden="true">
-      <svg class="lema-fondo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+    <div class="sidebar-bottom" [class.desconectado]="conexion.estado() !== 'sincronizado'" [attr.title]="colapsado() ? textoConexion() : null">
+      <svg class="lema-fondo" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
         <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
         <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
       </svg>
-      <span class="lema-icono">
+      <span class="lema-icono" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
           <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
           <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
@@ -85,6 +127,15 @@
       <p class="lema">
         <strong>Alimentos de calidad,</strong>
         <span>mejor organización</span>
+        <span
+          class="conexion"
+          [class]="'conexion ' + conexion.estado()"
+          role="status"
+          [attr.title]="textoConexion()"
+        >
+          <span class="conexion-punto" aria-hidden="true"></span>
+          <span class="conexion-texto">{{ textoConexion() }}</span>
+        </span>
       </p>
     </div>
   </mat-sidenav>

@@ -2,7 +2,7 @@
   <div class="fondo" (click)="cerrar()"></div>
   <div class="paleta" role="dialog" aria-modal="true" aria-label="Buscar módulo">
     <div class="campo">
-      <mat-icon>search</mat-icon>
+      <mat-icon svgIcon="nav:search"></mat-icon>
       <input
         #campo
         type="text"
@@ -29,7 +29,7 @@
           (mouseenter)="seleccionado.set(i)"
           (click)="ir(modulo)"
         >
-          <mat-icon>{{ modulo.icono }}</mat-icon>
+          <mat-icon [svgIcon]="'nav:' + modulo.icono"></mat-icon>
           <span class="titulo">{{ modulo.titulo }}</span>
           <span class="grupo">{{ modulo.grupo }}</span>
         </li>
