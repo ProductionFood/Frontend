@@ -18,7 +18,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
+import { DomSanitizer } from '@angular/platform-browser';
 import { MatMenuModule } from '@angular/material/menu';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter, fromEvent, merge } from 'rxjs';
@@ -27,6 +28,7 @@ import { AuthService } from '../core/auth/auth.service';
 import { TemaService } from '../core/ui/tema.service';
 import { ConexionService } from '../core/http/conexion.service';
 import { ContadoresNav, ContadoresNavService } from './contadores-nav.service';
+import { registrarIconosNavegacion } from './iconos-navegacion';
 import { MODULOS_REALES, NavGrupo, NavItem, NAV_GRUPOS } from './nav-items';
 
 /** Clave del ancho del sidebar elegido por el usuario (preferencia local). */
@@ -120,6 +122,8 @@ export class LayoutComponent {
   readonly animarIndicador = signal(false);
 
   constructor() {
+    registrarIconosNavegacion(inject(MatIconRegistry), inject(DomSanitizer));
+
     this.breakpoint
       .observe([Breakpoints.Handset, Breakpoints.TabletPortrait])
       .pipe(takeUntilDestroyed())

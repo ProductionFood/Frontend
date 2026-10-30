@@ -329,6 +329,14 @@
   margin-inline: 0;
 }
 
+/* Iconos lineales (Lucide): trazo fino y tamaño fijo dentro de su caja.
+   El SVG lo inserta MatIcon en tiempo de ejecución, por eso ::ng-deep. */
+.sidenav mat-icon ::ng-deep svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 1.75;
+}
+
 /* ---------------------------------------------------------
    Contadores de pendientes por módulo
    --------------------------------------------------------- */

@@ -1,3 +1,9 @@
+mat-icon ::ng-deep svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 1.75;
+}
+
 .fondo {
   position: fixed;
   inset: 0;

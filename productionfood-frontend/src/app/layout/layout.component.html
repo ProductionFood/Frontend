@@ -47,7 +47,7 @@
       [attr.title]="colapsado() ? 'Buscar módulo (Ctrl+K)' : null"
       aria-label="Buscar módulo (Ctrl+K)"
     >
-      <mat-icon>search</mat-icon>
+      <mat-icon svgIcon="nav:search"></mat-icon>
       <span class="buscar-texto">Buscar módulo</span>
       <kbd class="buscar-atajo">Ctrl K</kbd>
     </button>
@@ -77,7 +77,7 @@
         (click)="cerrarEnMovil()"
         [attr.title]="colapsado() ? 'Dashboard' : null"
       >
-        <mat-icon matListItemIcon>dashboard</mat-icon>
+        <mat-icon matListItemIcon svgIcon="nav:dashboard"></mat-icon>
         <span class="item-titulo" matListItemTitle>Dashboard</span>
       </a>
 
@@ -92,7 +92,7 @@
             (click)="cerrarEnMovil()"
             [attr.title]="tituloColapsado(item)"
           >
-            <mat-icon matListItemIcon>{{ item.icono }}</mat-icon>
+            <mat-icon matListItemIcon [svgIcon]="'nav:' + item.icono"></mat-icon>
             <span class="item-titulo" matListItemTitle>{{ item.titulo }}</span>
             @if (contadores()[item.ruta]; as contador) {
               <span
