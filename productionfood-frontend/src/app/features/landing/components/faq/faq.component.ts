@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 
 import { RevealDirective } from '../../reveal.directive';
 
@@ -6,6 +6,8 @@ import { RevealDirective } from '../../reveal.directive';
   selector: 'app-landing-faq',
   standalone: true,
   imports: [RevealDirective],
-  templateUrl: './faq.component.html'
+  templateUrl: './faq.component.html',
+  styleUrl: './faq.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 export class LandingFaqComponent {}

@@ -9,12 +9,11 @@ import { ProductoService } from '../../producto/services/producto.service';
 import { MateriaPrimaService } from '../../materia-prima/services/materia-prima.service';
 import { RecetaService } from '../../receta/services/receta.service';
 import { PlanProduccionService } from '../../produccion/services/plan-produccion.service';
+import { FiltroPlan, PlanProduccion } from '../../produccion/models/plan-produccion.model';
 import { InventarioService } from '../../inventario/services/inventario.service';
-import {
-  ConteosDashboard,
-  DashboardResumen,
-  ResumenPorVencer
-} from '../models/dashboard.model';
+import { ConteosDashboard, DashboardResumen, ResumenPorVencer } from '../models/dashboard.model';
+
+const ROLES_PLANES = ['ADMIN', 'PRODUCCION', 'CONSULTA'];
 
 /**
  * Resumen operativo del día (HU-24). Es de solo lectura y sin caché (R-04):
@@ -27,7 +26,7 @@ export class DashboardService {
   private readonly productos = inject(ProductoService);
   private readonly materias = inject(MateriaPrimaService);
   private readonly recetas = inject(RecetaService);
-  private readonly planes = inject(PlanProduccionService);
+  private readonly planesService = inject(PlanProduccionService);
   private readonly inventario = inject(InventarioService);
   private readonly url = `${environment.apiUrl}/dashboard`;
 
@@ -36,16 +35,14 @@ export class DashboardService {
     return this.http.get<DashboardResumen>(this.url);
   }
 
-  /**
-   * Detalle de lotes por vencer. El horizonte es configurable para que otros
-   * módulos lo reutilicen (diseno.md §4); por defecto, 7 días (CA-05).
-   */
   /** Conteos de catálogos con permisos por rol (una consulta ligera cada uno). */
   conteos(): Observable<ConteosDashboard> {
-    const rol = this.auth.rol();
-    const puede = (...roles: string[]) => rol !== null && roles.includes(rol);
+    const puede = (...roles: string[]) => this.tieneRol(roles);
     const contar = (peticion: Observable<PageResponse<unknown>>) =>
-      peticion.pipe(map(respuesta => respuesta.totalElements), catchError(() => of(null)));
+      peticion.pipe(
+        map((respuesta) => respuesta.totalElements),
+        catchError(() => of(null)),
+      );
 
     return forkJoin({
       productos: puede('ADMIN', 'VENTAS', 'PRODUCCION', 'CONSULTA')
@@ -58,17 +55,42 @@ export class DashboardService {
         ? contar(this.recetas.listar({ page: 0, size: 1 }))
         : of(null),
       planes: puede('ADMIN', 'PRODUCCION', 'CONSULTA')
-        ? contar(this.planes.listar({ page: 0, size: 1 }))
+        ? contar(this.planesService.listar({ page: 0, size: 1 }))
         : of(null),
       inventario: puede('ADMIN', 'PRODUCCION', 'COMPRAS', 'CONSULTA')
         ? contar(this.inventario.listar({ page: 0, size: 1 }))
-        : of(null)
+        : of(null),
     });
   }
 
+  /**
+   * Planes de producción para el gráfico y la tabla. Reutiliza el listado de
+   * planes; los roles sin acceso a producción reciben una lista vacía en
+   * lugar de un 403.
+   */
+  planes(filtro: Omit<FiltroPlan, 'page'>): Observable<PlanProduccion[]> {
+    if (!this.tieneRol(ROLES_PLANES)) {
+      return of([]);
+    }
+
+    return this.planesService.listar({ page: 0, ...filtro }).pipe(
+      map((respuesta) => respuesta.content),
+      catchError(() => of([])),
+    );
+  }
+
+  /**
+   * Detalle de lotes por vencer. El horizonte es configurable para que otros
+   * módulos lo reutilicen (diseno.md §4); por defecto, 7 días (CA-05).
+   */
   vencimientos(dias = 7): Observable<ResumenPorVencer> {
     return this.http.get<ResumenPorVencer>(`${this.url}/vencimientos`, {
-      params: new HttpParams().set('diasVencimiento', dias)
+      params: new HttpParams().set('diasVencimiento', dias),
     });
+  }
+
+  private tieneRol(roles: string[]): boolean {
+    const rol = this.auth.rol();
+    return rol !== null && roles.includes(rol);
   }
 }

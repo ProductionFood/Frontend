@@ -1,0 +1,40 @@
+// Estilos de la sección FAQ: viajan con el bloque @defer, fuera del render inicial.
+// Se emiten sin encapsulación bajo .landing-page, igual que landing.component.scss.
+.landing-page {
+/* =========================================================
+   FAQ
+   ========================================================= */
+.faq { background:var(--color-bg); padding:clamp(32px,4vw,56px) 0; }
+.faq .cards-grid--2 { gap:16px; }
+
+.faq-item { padding:0; overflow:hidden; }
+.faq-question {
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  width:100%; padding:20px 24px; background:transparent; border:none;
+  font-family:var(--fuente-texto); font-size:var(--text-body-m); font-weight:600;
+  color:var(--color-on-surface); text-align:left; cursor:pointer;
+  transition:color var(--motion-fast);
+}
+.faq-question:hover { color:var(--color-primary); }
+.faq-question:focus-visible {
+  outline:var(--focus-ring); outline-offset:-2px;
+  border-radius:var(--radio-s);
+}
+.faq-icon {
+  width:22px; height:22px; color:var(--color-on-surface-variant);
+  flex-shrink:0; transition:transform var(--motion-fast);
+}
+.faq-item[open] .faq-icon { transform:rotate(180deg); }
+.faq-answer {
+  padding:0 24px 20px;
+  animation:fadeIn var(--motion-base) var(--motion-easing-standard);
+}
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(-8px); }
+  to { opacity:1; transform:none; }
+}
+.faq-answer p {
+  font-size:var(--text-body-s); line-height:1.6;
+  color:var(--color-on-surface-variant); margin:0;
+}
+}

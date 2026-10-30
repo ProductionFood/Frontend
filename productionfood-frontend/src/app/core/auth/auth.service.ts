@@ -1,31 +1,14 @@
-import {
-  Injectable,
-  computed,
-  inject,
-  signal
-} from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 
-import {
-  HttpClient
-} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
-import {
-  Observable,
-  tap
-} from 'rxjs';
+import { Observable, tap } from 'rxjs';
 
-import {
-  Router
-} from '@angular/router';
+import { Router } from '@angular/router';
 
-import {
-  environment
-} from '../../../environments/environment';
+import { environment } from '../../../environments/environment';
 
-import {
-  Usuario,
-  RolNombre
-} from '../../features/usuario/models/usuario.model';
+import { Usuario, RolNombre } from '../../features/usuario/models/usuario.model';
 
 interface LoginDto {
   correo: string;
@@ -58,10 +41,9 @@ interface JwtPayload {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
 
@@ -74,13 +56,10 @@ export class AuthService {
     const usuario = this.usuario();
     const token = this.obtenerToken();
 
-    return token !== null &&
-      usuario !== null &&
-      !this.tokenEstaExpirado(token);
+    return token !== null && usuario !== null && !this.tokenEstaExpirado(token);
   });
 
   readonly rol = computed<RolNombre | null>(() => {
-
     const usuario = this.usuario();
 
     if (!usuario) {
@@ -88,7 +67,6 @@ export class AuthService {
     }
 
     return usuario.rol.nombre as RolNombre;
-
   });
 
   constructor() {
@@ -119,50 +97,30 @@ export class AuthService {
     window.localStorage.removeItem(this.usuarioKey);
   }
 
-  login(
-    credentials: LoginDto
-  ): Observable<LoginResponse> {
+  login(credentials: LoginDto): Observable<LoginResponse> {
+    const url = `${environment.apiUrl}/auth/login`;
 
-    const url =
-      `${environment.apiUrl}/auth/login`;
-
-    return this.http
-      .post<LoginResponse>(
-        url,
-        credentials
-      )
-      .pipe(
-        tap(response => {
-          this.guardarSesion(response);
-        })
-      );
+    return this.http.post<LoginResponse>(url, credentials).pipe(
+      tap((response) => {
+        this.guardarSesion(response);
+      }),
+    );
   }
 
   logout(redirigir = true): void {
+    sessionStorage.removeItem(this.tokenKey);
 
-  sessionStorage.removeItem(
-    this.tokenKey
-  );
+    sessionStorage.removeItem(this.usuarioKey);
 
-  sessionStorage.removeItem(
-    this.usuarioKey
-  );
+    this.usuario.set(null);
 
-  this.usuario.set(null);
-
-  if (redirigir) {
-
-    void this.router.navigate([
-      '/'
-    ]);
-
+    if (redirigir) {
+      void this.router.navigate(['/']);
+    }
   }
-}
 
   obtenerToken(): string | null {
-    return sessionStorage.getItem(
-      this.tokenKey
-    );
+    return sessionStorage.getItem(this.tokenKey);
   }
 
   /** Marca de tiempo (ms) en la que expira el JWT, o `null` si no hay token. */
@@ -178,10 +136,7 @@ export class AuthService {
     return payload?.exp ? payload.exp * 1000 : null;
   }
 
-  tieneAlgunRol(
-    roles: RolNombre[]
-  ): boolean {
-
+  tieneAlgunRol(roles: RolNombre[]): boolean {
     const rolActual = this.rol();
 
     if (!rolActual) {
@@ -191,14 +146,8 @@ export class AuthService {
     return roles.includes(rolActual);
   }
 
-  private guardarSesion(
-    response: LoginResponse
-  ): void {
-
-    sessionStorage.setItem(
-      this.tokenKey,
-      response.token
-    );
+  private guardarSesion(response: LoginResponse): void {
+    sessionStorage.setItem(this.tokenKey, response.token);
 
     const info = response.usuario;
 
@@ -209,80 +158,53 @@ export class AuthService {
       activo: true,
       rol: {
         idRol: 0,
-        nombre: info.rol
-      }
+        nombre: info.rol,
+      },
     };
 
-    sessionStorage.setItem(
-      this.usuarioKey,
-      JSON.stringify(usuario)
-    );
+    sessionStorage.setItem(this.usuarioKey, JSON.stringify(usuario));
 
     this.usuario.set(usuario);
   }
 
   private restaurarSesion(): void {
-
-    const token =
-      this.obtenerToken();
+    const token = this.obtenerToken();
 
     if (!token) {
       return;
     }
 
-    if (
-      this.tokenEstaExpirado(token)
-    ) {
-
+    if (this.tokenEstaExpirado(token)) {
       this.limpiarSesion();
 
       return;
     }
 
-    const usuarioGuardado =
-      sessionStorage.getItem(
-        this.usuarioKey
-      );
+    const usuarioGuardado = sessionStorage.getItem(this.usuarioKey);
 
     if (!usuarioGuardado) {
       return;
     }
 
     try {
-
-      const usuario =
-        JSON.parse(
-          usuarioGuardado
-        ) as Usuario;
+      const usuario = JSON.parse(usuarioGuardado) as Usuario;
 
       this.usuario.set(usuario);
-
     } catch {
-
       this.limpiarSesion();
-
     }
   }
 
   private limpiarSesion(): void {
+    sessionStorage.removeItem(this.tokenKey);
 
-    sessionStorage.removeItem(
-      this.tokenKey
-    );
-
-    sessionStorage.removeItem(
-      this.usuarioKey
-    );
+    sessionStorage.removeItem(this.usuarioKey);
 
     this.usuario.set(null);
   }
 
-  private tokenEstaExpirado(
-    token: string
-  ): boolean {
-
-    const payload =
-      this.decodificarToken(token);
+  private tokenEstaExpirado(token: string): boolean {
+    const payload = this.decodificarToken(token);
 
     if (!payload) {
       return true;
@@ -292,10 +214,7 @@ export class AuthService {
       return true;
     }
 
-    return (
-      payload.exp * 1000
-      <= Date.now()
-    );
+    return payload.exp * 1000 <= Date.now();
   }
 
   private decodificarToken(token: string): JwtPayload | null {
@@ -307,27 +226,15 @@ export class AuthService {
       }
 
       // JWT usa Base64URL, que puede omitir el relleno "=".
-      const base64 = partes[1]
-        .replace(/-/g, '+')
-        .replace(/_/g, '/');
-      const base64ConRelleno = base64.padEnd(
-        Math.ceil(base64.length / 4) * 4,
-        '='
-      );
+      const base64 = partes[1].replace(/-/g, '+').replace(/_/g, '/');
+      const base64ConRelleno = base64.padEnd(Math.ceil(base64.length / 4) * 4, '=');
 
       const binario = atob(base64ConRelleno);
-      const bytes = Uint8Array.from(
-        binario,
-        caracter => caracter.charCodeAt(0)
-      );
+      const bytes = Uint8Array.from(binario, (caracter) => caracter.charCodeAt(0));
       const json = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
       const payload: unknown = JSON.parse(json);
 
-      if (
-        payload === null ||
-        typeof payload !== 'object' ||
-        Array.isArray(payload)
-      ) {
+      if (payload === null || typeof payload !== 'object' || Array.isArray(payload)) {
         return null;
       }
 
@@ -337,5 +244,4 @@ export class AuthService {
       return null;
     }
   }
-
 }

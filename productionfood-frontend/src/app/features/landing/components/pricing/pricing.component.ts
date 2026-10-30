@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, ViewEncapsulation } from '@angular/core';
 
 import { RevealDirective } from '../../reveal.directive';
 
@@ -6,7 +6,9 @@ import { RevealDirective } from '../../reveal.directive';
   selector: 'app-landing-pricing',
   standalone: true,
   imports: [RevealDirective],
-  templateUrl: './pricing.component.html'
+  templateUrl: './pricing.component.html',
+  styleUrl: './pricing.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 export class LandingPricingComponent {
   readonly anual = signal(false);

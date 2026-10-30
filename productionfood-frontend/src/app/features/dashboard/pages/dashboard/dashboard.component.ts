@@ -13,12 +13,20 @@ import { TarjetaProduccionComponent } from '../../components/tarjeta-produccion/
 import { TarjetaStockComponent } from '../../components/tarjeta-stock/tarjeta-stock.component';
 import { TarjetaVencimientosComponent } from '../../components/tarjeta-vencimientos/tarjeta-vencimientos.component';
 import { KpiCardComponent } from '../../../../shared/components/kpi-card/kpi-card.component';
-import { ProduccionChartComponent } from '../../components/produccion-chart/produccion-chart.component';
+import { ProduccionChartComponent, ProduccionDia } from '../../components/produccion-chart/produccion-chart.component';
 import { PlanesDonutComponent } from '../../components/planes-donut/planes-donut.component';
-import { PlanesTablaComponent } from '../../components/planes-tabla/planes-tabla.component';
+import { PlanReciente, PlanesTablaComponent } from '../../components/planes-tabla/planes-tabla.component';
 import { AlertasInventarioComponent } from '../../components/alertas-inventario/alertas-inventario.component';
 import { ConteosDashboard, DashboardResumen, ResumenPorVencer } from '../../models/dashboard.model';
 import { DashboardService } from '../../services/dashboard.service';
+import { PlanProduccion } from '../../../produccion/models/plan-produccion.model';
+
+/** yyyy-MM-dd en hora local (toISOString usaría UTC y puede cambiar el día). */
+function aFechaIso(fecha: Date): string {
+  const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+  const dia = String(fecha.getDate()).padStart(2, '0');
+  return `${fecha.getFullYear()}-${mes}-${dia}`;
+}
 
 /**
  * Dashboard resumen del día (HU-24). El resumen principal alimenta cuatro
@@ -65,6 +73,9 @@ export class DashboardComponent {
   readonly conteos = signal<ConteosDashboard | null>(null);
   readonly cargandoConteos = signal(true);
 
+  readonly planesSemana = signal<PlanProduccion[]>([]);
+  readonly ultimosPlanes = signal<PlanProduccion[]>([]);
+
   /** Fecha del servidor (`curdate`, R-01); nunca la del navegador. */
   readonly fechaMostrada = computed(() => {
     const fecha = this.resumen()?.fecha;
@@ -82,42 +93,41 @@ export class DashboardComponent {
     return new Date(anio, mes - 1, dia);
   });
 
-  readonly produccionChart = computed(() => {
-    const res = this.resumen();
-    if (!res) return [];
+  /** Planes de los últimos 7 días (fecha del servidor) para el gráfico. */
+  readonly produccionChart = computed<ProduccionDia[]>(() => {
+    if (!this.resumen()) return [];
 
     const hoy = this.fechaMostrada();
-    const dias: { fecha: string; planificada: number; producida: number }[] = [];
+    const dias = new Map<string, ProduccionDia>();
 
     for (let i = 6; i >= 0; i--) {
       const d = new Date(hoy);
       d.setDate(d.getDate() - i);
-      const fechaStr = d.toISOString().split('T')[0];
-
-      const base = 50 + (i * 10);
-      dias.push({
-        fecha: fechaStr,
-        planificada: base + (i * 5),
-        producida: base + (i * 3)
-      });
+      const fecha = aFechaIso(d);
+      dias.set(fecha, { fecha, planificada: 0, producida: 0 });
     }
 
-    return dias;
+    for (const plan of this.planesSemana()) {
+      const dia = dias.get(plan.fechaProduccion);
+      if (!dia || plan.estado === 'CANCELADO') continue;
+
+      dia.planificada++;
+      if (plan.estado === 'COMPLETADO') dia.producida++;
+    }
+
+    return [...dias.values()];
   });
 
-  readonly planesRecientes = computed(() => {
-    const prod = this.resumen()?.produccionHoy;
-    if (!prod || prod.cantidad === 0) return [];
-
-    return Array.from({ length: Math.min(5, prod.cantidad) }, (_, i) => ({
-      idPlanProduccion: i + 1,
-      producto: `Producto ${i + 1}`,
-      fechaProduccion: this.resumen()?.fecha ?? new Date().toISOString().split('T')[0],
-      fechaFin: this.resumen()?.fecha ?? new Date().toISOString().split('T')[0],
-      estado: ['PLANIFICADO', 'EN_PROCESO', 'COMPLETADO', 'PENDIENTE'][i % 4],
-      cantidad: 100 + i * 50
-    }));
-  });
+  readonly planesRecientes = computed<PlanReciente[]>(() =>
+    this.ultimosPlanes().map(plan => ({
+      idPlanProduccion: plan.idPlanProduccion,
+      producto: plan.productoPrincipal ?? '—',
+      fechaProduccion: plan.fechaProduccion,
+      fechaFin: plan.fechaProduccion,
+      estado: plan.estado,
+      cantidad: plan.cantidadProductos ?? plan.detalles?.length ?? 0
+    }))
+  );
 
   readonly planesEstado = computed(() => {
     const prod = this.resumen()?.produccionHoy;
@@ -147,6 +157,7 @@ export class DashboardComponent {
     this.cargarResumen();
     this.cargarVencimientos();
     this.cargarConteos();
+    this.cargarPlanes();
 
     fromEvent(document, 'visibilitychange')
       .pipe(
@@ -160,6 +171,14 @@ export class DashboardComponent {
     this.cargarResumen();
     this.cargarVencimientos();
     this.cargarConteos();
+    this.cargarPlanes();
+  }
+
+  private cargarPlanes(): void {
+    this.dashboardService
+      .planes({ size: 5, sort: 'fechaProduccion,desc' })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(planes => this.ultimosPlanes.set(planes));
   }
 
   private cargarConteos(): void {
@@ -196,8 +215,21 @@ export class DashboardComponent {
         if (resumen) {
           this.resumen.set(resumen);
           this.actualizadoEn.set(new Date());
+          // El rango del gráfico depende de la fecha del servidor (R-01).
+          this.cargarPlanesSemana();
         }
       });
+  }
+
+  private cargarPlanesSemana(): void {
+    const hasta = this.fechaMostrada();
+    const desde = new Date(hasta);
+    desde.setDate(desde.getDate() - 6);
+
+    this.dashboardService
+      .planes({ size: 100, fechaInicio: aFechaIso(desde), fechaFin: aFechaIso(hasta) })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(planes => this.planesSemana.set(planes));
   }
 
   cargarVencimientos(): void {
