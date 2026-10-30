@@ -221,11 +221,25 @@
   padding: 0;
 }
 
+/*
+ * Nombres largos ("Lotes de producto terminado") pasan a una segunda línea
+ * en vez de cortarse con "…"; el ítem crece en alto para que quepan.
+ */
+.sidenav a.mat-mdc-list-item {
+  height: auto;
+  min-height: 48px;
+}
+
 .sidenav a .item-titulo {
-  display: block;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  /* 3 líneas solo hacen falta con el sidebar en su ancho mínimo. */
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.25;
 }
 
 /* ---------------------------------------------------------
@@ -368,13 +382,16 @@
 }
 
 .sidenav a.activo .contador {
-  color: var(--verde-900);
+  /* Color fijo: --verde-900 se aclara en tema oscuro y el número desaparecería. */
+  color: #0e3b2a;
   background: rgba(255, 255, 255, 0.88);
 }
 
+/* El contador va pegado al borde: el gap del ítem ya lo separa del nombre. */
 .sidenav ::ng-deep .mdc-list-item__end {
   margin-inline-start: auto;
-  padding-left: 8px;
+  margin-inline-end: 0;
+  padding-left: 0;
 }
 
 /* ---------------------------------------------------------
