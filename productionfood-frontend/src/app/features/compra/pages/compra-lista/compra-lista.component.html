@@ -135,4 +135,8 @@
       }
     </mat-menu>
   </ng-template>
+  <button accionVacio mat-flat-button type="button" *siRol="['ADMIN', 'COMPRAS']" (click)="abrirFormulario()">
+    <mat-icon>add</mat-icon>
+    Nueva compra
+  </button>
 </app-tabla-paginada>

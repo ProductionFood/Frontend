@@ -108,5 +108,9 @@
         </button>
       </div>
     </ng-template>
-  </app-tabla-paginada>
+    <button accionVacio mat-flat-button type="button" *siRol="['ADMIN', 'PRODUCCION']" (click)="nueva()">
+    <mat-icon>add</mat-icon>
+    Nueva receta
+  </button>
+</app-tabla-paginada>
 </div>

@@ -134,7 +134,11 @@
         <ng-template appTablaColumna="acciones" let-l>
           <a mat-button [routerLink]="['/app/lotes-producto', l.idLote, 'kardex']">Kardex</a>
         </ng-template>
-      </app-tabla-paginada>
+        <button accionVacio mat-flat-button type="button" *siRol="['ADMIN', 'PRODUCCION']" (click)="abrirFormulario()">
+    <mat-icon>add</mat-icon>
+    Nuevo lote
+  </button>
+</app-tabla-paginada>
     }
   </app-tarjeta-tabla>
 </section>

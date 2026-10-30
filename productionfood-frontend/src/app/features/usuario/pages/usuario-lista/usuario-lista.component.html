@@ -82,7 +82,12 @@
       [tono]="total() === 0 ? 'neutro' : 'neutro'"
       icono="group"
       [mensaje]="total() === 0 ? 'No hay usuarios registrados.' : 'Ningún usuario coincide con los filtros.'"
-    />
+    >
+      <button mat-flat-button type="button" *siRol="['ADMIN']" routerLink="/app/usuarios/nuevo">
+        <mat-icon>add</mat-icon>
+        Agregar usuario
+      </button>
+    </app-estado-vacio>
   } @else {
     <app-tabla-paginada
       [columnas]="columnas"

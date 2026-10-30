@@ -41,5 +41,9 @@
     <ng-template appTablaColumna="estado" let-lote>
       <mat-chip [class]="'estado-chip ' + estado(lote).clase">{{ estado(lote).texto }}</mat-chip>
     </ng-template>
-  </app-tabla-paginada>
+    <button accionVacio mat-flat-button type="button" *siRol="['ADMIN', 'PRODUCCION', 'COMPRAS']" (click)="abrirFormulario()">
+    <mat-icon>add</mat-icon>
+    Nuevo lote
+  </button>
+</app-tabla-paginada>
 </app-tarjeta-tabla>

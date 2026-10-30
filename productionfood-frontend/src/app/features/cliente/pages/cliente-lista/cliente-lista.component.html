@@ -52,4 +52,8 @@
       <button mat-menu-item type="button" *siRol="['ADMIN', 'VENTAS']" (click)="cambiarEstado(cliente)"><mat-icon>{{ cliente.activo ? 'person_off' : 'person_check' }}</mat-icon><span>{{ cliente.activo ? 'Desactivar' : 'Activar' }}</span></button>
     </mat-menu>
   </ng-template>
+  <button accionVacio mat-flat-button type="button" *siRol="['ADMIN', 'VENTAS']" (click)="abrirFormulario()">
+    <mat-icon>add</mat-icon>
+    Nuevo cliente
+  </button>
 </app-tabla-paginada>

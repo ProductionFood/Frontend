@@ -108,5 +108,9 @@
         </button>
       </div>
     </ng-template>
-  </app-tabla-paginada>
+    <button accionVacio mat-flat-button type="button" *siRol="['ADMIN']" (click)="abrirFormulario()">
+    <mat-icon>add</mat-icon>
+    Agregar materia prima
+  </button>
+</app-tabla-paginada>
 </div>

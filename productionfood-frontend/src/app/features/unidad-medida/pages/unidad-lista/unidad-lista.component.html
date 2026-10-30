@@ -52,4 +52,8 @@
       </button>
     </mat-menu>
   </ng-template>
+  <button accionVacio mat-flat-button type="button" *siRol="['ADMIN']" (click)="abrirFormulario()">
+    <mat-icon>add</mat-icon>
+    Nueva unidad
+  </button>
 </app-tabla-paginada>
