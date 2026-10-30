@@ -1,12 +1,6 @@
-import {IndicadorAlertasComponent} from './components/indicador-alertas/indicador-alertas.component';
+import { IndicadorAlertasComponent } from './components/indicador-alertas/indicador-alertas.component';
 import { Component, computed, inject, signal, ViewChild } from '@angular/core';
-import {
-  NavigationEnd,
-  Router,
-  RouterLink,
-  RouterLinkActive,
-  RouterOutlet
-} from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
@@ -19,12 +13,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { AuthService } from '../core/auth/auth.service';
 import { TemaService } from '../core/ui/tema.service';
-import {
-  MODULOS_REALES,
-  NavGrupo,
-  NavItem,
-  NAV_GRUPOS
-} from './nav-items';
+import { MODULOS_REALES, NavGrupo, NavItem, NAV_GRUPOS } from './nav-items';
 
 @Component({
   selector: 'app-layout',
@@ -39,10 +28,10 @@ import {
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
-    IndicadorAlertasComponent
+    IndicadorAlertasComponent,
   ],
   templateUrl: './layout.component.html',
-  styleUrl: './layout.component.scss'
+  styleUrl: './layout.component.scss',
 })
 export class LayoutComponent {
   readonly authService = inject(AuthService);
@@ -60,7 +49,7 @@ export class LayoutComponent {
     return nombre
       .split(' ')
       .slice(0, 2)
-      .map(parte => parte.charAt(0))
+      .map((parte) => parte.charAt(0))
       .join('')
       .toUpperCase();
   });
@@ -72,7 +61,7 @@ export class LayoutComponent {
       PRODUCCION: 'Producción',
       COMPRAS: 'Compras',
       VENTAS: 'Ventas',
-      CONSULTA: 'Consulta'
+      CONSULTA: 'Consulta',
     };
     return nombres[rol] ?? rol;
   });
@@ -83,12 +72,12 @@ export class LayoutComponent {
     this.breakpoint
       .observe([Breakpoints.Handset, Breakpoints.TabletPortrait])
       .pipe(takeUntilDestroyed())
-      .subscribe(estado => this.modoCompacto.set(estado.matches));
+      .subscribe((estado) => this.modoCompacto.set(estado.matches));
 
     this.router.events
       .pipe(
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
-        takeUntilDestroyed()
+        takeUntilDestroyed(),
       )
       .subscribe(() => this.actualizarTitulo());
 
@@ -106,12 +95,9 @@ export class LayoutComponent {
       .split('/')
       .filter(Boolean);
 
-    const ruta =
-      segmentos[1] === 'en-construccion' ? segmentos[2] : segmentos[1];
+    const ruta = segmentos[1] === 'en-construccion' ? segmentos[2] : segmentos[1];
 
-    const item = NAV_GRUPOS.flatMap(grupo => grupo.items).find(
-      i => i.ruta === ruta
-    );
+    const item = NAV_GRUPOS.flatMap((grupo) => grupo.items).find((i) => i.ruta === ruta);
 
     this.tituloActual.set(item?.titulo ?? 'Dashboard');
   }
@@ -126,13 +112,11 @@ export class LayoutComponent {
   readonly gruposVisibles = computed(() => {
     const rol = this.authService.rol();
     return this.grupos
-      .map(grupo => ({
+      .map((grupo) => ({
         ...grupo,
-        items: grupo.items.filter(
-          item => !item.roles || !rol || item.roles.includes(rol)
-        )
+        items: grupo.items.filter((item) => !item.roles || !rol || item.roles.includes(rol)),
       }))
-      .filter(grupo => grupo.items.length > 0);
+      .filter((grupo) => grupo.items.length > 0);
   });
 
   cerrarEnMovil(): void {
@@ -165,7 +149,7 @@ export class LayoutComponent {
       return;
     }
 
-    this.colapsado.update(valor => !valor);
+    this.colapsado.update((valor) => !valor);
   }
 
   cerrarSesion(): void {

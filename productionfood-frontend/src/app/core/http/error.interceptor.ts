@@ -24,9 +24,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           },
         });
       } else if (error.status === 403 && !esLogin) {
-        notificacion.advertencia(
-          'No tiene permisos para realizar esta acción.',
-        );
+        notificacion.advertencia('No tiene permisos para realizar esta acción.');
       } else if (error.status === 0) {
         notificacion.error('No se pudo conectar con el servidor.');
       } else if (error.status >= 500) {

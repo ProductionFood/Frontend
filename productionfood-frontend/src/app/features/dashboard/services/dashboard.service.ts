@@ -11,11 +11,7 @@ import { RecetaService } from '../../receta/services/receta.service';
 import { PlanProduccionService } from '../../produccion/services/plan-produccion.service';
 import { FiltroPlan, PlanProduccion } from '../../produccion/models/plan-produccion.model';
 import { InventarioService } from '../../inventario/services/inventario.service';
-import {
-  ConteosDashboard,
-  DashboardResumen,
-  ResumenPorVencer
-} from '../models/dashboard.model';
+import { ConteosDashboard, DashboardResumen, ResumenPorVencer } from '../models/dashboard.model';
 
 const ROLES_PLANES = ['ADMIN', 'PRODUCCION', 'CONSULTA'];
 
@@ -43,7 +39,10 @@ export class DashboardService {
   conteos(): Observable<ConteosDashboard> {
     const puede = (...roles: string[]) => this.tieneRol(roles);
     const contar = (peticion: Observable<PageResponse<unknown>>) =>
-      peticion.pipe(map(respuesta => respuesta.totalElements), catchError(() => of(null)));
+      peticion.pipe(
+        map((respuesta) => respuesta.totalElements),
+        catchError(() => of(null)),
+      );
 
     return forkJoin({
       productos: puede('ADMIN', 'VENTAS', 'PRODUCCION', 'CONSULTA')
@@ -60,7 +59,7 @@ export class DashboardService {
         : of(null),
       inventario: puede('ADMIN', 'PRODUCCION', 'COMPRAS', 'CONSULTA')
         ? contar(this.inventario.listar({ page: 0, size: 1 }))
-        : of(null)
+        : of(null),
     });
   }
 
@@ -75,8 +74,8 @@ export class DashboardService {
     }
 
     return this.planesService.listar({ page: 0, ...filtro }).pipe(
-      map(respuesta => respuesta.content),
-      catchError(() => of([]))
+      map((respuesta) => respuesta.content),
+      catchError(() => of([])),
     );
   }
 
@@ -86,7 +85,7 @@ export class DashboardService {
    */
   vencimientos(dias = 7): Observable<ResumenPorVencer> {
     return this.http.get<ResumenPorVencer>(`${this.url}/vencimientos`, {
-      params: new HttpParams().set('diasVencimiento', dias)
+      params: new HttpParams().set('diasVencimiento', dias),
     });
   }
 
