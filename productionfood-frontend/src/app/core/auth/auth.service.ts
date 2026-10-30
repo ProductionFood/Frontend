@@ -115,7 +115,8 @@ export class AuthService {
     this.usuario.set(null);
 
     if (redirigir) {
-      void this.router.navigate(['/']);
+      // Directo al login (no a la landing) y sin dejar la página privada en el historial.
+      void this.router.navigate(['/login'], { replaceUrl: true });
     }
   }
 
