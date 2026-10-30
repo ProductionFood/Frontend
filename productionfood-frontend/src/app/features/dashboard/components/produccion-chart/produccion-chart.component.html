@@ -2,17 +2,17 @@
   <header class="chart-header">
     <h3>Producción de los últimos 7 días</h3>
   </header>
-  <div class="bar-chart" role="img" aria-label="Gráfico de barras comparativo producción planificada vs producida">
+  <div class="bar-chart" role="img" aria-label="Gráfico de barras comparativo planes planificados vs completados">
     @for (dia of datos(); track dia.fecha) {
       <div class="bar-group">
-        <div class="bar planificada" [style.height.%]="altoPlanificada(dia)" [attr.aria-label]="'Planificada ' + dia.planificada + ' kg'"></div>
-        <div class="bar producida" [style.height.%]="altoProducida(dia)" [attr.aria-label]="'Producida ' + dia.producida + ' kg'"></div>
+        <div class="bar planificada" [style.height.%]="altoPlanificada(dia)" [attr.aria-label]="'Planificados ' + dia.planificada + ' planes'"></div>
+        <div class="bar producida" [style.height.%]="altoProducida(dia)" [attr.aria-label]="'Completados ' + dia.producida + ' planes'"></div>
         <span class="bar-label">{{ etiquetaDia(dia.fecha) }}</span>
       </div>
     }
   </div>
   <div class="chart-legend">
-    <span><span class="dot" style="background:var(--azul-500)"></span>Planificada</span>
-    <span><span class="dot" style="background:var(--verde-500)"></span>Producida</span>
+    <span><span class="dot" style="background:var(--azul-500)"></span>Planificados</span>
+    <span><span class="dot" style="background:var(--verde-500)"></span>Completados</span>
   </div>
 </article>
