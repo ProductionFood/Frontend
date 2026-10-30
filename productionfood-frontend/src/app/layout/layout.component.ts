@@ -87,10 +87,15 @@ export class LayoutComponent {
   });
 
   @ViewChild('sidenav') private sidenav?: MatSidenav;
-  private readonly navLista = viewChild('navLista', { read: ElementRef<HTMLElement> });
+  private readonly navLista = viewChild<string, ElementRef<HTMLElement>>('navLista', { read: ElementRef });
 
   /** Hay módulos ocultos bajo el borde del menú (muestra el degradado). */
   readonly hayMasAbajo = signal(false);
+
+  /** Fondo verde compartido que se desliza hasta el ítem activo. */
+  readonly indicador = signal<{ x: number; y: number; ancho: number; alto: number } | null>(null);
+  /** La primera ubicación no se anima; las siguientes sí. */
+  readonly animarIndicador = signal(false);
 
   constructor() {
     this.breakpoint
@@ -113,10 +118,47 @@ export class LayoutComponent {
     afterNextRender(() => {
       const nav = this.navLista()?.nativeElement;
       if (!nav) return;
-      const observador = new ResizeObserver(() => this.revisarScroll());
+      const observador = new ResizeObserver(() => {
+        this.revisarScroll();
+        this.actualizarIndicador();
+      });
       observador.observe(nav);
-      destroyRef.onDestroy(() => observador.disconnect());
+
+      // routerLinkActive cambia la clase `activo` cuando termina la navegación:
+      // se reubica el indicador justo cuando eso ocurre.
+      const cambiosDeClase = new MutationObserver(() => this.actualizarIndicador());
+      cambiosDeClase.observe(nav, { subtree: true, attributes: true, attributeFilter: ['class'] });
+      this.actualizarIndicador();
+
+      destroyRef.onDestroy(() => {
+        observador.disconnect();
+        cambiosDeClase.disconnect();
+      });
     });
+  }
+
+  private actualizarIndicador(): void {
+    const activo = this.navLista()?.nativeElement.querySelector<HTMLElement>('a.activo');
+    if (!activo) {
+      this.indicador.set(null);
+      return;
+    }
+    const nuevo = {
+      x: activo.offsetLeft,
+      y: activo.offsetTop,
+      ancho: activo.offsetWidth,
+      alto: activo.offsetHeight,
+    };
+    const actual = this.indicador();
+    const igual =
+      actual &&
+      actual.x === nuevo.x &&
+      actual.y === nuevo.y &&
+      actual.ancho === nuevo.ancho &&
+      actual.alto === nuevo.alto;
+    if (!igual) this.indicador.set(nuevo);
+    // Habilita la animación después de la primera ubicación.
+    if (!this.animarIndicador()) setTimeout(() => this.animarIndicador.set(true));
   }
 
   revisarScroll(): void {
@@ -205,6 +247,8 @@ export class LayoutComponent {
     }
 
     this.colapsado.update((valor) => !valor);
+    // Al terminar la animación del ancho (0.28 s) los ítems ya tienen su posición final.
+    setTimeout(() => this.actualizarIndicador(), 320);
   }
 
   cerrarSesion(): void {

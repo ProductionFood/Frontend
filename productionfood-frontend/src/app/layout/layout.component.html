@@ -34,9 +34,21 @@
     <mat-nav-list
       #navLista
       class="nav"
+      [class.con-indicador]="indicador()"
       aria-label="Navegación principal"
       (scroll)="revisarScroll()"
     >
+      @if (indicador(); as pos) {
+        <span
+          class="indicador-activo"
+          [class.animar]="animarIndicador()"
+          [style.transform]="'translate(' + pos.x + 'px, ' + pos.y + 'px)'"
+          [style.width.px]="pos.ancho"
+          [style.height.px]="pos.alto"
+          aria-hidden="true"
+        ></span>
+      }
+
       <a
         mat-list-item
         routerLink="/app/dashboard"
