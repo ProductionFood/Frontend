@@ -1,6 +1,9 @@
 <mat-sidenav-container
   class="shell"
   [class.colapsado]="colapsado() && !modoCompacto()"
+  [class.lateral]="!modoCompacto()"
+  [class.arrastrando]="arrastrando()"
+  [style.--ancho-sidebar]="anchoSidebar() + 'px'"
 >
   <mat-sidenav
     #sidenav
@@ -9,6 +12,24 @@
     class="sidenav"
     [class.colapsado]="colapsado() && !modoCompacto()"
   >
+    @if (!modoCompacto() && !colapsado()) {
+      <div
+        class="redimensionar"
+        role="separator"
+        aria-orientation="vertical"
+        aria-label="Ajustar el ancho del menú"
+        [attr.aria-valuenow]="anchoSidebar()"
+        [attr.aria-valuemin]="anchoMin"
+        [attr.aria-valuemax]="anchoMax"
+        tabindex="0"
+        title="Arrastra para ajustar el ancho · doble clic para restablecer"
+        (pointerdown)="iniciarArrastre($event)"
+        (dblclick)="cambiarAncho(anchoPorDefecto)"
+        (keydown.arrowleft)="cambiarAncho(anchoSidebar() - 16)"
+        (keydown.arrowright)="cambiarAncho(anchoSidebar() + 16)"
+      ></div>
+    }
+
     <div class="brand">
       <div class="brand-icon">
         <img src="/logos/isotipo-oscuro.svg" alt="">

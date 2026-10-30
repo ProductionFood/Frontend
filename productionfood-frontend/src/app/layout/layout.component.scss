@@ -12,8 +12,8 @@
    SIDEBAR — Navy 900 (guía §06)
    ========================================================= */
 .sidenav {
-  width: 260px;
-  max-width: 260px;
+  width: var(--ancho-sidebar, 260px);
+  max-width: var(--ancho-sidebar, 260px);
   box-sizing: border-box;
   background:
     radial-gradient(ellipse at 0% 0%, rgba(44, 178, 123, 0.09), transparent 38%),
@@ -745,8 +745,44 @@ mat-sidenav-content {
   transition: margin-left 0.28s cubic-bezier(0.2, 0.75, 0.25, 1);
 }
 
+/* Modo lateral: el contenido acompaña el ancho elegido para el sidebar. */
+.shell.lateral mat-sidenav-content {
+  margin-left: var(--ancho-sidebar, 260px) !important;
+}
+
 .shell.colapsado mat-sidenav-content {
   margin-left: 80px !important;
+}
+
+/* Mientras se arrastra, el ancho sigue al cursor sin animación. */
+.shell.arrastrando,
+.shell.arrastrando * {
+  cursor: col-resize !important;
+  user-select: none;
+}
+
+.shell.arrastrando .sidenav,
+.shell.arrastrando mat-sidenav-content {
+  transition: none !important;
+}
+
+/* Barra para arrastrar el borde derecho del sidebar. */
+.redimensionar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 5;
+  width: 6px;
+  cursor: col-resize;
+  transition: background 0.2s ease;
+}
+
+.redimensionar:hover,
+.redimensionar:focus-visible,
+.shell.arrastrando .redimensionar {
+  background: linear-gradient(to right, transparent 2px, rgba(131, 224, 177, 0.55) 2px);
+  outline: none;
 }
 
 /* FIX: el host real es <mat-sidenav>; aseguramos box-sizing */

@@ -29,6 +29,9 @@ import { ConexionService } from '../core/http/conexion.service';
 import { ContadoresNav, ContadoresNavService } from './contadores-nav.service';
 import { MODULOS_REALES, NavGrupo, NavItem, NAV_GRUPOS } from './nav-items';
 
+/** Clave del ancho del sidebar elegido por el usuario (preferencia local). */
+const CLAVE_ANCHO = 'productionfood_ancho_sidebar';
+
 /** Espera mínima entre recargas de contadores al navegar. */
 const REFRESCO_CONTADORES_MS = 30_000;
 
@@ -105,6 +108,12 @@ export class LayoutComponent {
   /** Hay módulos ocultos bajo el borde del menú (muestra el degradado). */
   readonly hayMasAbajo = signal(false);
 
+  readonly anchoMin = 220;
+  readonly anchoMax = 360;
+  readonly anchoPorDefecto = 260;
+  readonly anchoSidebar = signal(this.leerAnchoGuardado());
+  readonly arrastrando = signal(false);
+
   /** Fondo verde compartido que se desliza hasta el ítem activo. */
   readonly indicador = signal<{ x: number; y: number; ancho: number; alto: number } | null>(null);
   /** La primera ubicación no se anima; las siguientes sí. */
@@ -172,6 +181,44 @@ export class LayoutComponent {
     if (!igual) this.indicador.set(nuevo);
     // Habilita la animación después de la primera ubicación.
     if (!this.animarIndicador()) setTimeout(() => this.animarIndicador.set(true));
+  }
+
+  iniciarArrastre(evento: PointerEvent): void {
+    evento.preventDefault();
+    this.arrastrando.set(true);
+    const mover = (e: PointerEvent) => this.cambiarAncho(e.clientX, false);
+    const soltar = () => {
+      this.arrastrando.set(false);
+      this.guardarAncho();
+      document.removeEventListener('pointermove', mover);
+      document.removeEventListener('pointerup', soltar);
+    };
+    document.addEventListener('pointermove', mover);
+    document.addEventListener('pointerup', soltar);
+  }
+
+  cambiarAncho(ancho: number, guardar = true): void {
+    this.anchoSidebar.set(Math.round(Math.min(this.anchoMax, Math.max(this.anchoMin, ancho))));
+    if (guardar) this.guardarAncho();
+    // Al arrastrar no hay animación; con teclado o doble clic se espera a que termine (0,28 s).
+    setTimeout(() => this.actualizarIndicador(), this.arrastrando() ? 0 : 320);
+  }
+
+  private leerAnchoGuardado(): number {
+    try {
+      const guardado = Number(localStorage.getItem(CLAVE_ANCHO));
+      return guardado >= this.anchoMin && guardado <= this.anchoMax ? guardado : this.anchoPorDefecto;
+    } catch {
+      return this.anchoPorDefecto;
+    }
+  }
+
+  private guardarAncho(): void {
+    try {
+      localStorage.setItem(CLAVE_ANCHO, String(this.anchoSidebar()));
+    } catch {
+      // Sin almacenamiento disponible: el ancho vale solo para esta sesión.
+    }
   }
 
   revisarScroll(): void {
