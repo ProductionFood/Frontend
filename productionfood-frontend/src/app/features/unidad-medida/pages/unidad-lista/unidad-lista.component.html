@@ -1,5 +1,8 @@
 <header class="page-header">
-  <p>Catálogo de unidades de medida del sistema.</p>
+  <div>
+    <h1 class="titulo-pagina">Unidades de medida</h1>
+    <p>Catálogo de unidades de medida del sistema.</p>
+  </div>
 
   <button
     *siRol="['ADMIN']"
@@ -49,4 +52,8 @@
       </button>
     </mat-menu>
   </ng-template>
+  <button accionVacio mat-flat-button type="button" *siRol="['ADMIN']" (click)="abrirFormulario()">
+    <mat-icon>add</mat-icon>
+    Nueva unidad
+  </button>
 </app-tabla-paginada>

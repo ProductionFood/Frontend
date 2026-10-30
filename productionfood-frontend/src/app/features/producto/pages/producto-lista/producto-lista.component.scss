@@ -16,7 +16,7 @@
   h1 {
     margin: 0;
     font-family: var(--fuente-display);
-    font-size: 30px;
+    font-size: var(--titulo-pagina);
     font-weight: 600;
     color: var(--verde-900);
     letter-spacing: -0.4px;
@@ -27,21 +27,6 @@
     color: var(--tinta-600);
     font-size: 13px;
     max-width: 520px;
-  }
-}
-
-.btn-primary {
-  @include ui.boton-primario;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--texto-sobre-marca);
-  background: var(--marca-fuerte);
-  box-shadow: 0 5px 15px rgba(31, 170, 112, 0.22);
-
-  &:hover {
-    background: var(--verde-700);
-    transform: translateY(-1px);
   }
 }
 
@@ -209,7 +194,7 @@
     align-items: stretch;
   }
 
-  .btn-primary {
+  .page-header button {
     width: 100%;
     justify-content: center;
   }

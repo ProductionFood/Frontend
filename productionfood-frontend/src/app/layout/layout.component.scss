@@ -98,6 +98,68 @@
 }
 
 /* ---------------------------------------------------------
+   Botón del buscador de módulos (Ctrl+K)
+   --------------------------------------------------------- */
+.buscar-modulo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  margin: 0 16px 18px;
+  padding: 9px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #9eb3b5;
+  font-family: var(--fuente-texto);
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(131, 224, 177, 0.25);
+    color: #fff;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #83e0b1;
+    outline-offset: 2px;
+  }
+}
+
+.buscar-texto {
+  flex: 1;
+  text-align: left;
+}
+
+.buscar-atajo {
+  padding: 1px 6px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 5px;
+  font-family: inherit;
+  font-size: 10px;
+  color: #8aa0a3;
+}
+
+.sidenav.colapsado .buscar-modulo {
+  justify-content: center;
+  margin: 0 18px 18px;
+  padding: 9px 0;
+}
+
+.sidenav.colapsado .buscar-texto,
+.sidenav.colapsado .buscar-atajo {
+  display: none;
+}
+
+/* ---------------------------------------------------------
    Nav — es un <mat-nav-list> directamente (no un div wrapper)
    --------------------------------------------------------- */
 .nav {
@@ -268,6 +330,46 @@
 }
 
 /* ---------------------------------------------------------
+   Contadores de pendientes por módulo
+   --------------------------------------------------------- */
+.contador {
+  min-width: 22px;
+  height: 20px;
+  padding: 0 7px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 1;
+  color: #d5ffe6;
+  background: rgba(63, 190, 137, 0.2);
+  font-variant-numeric: tabular-nums;
+}
+
+.contador.aviso {
+  color: #ffe2a8;
+  background: rgba(245, 166, 35, 0.22);
+}
+
+.contador.peligro {
+  color: #fff;
+  background: var(--peligro-icono, #e5484d);
+}
+
+.sidenav a.activo .contador {
+  color: var(--verde-900);
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.sidenav ::ng-deep .mdc-list-item__end {
+  margin-inline-start: auto;
+  padding-left: 8px;
+}
+
+/* ---------------------------------------------------------
    Accesibilidad
    --------------------------------------------------------- */
 .sr-only {
@@ -293,24 +395,86 @@
 }
 
 .sidebar-bottom {
-  padding: 12px 10px 10px;
-  text-align: center;
+  position: relative;
+  overflow: hidden;
   flex-shrink: 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.045);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 12px 14px;
+  padding: 12px 14px;
+  border: 1px solid rgba(131, 224, 177, 0.1);
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(63, 190, 137, 0.18), transparent 60%),
+    rgba(255, 255, 255, 0.025);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  transition: border-color 0.25s ease, background 0.25s ease;
 }
 
-.sidebar-bottom svg {
-  color: rgba(143, 214, 180, 0.34);
-  margin-bottom: 7px;
-  transition: color 0.25s ease, transform 0.25s ease;
+.sidebar-bottom:hover {
+  border-color: rgba(131, 224, 177, 0.2);
 }
 
-.sidebar-bottom p {
+/* Hoja grande de marca de agua, recortada por la tarjeta. */
+.lema-fondo {
+  position: absolute;
+  right: -18px;
+  bottom: -22px;
+  width: 84px;
+  height: 84px;
+  color: rgba(143, 214, 180, 0.07);
+  transform: rotate(-12deg);
+  pointer-events: none;
+}
+
+.lema-icono {
+  position: relative;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(131, 224, 177, 0.22);
+  border-radius: 11px;
+  background: linear-gradient(145deg, rgba(31, 170, 112, 0.28), rgba(20, 101, 63, 0.18));
+  color: #9be2bd;
+  box-shadow: 0 4px 12px rgba(31, 170, 112, 0.12);
+
+  svg {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.35s cubic-bezier(0.2, 0.75, 0.25, 1);
+  }
+}
+
+.sidebar-bottom:hover .lema-icono svg {
+  transform: rotate(-10deg) scale(1.06);
+}
+
+.lema {
+  position: relative;
+  min-width: 0;
   margin: 0;
-  color: #6d8386;
-  font-size: 10.5px;
-  line-height: 1.45;
-  letter-spacing: 0.01em;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1.3;
+
+  strong {
+    font-family: var(--fuente-display);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: -0.1px;
+    color: #e3f2ea;
+  }
+
+  span {
+    font-size: 11px;
+    color: #8fa6a8;
+    letter-spacing: 0.01em;
+  }
 }
 
 /* =========================================================
@@ -338,8 +502,18 @@
 .sidenav.colapsado .brand-text,
 .sidenav.colapsado .grupo-titulo,
 .sidenav.colapsado .item-titulo,
-.sidenav.colapsado .sidebar-bottom p {
+.sidenav.colapsado .lema,
+.sidenav.colapsado .lema-fondo {
   display: none;
+}
+
+.sidenav.colapsado .sidebar-bottom {
+  justify-content: center;
+  margin: 0 0 14px;
+  padding: 0;
+  border-color: transparent;
+  background: none;
+  box-shadow: none;
 }
 
 .sidenav.colapsado .nav {
@@ -384,6 +558,32 @@
   margin-inline: 0;
 }
 
+/* Colapsado: el contador se reduce a un punto sobre el ícono. */
+.sidenav.colapsado ::ng-deep .mdc-list-item__end {
+  position: absolute;
+  top: 6px;
+  right: 14px;
+  padding: 0;
+  margin: 0;
+}
+
+.sidenav.colapsado .contador {
+  min-width: 9px;
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  font-size: 0;
+  border: 2px solid var(--navy-900);
+}
+
+.sidenav.colapsado .contador.normal {
+  background: var(--verde-500);
+}
+
+.sidenav.colapsado .contador.aviso {
+  background: #f5a623;
+}
+
 /*
  * El contenido (modo `side`) debe acompañar el ancho del sidebar.
  * Material lo fija por estilo inline, así que al colapsar lo
@@ -418,14 +618,6 @@ mat-sidenav-container.shell {
   background: var(--blanco);
   color: var(--tinta-900);
   border-bottom: 1px solid var(--linea);
-}
-
-.toolbar-title {
-  margin-left: 4px;
-  font-family: var(--fuente-display);
-  font-weight: 600;
-  font-size: 20px;
-  color: var(--verde-900);
 }
 
 .spacer {

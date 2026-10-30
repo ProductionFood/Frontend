@@ -1,12 +1,11 @@
-<div class="breadcrumb">Inicio / <b>Materias Primas</b></div>
 
 <header class="page-header">
   <div>
     <h1>Materias Primas</h1>
     <p>Administra los insumos que usas en tus recetas y controla su disponibilidad.</p>
   </div>
-  <button class="btn-primary" type="button" *siRol="['ADMIN']" (click)="abrirFormulario()">
-    <svg class="ic" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  <button mat-flat-button type="button" *siRol="['ADMIN']" (click)="abrirFormulario()">
+    <mat-icon>add</mat-icon>
     Agregar materia prima
   </button>
 </header>
@@ -23,7 +22,7 @@
 />
 
 <section class="filtros" aria-label="Filtros de materias primas">
-  <app-filtro-busqueda etiqueta="Buscar por nombre, categoría o proveedor..." [control]="filtros.controls.busqueda" />
+  <app-filtro-busqueda etiqueta="Buscar por nombre, categoría o proveedor..." [control]="filtros.controls.busqueda" [sugerencias]="nombresBusqueda()" />
   <mat-form-field appearance="outline" class="filtro-select">
     <mat-label>Categoría</mat-label>
     <mat-select [formControl]="filtros.controls.categoria">
@@ -109,5 +108,9 @@
         </button>
       </div>
     </ng-template>
-  </app-tabla-paginada>
+    <button accionVacio mat-flat-button type="button" *siRol="['ADMIN']" (click)="abrirFormulario()">
+    <mat-icon>add</mat-icon>
+    Agregar materia prima
+  </button>
+</app-tabla-paginada>
 </div>

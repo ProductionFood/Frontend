@@ -14,10 +14,22 @@
         <img src="/logos/isotipo-oscuro.svg" alt="">
       </div>
       <div class="brand-text">
-        <h2>ProducciónFood</h2>
+        <h2>ProductionFood</h2>
         <span>Planificación y Gestión</span>
       </div>
     </div>
+
+    <button
+      type="button"
+      class="buscar-modulo"
+      (click)="abrirBuscador(buscador)"
+      [attr.title]="colapsado() ? 'Buscar módulo (Ctrl+K)' : null"
+      aria-label="Buscar módulo (Ctrl+K)"
+    >
+      <mat-icon>search</mat-icon>
+      <span class="buscar-texto">Buscar módulo</span>
+      <kbd class="buscar-atajo">Ctrl K</kbd>
+    </button>
 
     <mat-nav-list class="nav" aria-label="Navegación principal">
       <a
@@ -40,10 +52,18 @@
             [routerLink]="enlaceItem(item)"
             routerLinkActive="activo"
             (click)="cerrarEnMovil()"
-            [attr.title]="colapsado() ? item.titulo : null"
+            [attr.title]="tituloColapsado(item)"
           >
             <mat-icon matListItemIcon>{{ item.icono }}</mat-icon>
             <span class="item-titulo" matListItemTitle>{{ item.titulo }}</span>
+            @if (contadores()[item.ruta]; as contador) {
+              <span
+                matListItemMeta
+                class="contador"
+                [class]="'contador ' + contador.tono"
+                [attr.aria-label]="contador.descripcion"
+              >{{ contador.valor > 99 ? '99+' : contador.valor }}</span>
+            }
           </a>
         }
       }
@@ -52,11 +72,20 @@
     <div class="separator"></div>
 
     <div class="sidebar-bottom" aria-hidden="true">
-      <svg width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+      <svg class="lema-fondo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
         <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
         <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
       </svg>
-      <p>Alimentos de calidad,<br>mejor organización</p>
+      <span class="lema-icono">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+          <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+        </svg>
+      </span>
+      <p class="lema">
+        <strong>Alimentos de calidad,</strong>
+        <span>mejor organización</span>
+      </p>
     </div>
   </mat-sidenav>
 
@@ -70,8 +99,6 @@
       >
         <mat-icon>menu</mat-icon>
       </button>
-
-      <span class="toolbar-title">{{ tituloActual() }}</span>
 
       <span class="spacer"></span>
       @if(['ADMIN','PRODUCCION','COMPRAS'].includes(authService.rol()??'')){<app-indicador-alertas />}
@@ -113,7 +140,10 @@
     </mat-toolbar>
 
     <main class="content">
+      <app-migas />
       <router-outlet />
     </main>
   </mat-sidenav-content>
 </mat-sidenav-container>
+
+<app-buscador-modulos #buscador [modulos]="modulosBuscables()" />

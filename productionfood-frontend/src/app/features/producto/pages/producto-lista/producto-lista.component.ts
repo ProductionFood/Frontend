@@ -54,6 +54,8 @@ export class ProductoListaComponent {
     estado: this.fb.control<boolean | null>(true)
   });
   readonly productos = signal<Producto[]>([]);
+  /** Nombres ya recibidos: alimentan el autocompletado (Trie) del buscador. */
+  readonly nombresBusqueda = computed(() => this.productos().map(p => p.nombre));
   readonly total = signal(0);
   readonly kpiTotal = signal(0);
   readonly kpiActivos = signal(0);

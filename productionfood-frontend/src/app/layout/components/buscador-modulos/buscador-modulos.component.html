@@ -1,0 +1,47 @@
+@if (abierto()) {
+  <div class="fondo" (click)="cerrar()"></div>
+  <div class="paleta" role="dialog" aria-modal="true" aria-label="Buscar módulo">
+    <div class="campo">
+      <mat-icon>search</mat-icon>
+      <input
+        #campo
+        type="text"
+        placeholder="Buscar módulo…"
+        autocomplete="off"
+        role="combobox"
+        aria-controls="resultados-modulos"
+        aria-expanded="true"
+        [attr.aria-activedescendant]="resultados().length ? 'modulo-' + seleccionado() : null"
+        [value]="texto()"
+        (input)="escribir($any($event.target).value)"
+        (keydown)="teclear($event)"
+      />
+      <kbd>Esc</kbd>
+    </div>
+
+    <ul id="resultados-modulos" class="resultados" role="listbox">
+      @for (modulo of resultados(); track modulo.titulo; let i = $index) {
+        <li
+          [id]="'modulo-' + i"
+          role="option"
+          [attr.aria-selected]="i === seleccionado()"
+          [class.activo]="i === seleccionado()"
+          (mouseenter)="seleccionado.set(i)"
+          (click)="ir(modulo)"
+        >
+          <mat-icon>{{ modulo.icono }}</mat-icon>
+          <span class="titulo">{{ modulo.titulo }}</span>
+          <span class="grupo">{{ modulo.grupo }}</span>
+        </li>
+      } @empty {
+        <li class="vacio" role="presentation">No hay módulos que coincidan con «{{ texto() }}».</li>
+      }
+    </ul>
+
+    <footer class="ayuda">
+      <span><kbd>↑</kbd><kbd>↓</kbd> moverse</span>
+      <span><kbd>Enter</kbd> abrir</span>
+      <span><kbd>Ctrl</kbd><kbd>K</kbd> abrir o cerrar</span>
+    </footer>
+  </div>
+}

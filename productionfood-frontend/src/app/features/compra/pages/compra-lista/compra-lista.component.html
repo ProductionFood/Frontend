@@ -1,5 +1,6 @@
 <header class="page-header">
   <div class="header-info">
+    <h1 class="titulo-pagina">Compras</h1>
     <p>Registra las adquisiciones de materia prima a tus proveedores.</p>
 
     <a class="enlace-historial" mat-button routerLink="/app/compras/historial">
@@ -134,4 +135,8 @@
       }
     </mat-menu>
   </ng-template>
+  <button accionVacio mat-flat-button type="button" *siRol="['ADMIN', 'COMPRAS']" (click)="abrirFormulario()">
+    <mat-icon>add</mat-icon>
+    Nueva compra
+  </button>
 </app-tabla-paginada>

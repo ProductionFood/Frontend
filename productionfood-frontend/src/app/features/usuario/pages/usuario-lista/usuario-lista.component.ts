@@ -91,6 +91,8 @@ export class UsuarioListaComponent {
   });
 
   readonly usuarios = signal<Usuario[]>([]);
+  /** Nombres ya recibidos: alimentan el autocompletado (Trie) del buscador. */
+  readonly nombresBusqueda = computed(() => this.usuarios().map(u => u.nombre));
   readonly total = signal(0);
   readonly kpiTotal = signal(0);
   readonly kpiActivosAhora = signal(0);

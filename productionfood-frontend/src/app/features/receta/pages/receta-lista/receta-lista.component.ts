@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal, computed } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -84,6 +84,8 @@ export class RecetaListaComponent {
   });
 
   readonly recetas = signal<Receta[]>([]);
+  /** Nombres ya recibidos: alimentan el autocompletado (Trie) del buscador. */
+  readonly nombresBusqueda = computed(() => this.recetas().map(r => r.nombre));
   readonly total = signal(0);
   readonly kpiTotal = signal(0);
   readonly kpiActivas = signal(0);

@@ -1,4 +1,4 @@
-<header class="page-header"><div><a class="volver" mat-button routerLink="/app/inventario"><mat-icon>arrow_back</mat-icon> Volver al inventario</a><h1>{{ nombreMateria() }} · Movimientos</h1><p>Historial de movimientos de los últimos 30 días.</p></div><mat-card class="saldo-card"><mat-card-content><span>Saldo actual</span><strong>{{ saldoActual() === null ? '—' : (saldoActual() | number:'1.2-2':'es-CO') + ' ' + unidad() }}</strong></mat-card-content></mat-card></header>
+<header class="page-header"><div><a class="volver" mat-button routerLink="/app/inventario"><mat-icon>arrow_back</mat-icon> Volver al inventario</a><h1 class="titulo-pagina">{{ nombreMateria() }} · Movimientos</h1><p>Historial de movimientos de los últimos 30 días.</p></div><mat-card class="saldo-card"><mat-card-content><span>Saldo actual</span><strong>{{ saldoActual() === null ? '—' : (saldoActual() | number:'1.2-2':'es-CO') + ' ' + unidad() }}</strong></mat-card-content></mat-card></header>
 
 <app-tarjeta-tabla
   titulo="Movimientos del kardex"

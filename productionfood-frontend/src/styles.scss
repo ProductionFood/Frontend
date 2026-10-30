@@ -241,6 +241,8 @@ body * {
 
   /* Tipografía */
   --fuente-display:'Zilla Slab','Georgia',serif;
+  /* Título principal de cada módulo (el topbar ya no lo repite). */
+  --titulo-pagina:clamp(1.75rem, 1.4rem + 1vw, 2.125rem);
   --fuente-texto:'Inter','Segoe UI',sans-serif;
 
   /* Radios */
@@ -684,4 +686,15 @@ svg.ic {
   .mat-mdc-icon-button:active:not(:disabled) {
     transform: none;
   }
+}
+
+/* Título principal de módulo para las páginas que no traen regla propia. */
+.titulo-pagina {
+  margin: 0;
+  font-family: var(--fuente-display);
+  font-size: var(--titulo-pagina);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.4px;
+  color: var(--verde-900);
 }

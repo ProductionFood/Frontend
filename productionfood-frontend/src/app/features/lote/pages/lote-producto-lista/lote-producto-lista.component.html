@@ -1,5 +1,9 @@
 <section class="pagina">
-  <header class="cabecera">
+  <header class="page-header">
+    <div>
+      <h1 class="titulo-pagina">Lotes de producto terminado</h1>
+      <p>Controla el stock y los vencimientos de cada lote producido.</p>
+    </div>
     <button mat-flat-button (click)="abrirFormulario()" *siRol="['ADMIN', 'PRODUCCION']">
       <mat-icon>add</mat-icon>
       Nuevo lote
@@ -36,7 +40,7 @@
     «Incluir vencidos» activo para detectar mercancía que debe retirarse.
   </p>
 
-  <form [formGroup]="filtros" class="filtros-card" aria-label="Filtros de lotes de producto terminado">
+  <form [formGroup]="filtros" class="filtros" aria-label="Filtros de lotes de producto terminado">
     <mat-form-field appearance="outline" subscriptSizing="dynamic">
       <mat-label>Producto</mat-label>
       <mat-select formControlName="idProducto">
@@ -130,7 +134,11 @@
         <ng-template appTablaColumna="acciones" let-l>
           <a mat-button [routerLink]="['/app/lotes-producto', l.idLote, 'kardex']">Kardex</a>
         </ng-template>
-      </app-tabla-paginada>
+        <button accionVacio mat-flat-button type="button" *siRol="['ADMIN', 'PRODUCCION']" (click)="abrirFormulario()">
+    <mat-icon>add</mat-icon>
+    Nuevo lote
+  </button>
+</app-tabla-paginada>
     }
   </app-tarjeta-tabla>
 </section>

@@ -1,4 +1,6 @@
 import { IndicadorAlertasComponent } from './components/indicador-alertas/indicador-alertas.component';
+import { MigasComponent } from './components/migas/migas.component';
+import { BuscadorModulosComponent, ModuloBuscable } from './components/buscador-modulos/buscador-modulos.component';
 import { Component, computed, inject, signal, ViewChild } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
@@ -8,12 +10,16 @@ import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import { filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { filter, fromEvent, merge } from 'rxjs';
 
 import { AuthService } from '../core/auth/auth.service';
 import { TemaService } from '../core/ui/tema.service';
+import { ContadoresNav, ContadoresNavService } from './contadores-nav.service';
 import { MODULOS_REALES, NavGrupo, NavItem, NAV_GRUPOS } from './nav-items';
+
+/** Espera mínima entre recargas de contadores al navegar. */
+const REFRESCO_CONTADORES_MS = 30_000;
 
 @Component({
   selector: 'app-layout',
@@ -29,6 +35,8 @@ import { MODULOS_REALES, NavGrupo, NavItem, NAV_GRUPOS } from './nav-items';
     MatIconModule,
     MatMenuModule,
     IndicadorAlertasComponent,
+    BuscadorModulosComponent,
+    MigasComponent,
   ],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss',
@@ -36,13 +44,15 @@ import { MODULOS_REALES, NavGrupo, NavItem, NAV_GRUPOS } from './nav-items';
 export class LayoutComponent {
   readonly authService = inject(AuthService);
   readonly tema = inject(TemaService);
-  private readonly router = inject(Router);
   private readonly breakpoint = inject(BreakpointObserver);
+  private readonly router = inject(Router);
+  private readonly contadoresService = inject(ContadoresNavService);
 
   readonly grupos: NavGrupo[] = NAV_GRUPOS;
   readonly modoCompacto = signal(false);
   readonly colapsado = signal(false);
-  readonly tituloActual = signal('Dashboard');
+  readonly contadores = signal<ContadoresNav>({});
+  private ultimaCargaContadores = 0;
 
   readonly iniciales = computed(() => {
     const nombre = this.authService.usuario()?.nombre ?? 'Usuario';
@@ -74,32 +84,29 @@ export class LayoutComponent {
       .pipe(takeUntilDestroyed())
       .subscribe((estado) => this.modoCompacto.set(estado.matches));
 
-    this.router.events
-      .pipe(
-        filter((e): e is NavigationEnd => e instanceof NavigationEnd),
-        takeUntilDestroyed(),
-      )
-      .subscribe(() => this.actualizarTitulo());
-
-    this.actualizarTitulo();
+    // Contadores: al entrar, al navegar y al volver a la pestaña (con un
+    // mínimo de 30 s entre consultas para no recargar en cada clic).
+    merge(
+      this.router.events.pipe(filter((e) => e instanceof NavigationEnd)),
+      fromEvent(document, 'visibilitychange').pipe(filter(() => document.visibilityState === 'visible')),
+    )
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.cargarContadores());
+    this.cargarContadores(true);
   }
 
-  /**
-   * Título del topbar para la ruta actual, resuelto desde NAV_GRUPOS (el
-   * mismo origen que el navbar lateral): los nombres de módulo no se
-   * duplican en las rutas de app.routes.ts.
-   */
-  private actualizarTitulo(): void {
-    const segmentos = this.router.url
-      .replace(/[?#].*$/, '')
-      .split('/')
-      .filter(Boolean);
+  private cargarContadores(forzar = false): void {
+    const ahora = Date.now();
+    if (!forzar && ahora - this.ultimaCargaContadores < REFRESCO_CONTADORES_MS) return;
+    this.ultimaCargaContadores = ahora;
+    this.contadoresService.cargar().subscribe((contadores) => this.contadores.set(contadores));
+  }
 
-    const ruta = segmentos[1] === 'en-construccion' ? segmentos[2] : segmentos[1];
-
-    const item = NAV_GRUPOS.flatMap((grupo) => grupo.items).find((i) => i.ruta === ruta);
-
-    this.tituloActual.set(item?.titulo ?? 'Dashboard');
+  /** Tooltip del ítem en modo colapsado, con su contador si lo tiene. */
+  tituloColapsado(item: NavItem): string | null {
+    if (!this.colapsado()) return null;
+    const contador = this.contadores()[item.ruta];
+    return contador ? `${item.titulo} · ${contador.descripcion}` : item.titulo;
   }
 
   /**
@@ -118,6 +125,24 @@ export class LayoutComponent {
       }))
       .filter((grupo) => grupo.items.length > 0);
   });
+
+  /** Dashboard + módulos visibles, en el orden del sidebar, para Ctrl+K. */
+  readonly modulosBuscables = computed<ModuloBuscable[]>(() => [
+    { titulo: 'Dashboard', icono: 'dashboard', grupo: 'Inicio', enlace: ['/app', 'dashboard'] },
+    ...this.gruposVisibles().flatMap((grupo) =>
+      grupo.items.map((item) => ({
+        titulo: item.titulo,
+        icono: item.icono,
+        grupo: grupo.titulo,
+        enlace: this.enlaceItem(item),
+      })),
+    ),
+  ]);
+
+  abrirBuscador(buscador: BuscadorModulosComponent): void {
+    this.cerrarEnMovil();
+    buscador.abrir();
+  }
 
   cerrarEnMovil(): void {
     if (this.modoCompacto()) {

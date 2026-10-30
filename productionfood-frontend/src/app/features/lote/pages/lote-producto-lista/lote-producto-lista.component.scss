@@ -4,20 +4,6 @@
   display: block;
 }
 
-.breadcrumb {
-  color: var(--tinta-400);
-  font-size: 11px;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.breadcrumb b {
-  color: var(--tinta-600);
-  font-weight: 700;
-}
-
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -29,7 +15,7 @@
 
 .page-header h1 {
   font-family: var(--fuente-display);
-  font-size: 30px;
+  font-size: var(--titulo-pagina);
   font-weight: 600;
   color: var(--verde-900);
   letter-spacing: -0.4px;
@@ -42,34 +28,6 @@
   max-width: 520px;
 }
 
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border: none;
-  padding: 11px 18px;
-  border-radius: var(--radio-s);
-  background: var(--verde-500);
-  color: white;
-  font-family: inherit;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 5px 15px rgba(31, 170, 112, 0.22);
-  transition: 0.2s;
-  white-space: nowrap;
-}
-
-.btn-primary:hover {
-  background: var(--verde-700);
-  transform: translateY(-1px);
-}
-
-.btn-primary svg.ic {
-  width: 13px;
-  height: 13px;
-}
-
 .kpi-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -78,7 +36,7 @@
 }
 
 .nota {
-  margin: 0;
+  margin: 0 0 12px;
   font-size: 12px;
   color: var(--tinta-400);
 }

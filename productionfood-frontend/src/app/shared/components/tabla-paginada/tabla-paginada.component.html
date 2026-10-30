@@ -13,6 +13,7 @@
     <div class="estado">
       <mat-icon>inbox</mat-icon>
       <p>{{ mensajeVacio() }}</p>
+      <ng-content select="[accionVacio]" />
     </div>
   } @else {
     <div class="tabla-scroll">
