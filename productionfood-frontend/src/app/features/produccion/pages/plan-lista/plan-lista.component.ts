@@ -15,6 +15,7 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { EstadoPlan, PlanProduccion } from '../../models/plan-produccion.model';
 import { PlanProduccionService } from '../../services/plan-produccion.service';
 import { EstadoVacioComponent } from '../../../../shared/components/estado-vacio/estado-vacio.component';
+import { cambiosDeFiltros } from '../../../../shared/utils/filtros-debounce';
 import { FiltroBusquedaComponent } from '../../../../shared/components/filtro-busqueda/filtro-busqueda.component';
 import { TarjetaTablaComponent } from '../../../../shared/components/tarjeta-tabla/tarjeta-tabla.component';
 import { KpiCardComponent } from '../../../../shared/components/kpi-card/kpi-card.component';
@@ -86,7 +87,7 @@ export class PlanListaComponent {
   readonly kpiTrendCompletados = computed(() => '—');
 
   constructor() {
-    this.filtro.valueChanges.pipe(takeUntilDestroyed(this.destroy)).subscribe(() => {
+    cambiosDeFiltros(this.filtro).pipe(takeUntilDestroyed(this.destroy)).subscribe(() => {
       this.page.set(0);
       this.cargar();
     });

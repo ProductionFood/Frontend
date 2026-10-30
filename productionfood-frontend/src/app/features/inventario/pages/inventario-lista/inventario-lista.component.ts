@@ -10,6 +10,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterLink } from '@angular/router';
 import { EMPTY, Subject, catchError, switchMap, tap } from 'rxjs';
 import { EstadoVacioComponent } from '../../../../shared/components/estado-vacio/estado-vacio.component';
+import { cambiosDeFiltros } from '../../../../shared/utils/filtros-debounce';
 import { FiltroBusquedaComponent } from '../../../../shared/components/filtro-busqueda/filtro-busqueda.component';
 import { KpiCardComponent } from '../../../../shared/components/kpi-card/kpi-card.component';
 import {
@@ -146,7 +147,7 @@ export class InventarioListaComponent {
       this.error.set('');
     });
 
-    this.filtros.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+    cambiosDeFiltros(this.filtros).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.pagina.set(0);
       this.recargar();
     });
