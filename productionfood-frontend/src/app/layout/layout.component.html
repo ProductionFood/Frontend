@@ -71,12 +71,32 @@
 
     <div class="separator"></div>
 
-    <div class="sidebar-bottom" aria-hidden="true">
-      <svg width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
-        <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
-      </svg>
-      <p>Alimentos de calidad,<br>mejor organización</p>
+    <div class="sidebar-usuario">
+      <button
+        type="button"
+        class="perfil"
+        [matMenuTriggerFor]="userMenu"
+        aria-label="Abrir menú de usuario"
+        [attr.title]="colapsado() ? (authService.usuario()?.nombre ?? 'Usuario') + ' · ' + nombreRol() : null"
+      >
+        <span class="avatar">{{ iniciales() }}</span>
+        <span class="perfil-info">
+          <strong>{{ authService.usuario()?.nombre ?? 'Usuario' }}</strong>
+          <span>{{ nombreRol() }}</span>
+        </span>
+        <mat-icon class="chevron">unfold_more</mat-icon>
+      </button>
+
+      <button
+        mat-icon-button
+        type="button"
+        class="boton-tema"
+        [attr.aria-label]="tema.oscuro() ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'"
+        [attr.title]="tema.oscuro() ? 'Tema claro' : 'Tema oscuro'"
+        (click)="tema.alternar()"
+      >
+        <mat-icon>{{ tema.oscuro() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+      </button>
     </div>
   </mat-sidenav>
 
@@ -94,31 +114,7 @@
       <span class="spacer"></span>
       @if(['ADMIN','PRODUCCION','COMPRAS'].includes(authService.rol()??'')){<app-indicador-alertas />}
 
-      <button
-        mat-icon-button
-        type="button"
-        class="boton-tema"
-        [attr.aria-label]="tema.oscuro() ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'"
-        (click)="tema.alternar()"
-      >
-        <mat-icon>{{ tema.oscuro() ? 'light_mode' : 'dark_mode' }}</mat-icon>
-      </button>
-
-      <button
-        class="perfil"
-        type="button"
-        [matMenuTriggerFor]="userMenu"
-        aria-label="Abrir menú de usuario"
-      >
-        <span class="avatar">{{ iniciales() }}</span>
-        <span class="perfil-info">
-          <strong>{{ authService.usuario()?.nombre ?? 'Usuario' }}</strong>
-          <span>{{ nombreRol() }}</span>
-        </span>
-        <mat-icon class="chevron">expand_more</mat-icon>
-      </button>
-
-      <mat-menu #userMenu="matMenu">
+      <mat-menu #userMenu="matMenu" yPosition="above">
         <div class="user-info">
           <strong>{{ authService.usuario()?.nombre }}</strong>
           <small>{{ authService.usuario()?.correo }}</small>
