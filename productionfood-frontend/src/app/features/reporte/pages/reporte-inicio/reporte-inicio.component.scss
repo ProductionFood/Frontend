@@ -4,20 +4,6 @@
   display: block;
 }
 
-.breadcrumb {
-  color: var(--tinta-400);
-  font-size: 11px;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.breadcrumb b {
-  color: var(--tinta-600);
-  font-weight: 700;
-}
-
 .page-header {
   display: flex;
   justify-content: space-between;

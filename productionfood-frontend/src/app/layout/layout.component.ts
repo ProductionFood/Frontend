@@ -1,4 +1,5 @@
 import { IndicadorAlertasComponent } from './components/indicador-alertas/indicador-alertas.component';
+import { MigasComponent } from './components/migas/migas.component';
 import { BuscadorModulosComponent, ModuloBuscable } from './components/buscador-modulos/buscador-modulos.component';
 import { Component, computed, inject, signal, ViewChild } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
@@ -35,6 +36,7 @@ const REFRESCO_CONTADORES_MS = 30_000;
     MatMenuModule,
     IndicadorAlertasComponent,
     BuscadorModulosComponent,
+    MigasComponent,
   ],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss',
