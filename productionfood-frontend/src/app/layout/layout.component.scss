@@ -382,7 +382,8 @@
 }
 
 .sidenav a.activo .contador {
-  color: var(--verde-900);
+  /* Color fijo: --verde-900 se aclara en tema oscuro y el número desaparecería. */
+  color: #0e3b2a;
   background: rgba(255, 255, 255, 0.88);
 }
 
