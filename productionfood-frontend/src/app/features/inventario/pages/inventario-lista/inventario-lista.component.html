@@ -39,7 +39,7 @@
 </section>
 
 <section class="filtros" aria-label="Filtros de inventario">
-  <app-filtro-busqueda etiqueta="Buscar por nombre, categoría o proveedor..." [control]="filtros.controls.busqueda" />
+  <app-filtro-busqueda etiqueta="Buscar por nombre, categoría o proveedor..." [control]="filtros.controls.busqueda" [sugerencias]="nombresBusqueda()" />
   <mat-checkbox [formControl]="filtros.controls.soloStockBajo">Solo stock bajo</mat-checkbox>
   <mat-checkbox [formControl]="filtros.controls.incluirInactivas">Incluir inactivas</mat-checkbox>
 </section>

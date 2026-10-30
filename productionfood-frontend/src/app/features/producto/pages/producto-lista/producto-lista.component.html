@@ -42,7 +42,7 @@
 </section>
 
 <form class="filtros" [formGroup]="filtros" aria-label="Filtros de productos">
-  <app-filtro-busqueda etiqueta="Buscar por nombre" [control]="filtros.controls.busqueda" />
+  <app-filtro-busqueda etiqueta="Buscar por nombre" [control]="filtros.controls.busqueda" [sugerencias]="nombresBusqueda()" />
 
   <mat-form-field appearance="outline" class="filtro-select">
     <mat-label>Estado</mat-label>

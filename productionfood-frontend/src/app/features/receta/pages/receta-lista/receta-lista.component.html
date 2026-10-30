@@ -39,7 +39,7 @@
 </div>
 
 <section class="filtros" aria-label="Filtros de recetas">
-  <app-filtro-busqueda etiqueta="Buscar por nombre, producto o ingrediente..." [control]="filtros.controls.busqueda" />
+  <app-filtro-busqueda etiqueta="Buscar por nombre, producto o ingrediente..." [control]="filtros.controls.busqueda" [sugerencias]="nombresBusqueda()" />
   <mat-form-field appearance="outline" class="filtro-select">
     <mat-label>Estado</mat-label>
     <mat-select [formControl]="filtros.controls.estado">

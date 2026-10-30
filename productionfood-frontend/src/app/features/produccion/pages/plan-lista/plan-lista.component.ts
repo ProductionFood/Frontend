@@ -69,6 +69,8 @@ export class PlanListaComponent {
   ];
 
   readonly datos = signal<PlanProduccion[]>([]);
+  /** Nombres ya recibidos: alimentan el autocompletado (Trie) del buscador. */
+  readonly nombresBusqueda = computed(() => this.datos().map(p => p.productoPrincipal));
   readonly cargando = signal(false);
   readonly error = signal('');
   readonly total = signal(0);

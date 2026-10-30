@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal, computed } from '@angular/core';
 
 import { DecimalPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
@@ -88,6 +88,8 @@ export class MateriaPrimaListaComponent {
   });
 
   readonly materias = signal<MateriaPrima[]>([]);
+  /** Nombres ya recibidos: alimentan el autocompletado (Trie) del buscador. */
+  readonly nombresBusqueda = computed(() => this.materias().map(m => m.nombre));
   readonly total = signal(0);
 
   readonly kpiTotal = signal(0);

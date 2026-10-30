@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal, computed } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatButtonModule } from '@angular/material/button';
@@ -52,6 +52,8 @@ export class ProveedorListaComponent {
     activo: this.fb.control<boolean | null>(true)
   });
   readonly proveedores = signal<Proveedor[]>([]);
+  /** Nombres ya recibidos: alimentan el autocompletado (Trie) del buscador. */
+  readonly nombresBusqueda = computed(() => this.proveedores().map(p => p.nombre));
   readonly total = signal(0);
   readonly kpiTotal = signal(0);
   readonly kpiActivos = signal(0);

@@ -63,6 +63,8 @@ export class InventarioListaComponent {
   });
 
   readonly filas = signal<InventarioMateriaPrima[]>([]);
+  /** Nombres ya recibidos: alimentan el autocompletado (Trie) del buscador. */
+  readonly nombresBusqueda = computed(() => this.filas().map(f => f.nombre ?? f.nombreMateriaPrima ?? f.materiaPrima?.nombre));
   readonly materias = signal<MateriaPrima[]>([]);
   readonly total = signal(0);
   readonly pagina = signal(0);

@@ -52,7 +52,7 @@
 </section>
 
 <form class="filtros" [formGroup]="filtro" aria-label="Filtros de planes de producción">
-  <app-filtro-busqueda etiqueta="Buscar por código o producto..." [control]="filtro.controls.busqueda" />
+  <app-filtro-busqueda etiqueta="Buscar por código o producto..." [control]="filtro.controls.busqueda" [sugerencias]="nombresBusqueda()" />
 
   <mat-form-field appearance="outline" class="filtro-select">
     <mat-label>Estado</mat-label>
