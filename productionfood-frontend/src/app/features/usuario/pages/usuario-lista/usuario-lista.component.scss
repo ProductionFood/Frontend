@@ -15,7 +15,7 @@
 
   h1 {
     @include ui.titulo-panel;
-    font-size: 30px;
+    font-size: var(--titulo-pagina);
     font-weight: 600;
     letter-spacing: -0.4px;
     color: var(--texto-titulo);
