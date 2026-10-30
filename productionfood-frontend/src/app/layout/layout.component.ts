@@ -1,7 +1,17 @@
 import { IndicadorAlertasComponent } from './components/indicador-alertas/indicador-alertas.component';
 import { MigasComponent } from './components/migas/migas.component';
 import { BuscadorModulosComponent, ModuloBuscable } from './components/buscador-modulos/buscador-modulos.component';
-import { Component, computed, inject, signal, ViewChild } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  ElementRef,
+  afterNextRender,
+  computed,
+  inject,
+  signal,
+  viewChild,
+  ViewChild,
+} from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -77,6 +87,10 @@ export class LayoutComponent {
   });
 
   @ViewChild('sidenav') private sidenav?: MatSidenav;
+  private readonly navLista = viewChild('navLista', { read: ElementRef<HTMLElement> });
+
+  /** Hay módulos ocultos bajo el borde del menú (muestra el degradado). */
+  readonly hayMasAbajo = signal(false);
 
   constructor() {
     this.breakpoint
@@ -93,6 +107,22 @@ export class LayoutComponent {
       .pipe(takeUntilDestroyed())
       .subscribe(() => this.cargarContadores());
     this.cargarContadores(true);
+
+    // El menú cambia de alto al redimensionar la ventana o colapsar el sidebar.
+    const destroyRef = inject(DestroyRef);
+    afterNextRender(() => {
+      const nav = this.navLista()?.nativeElement;
+      if (!nav) return;
+      const observador = new ResizeObserver(() => this.revisarScroll());
+      observador.observe(nav);
+      destroyRef.onDestroy(() => observador.disconnect());
+    });
+  }
+
+  revisarScroll(): void {
+    const nav = this.navLista()?.nativeElement;
+    if (!nav) return;
+    this.hayMasAbajo.set(nav.scrollHeight - nav.scrollTop - nav.clientHeight > 8);
   }
 
   private cargarContadores(forzar = false): void {

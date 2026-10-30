@@ -31,7 +31,12 @@
       <kbd class="buscar-atajo">Ctrl K</kbd>
     </button>
 
-    <mat-nav-list class="nav" aria-label="Navegación principal">
+    <mat-nav-list
+      #navLista
+      class="nav"
+      aria-label="Navegación principal"
+      (scroll)="revisarScroll()"
+    >
       <a
         mat-list-item
         routerLink="/app/dashboard"
@@ -68,6 +73,10 @@
         }
       }
     </mat-nav-list>
+
+    <div class="mas-abajo" [class.visible]="hayMasAbajo()" aria-hidden="true">
+      <mat-icon>keyboard_arrow_down</mat-icon>
+    </div>
 
     <div class="separator"></div>
 

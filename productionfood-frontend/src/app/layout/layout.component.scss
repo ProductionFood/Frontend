@@ -370,6 +370,36 @@
 }
 
 /* ---------------------------------------------------------
+   Indicador de "hay más módulos abajo"
+   --------------------------------------------------------- */
+.mas-abajo {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  height: 40px;
+  margin-top: -40px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 2px;
+  background: linear-gradient(to bottom, rgba(16, 27, 39, 0), var(--navy-900) 85%);
+  color: #8fd6b4;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.mas-abajo.visible {
+  opacity: 1;
+}
+
+/* ---------------------------------------------------------
    Accesibilidad
    --------------------------------------------------------- */
 .sr-only {
