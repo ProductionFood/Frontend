@@ -42,24 +42,6 @@
   max-width: 520px;
 }
 
-.btn-primary {
-  @include ui.boton-primario;
-  background: var(--verde-500);
-  color: #ffffff;
-  box-shadow: 0 5px 15px rgba(31, 170, 112, 0.22);
-}
-
-.btn-primary:hover {
-  background: var(--verde-700);
-  transform: translateY(-1px);
-}
-
-.btn-primary svg.ic,
-.btn-primary mat-icon {
-  width: 16px;
-  height: 16px;
-}
-
 .kpi-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

@@ -3,7 +3,7 @@
     <h1>Productos</h1>
     <p>Administra los productos que ofrece tu empresa. Aquí puedes crear, editar, eliminar y ver el detalle de cada producto.</p>
   </div>
-  <button *siRol="['ADMIN']" mat-flat-button class="btn-primary" type="button" (click)="abrirFormulario()">
+  <button mat-flat-button *siRol="['ADMIN']" type="button" (click)="abrirFormulario()">
     <mat-icon>add</mat-icon>
     Agregar producto
   </button>
@@ -62,7 +62,7 @@
     @if (filtroAplicado()) {
       <button mat-stroked-button type="button" (click)="limpiarFiltros()">Limpiar filtros</button>
     } @else {
-      <button *siRol="['ADMIN']" mat-flat-button class="btn-primary" type="button" (click)="abrirFormulario()">Registrar el primero</button>
+      <button mat-flat-button *siRol="['ADMIN']" type="button" (click)="abrirFormulario()">Registrar el primero</button>
     }
   </app-estado-vacio>
 } @else {
