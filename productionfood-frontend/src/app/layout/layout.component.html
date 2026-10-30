@@ -40,10 +40,18 @@
             [routerLink]="enlaceItem(item)"
             routerLinkActive="activo"
             (click)="cerrarEnMovil()"
-            [attr.title]="colapsado() ? item.titulo : null"
+            [attr.title]="tituloColapsado(item)"
           >
             <mat-icon matListItemIcon>{{ item.icono }}</mat-icon>
             <span class="item-titulo" matListItemTitle>{{ item.titulo }}</span>
+            @if (contadores()[item.ruta]; as contador) {
+              <span
+                matListItemMeta
+                class="contador"
+                [class]="'contador ' + contador.tono"
+                [attr.aria-label]="contador.descripcion"
+              >{{ contador.valor > 99 ? '99+' : contador.valor }}</span>
+            }
           </a>
         }
       }

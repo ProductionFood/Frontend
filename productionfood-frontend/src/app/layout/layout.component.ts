@@ -1,6 +1,6 @@
 import { IndicadorAlertasComponent } from './components/indicador-alertas/indicador-alertas.component';
 import { Component, computed, inject, signal, ViewChild } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
@@ -9,10 +9,15 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { filter, fromEvent, merge } from 'rxjs';
 
 import { AuthService } from '../core/auth/auth.service';
 import { TemaService } from '../core/ui/tema.service';
+import { ContadoresNav, ContadoresNavService } from './contadores-nav.service';
 import { MODULOS_REALES, NavGrupo, NavItem, NAV_GRUPOS } from './nav-items';
+
+/** Espera mínima entre recargas de contadores al navegar. */
+const REFRESCO_CONTADORES_MS = 30_000;
 
 @Component({
   selector: 'app-layout',
@@ -36,10 +41,14 @@ export class LayoutComponent {
   readonly authService = inject(AuthService);
   readonly tema = inject(TemaService);
   private readonly breakpoint = inject(BreakpointObserver);
+  private readonly router = inject(Router);
+  private readonly contadoresService = inject(ContadoresNavService);
 
   readonly grupos: NavGrupo[] = NAV_GRUPOS;
   readonly modoCompacto = signal(false);
   readonly colapsado = signal(false);
+  readonly contadores = signal<ContadoresNav>({});
+  private ultimaCargaContadores = 0;
 
   readonly iniciales = computed(() => {
     const nombre = this.authService.usuario()?.nombre ?? 'Usuario';
@@ -70,6 +79,30 @@ export class LayoutComponent {
       .observe([Breakpoints.Handset, Breakpoints.TabletPortrait])
       .pipe(takeUntilDestroyed())
       .subscribe((estado) => this.modoCompacto.set(estado.matches));
+
+    // Contadores: al entrar, al navegar y al volver a la pestaña (con un
+    // mínimo de 30 s entre consultas para no recargar en cada clic).
+    merge(
+      this.router.events.pipe(filter((e) => e instanceof NavigationEnd)),
+      fromEvent(document, 'visibilitychange').pipe(filter(() => document.visibilityState === 'visible')),
+    )
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.cargarContadores());
+    this.cargarContadores(true);
+  }
+
+  private cargarContadores(forzar = false): void {
+    const ahora = Date.now();
+    if (!forzar && ahora - this.ultimaCargaContadores < REFRESCO_CONTADORES_MS) return;
+    this.ultimaCargaContadores = ahora;
+    this.contadoresService.cargar().subscribe((contadores) => this.contadores.set(contadores));
+  }
+
+  /** Tooltip del ítem en modo colapsado, con su contador si lo tiene. */
+  tituloColapsado(item: NavItem): string | null {
+    if (!this.colapsado()) return null;
+    const contador = this.contadores()[item.ruta];
+    return contador ? `${item.titulo} · ${contador.descripcion}` : item.titulo;
   }
 
   /**
