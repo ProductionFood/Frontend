@@ -1,0 +1,141 @@
+// Estilos de la sección de planes y precios.
+// Se emiten sin encapsulación bajo .landing-page, igual que landing.component.scss.
+.landing-page {
+/* =========================================================
+   PRICING
+   ========================================================= */
+.pricing {
+  background:linear-gradient(180deg,var(--color-surface),var(--color-bg));
+  padding:clamp(32px,4vw,56px) 0;
+}
+.pricing-toggle {
+  display:flex; align-items:center; justify-content:center; gap:14px;
+  margin-bottom:clamp(24px,3vw,40px);
+}
+.pricing-toggle span {
+  font-size:var(--text-body-m); font-weight:600; color:var(--color-on-surface);
+}
+.annual-badge {
+  font-size:var(--text-label-s); font-weight:700;
+  color:var(--color-primary); background:var(--verde-100);
+  padding:4px 10px; border-radius:100px;
+}
+.annual-badge em { font-style:normal; font-weight:700; }
+.toggle-switch { position:relative; width:56px; height:28px; }
+.toggle-switch input { opacity:0; width:0; height:0; }
+.toggle-slider {
+  position:absolute; inset:0;
+  background:var(--color-outline); border-radius:100px;
+  transition:background var(--motion-fast);
+}
+.toggle-slider::before {
+  content:""; position:absolute; top:3px; left:3px;
+  width:22px; height:22px; border-radius:50%;
+  background:#fff; box-shadow:var(--elevation-1);
+  transition:transform var(--motion-fast);
+}
+.toggle-switch input:checked + .toggle-slider {
+  background:var(--color-primary);
+}
+.toggle-switch input:checked + .toggle-slider::before {
+  transform:translateX(28px);
+}
+
+/* Pricing cards using unified card system */
+.pricing .cards-grid--3 { gap:24px; }
+.pricing-card.pricing-card {
+  position:relative; display:flex; flex-direction:column;
+  padding:clamp(24px,3vw,32px);
+  border:1px solid var(--color-outline);
+}
+.pricing-card.pricing-card:hover {
+  border-color:var(--verde-300); box-shadow:var(--elevation-3);
+  transform:translateY(-4px);
+  transition:border-color var(--motion-base),box-shadow var(--motion-base),
+             transform var(--motion-base);
+}
+.pricing-card--featured {
+  border-color:var(--color-primary); box-shadow:var(--elevation-3);
+  background:linear-gradient(180deg,rgba(31,170,112,.02),var(--color-surface));
+}
+.pricing-card.pricing-card--featured:hover {
+  transform:translateY(-6px);
+  box-shadow:0 12px 32px rgba(31,170,112,.15);
+}
+.popular-badge {
+  position:absolute; top:-12px; left:50%; transform:translateX(-50%);
+  font-size:var(--text-label-s); font-weight:700; color:#fff;
+  background:var(--color-primary); padding:4px 16px;
+  border-radius:100px; white-space:nowrap; box-shadow:var(--elevation-2);
+}
+.pricing-header {
+  text-align:center; margin-bottom:20px; padding-bottom:20px;
+  border-bottom:1px solid var(--color-outline);
+}
+.pricing-header .card-title {
+  font-family:var(--fuente-display); font-size:var(--text-title-l);
+  font-weight:600; color:var(--verde-900); margin-bottom:6px;
+}
+.pricing-desc { font-size:var(--text-body-s); color:var(--color-on-surface-variant); }
+.pricing-price {
+  display:flex; align-items:baseline; justify-content:center; gap:2px;
+  margin-bottom:24px;
+}
+.currency {
+  font-family:var(--fuente-display); font-size:var(--text-display-s);
+  font-weight:600; color:var(--verde-900);
+}
+.amount {
+  font-family:var(--fuente-display); font-size:var(--text-display-l);
+  font-weight:700; color:var(--verde-900); line-height:1;
+}
+.period {
+  font-size:var(--text-body-s); color:var(--color-on-surface-variant);
+  margin-left:2px;
+}
+.pricing-features {
+  display:flex; flex-direction:column; gap:12px; margin-bottom:28px; flex:1;
+}
+.pricing-features li {
+  display:flex; align-items:flex-start; gap:12px;
+  font-size:var(--text-body-s); line-height:1.5;
+  color:var(--color-on-surface); transition:color var(--motion-fast);
+}
+.pricing-features li svg.ic {
+  width:20px; height:20px; color:var(--color-primary);
+  flex-shrink:0; margin-top:1px; transition:transform var(--motion-fast);
+}
+.pricing-card:hover .pricing-features li:not(.disabled) svg.ic {
+  transform:scale(1.15);
+}
+.pricing-features li.disabled { color:var(--tinta-400); }
+.pricing-features li.disabled svg.ic {
+  color:var(--tinta-400); stroke-width:1.5; transform:none;
+}
+.btn-block { width:100%; justify-content:center; }
+.pricing-card--featured .btn-block {
+  background:var(--color-primary); color:#fff;
+}
+.pricing-card--featured .btn-block:hover {
+  background:var(--color-primary-hover); transform:translateY(-1px);
+}
+.pricing-footnote {
+  margin-top:clamp(24px,3vw,40px);
+  padding-top:clamp(20px,2.5vw,28px);
+  border-top:1px solid var(--color-outline); text-align:center;
+}
+.pricing-footnote p {
+  font-size:var(--text-body-s); line-height:1.6;
+  color:var(--color-on-surface-variant); margin-bottom:8px;
+}
+.pricing-footnote p:last-child { margin-bottom:0; }
+
+
+@media (max-width:1023px) {
+  .pricing .cards-grid--3 { grid-template-columns:1fr 1fr; gap:16px; }
+}
+
+@media (max-width:760px) {
+  .pricing .cards-grid--3 { grid-template-columns:1fr; }
+}
+}
