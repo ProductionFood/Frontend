@@ -19,6 +19,18 @@
       </div>
     </div>
 
+    <button
+      type="button"
+      class="buscar-modulo"
+      (click)="abrirBuscador(buscador)"
+      [attr.title]="colapsado() ? 'Buscar módulo (Ctrl+K)' : null"
+      aria-label="Buscar módulo (Ctrl+K)"
+    >
+      <mat-icon>search</mat-icon>
+      <span class="buscar-texto">Buscar módulo</span>
+      <kbd class="buscar-atajo">Ctrl K</kbd>
+    </button>
+
     <mat-nav-list class="nav" aria-label="Navegación principal">
       <a
         mat-list-item
@@ -123,3 +135,5 @@
     </main>
   </mat-sidenav-content>
 </mat-sidenav-container>
+
+<app-buscador-modulos #buscador [modulos]="modulosBuscables()" />

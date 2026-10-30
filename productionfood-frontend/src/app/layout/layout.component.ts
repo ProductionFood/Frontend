@@ -1,4 +1,5 @@
 import { IndicadorAlertasComponent } from './components/indicador-alertas/indicador-alertas.component';
+import { BuscadorModulosComponent, ModuloBuscable } from './components/buscador-modulos/buscador-modulos.component';
 import { Component, computed, inject, signal, ViewChild } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
@@ -33,6 +34,7 @@ const REFRESCO_CONTADORES_MS = 30_000;
     MatIconModule,
     MatMenuModule,
     IndicadorAlertasComponent,
+    BuscadorModulosComponent,
   ],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss',
@@ -121,6 +123,24 @@ export class LayoutComponent {
       }))
       .filter((grupo) => grupo.items.length > 0);
   });
+
+  /** Dashboard + módulos visibles, en el orden del sidebar, para Ctrl+K. */
+  readonly modulosBuscables = computed<ModuloBuscable[]>(() => [
+    { titulo: 'Dashboard', icono: 'dashboard', grupo: 'Inicio', enlace: ['/app', 'dashboard'] },
+    ...this.gruposVisibles().flatMap((grupo) =>
+      grupo.items.map((item) => ({
+        titulo: item.titulo,
+        icono: item.icono,
+        grupo: grupo.titulo,
+        enlace: this.enlaceItem(item),
+      })),
+    ),
+  ]);
+
+  abrirBuscador(buscador: BuscadorModulosComponent): void {
+    this.cerrarEnMovil();
+    buscador.abrir();
+  }
 
   cerrarEnMovil(): void {
     if (this.modoCompacto()) {

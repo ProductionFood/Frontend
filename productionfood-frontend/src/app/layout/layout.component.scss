@@ -98,6 +98,68 @@
 }
 
 /* ---------------------------------------------------------
+   Botón del buscador de módulos (Ctrl+K)
+   --------------------------------------------------------- */
+.buscar-modulo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  margin: 0 16px 18px;
+  padding: 9px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #9eb3b5;
+  font-family: var(--fuente-texto);
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(131, 224, 177, 0.25);
+    color: #fff;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #83e0b1;
+    outline-offset: 2px;
+  }
+}
+
+.buscar-texto {
+  flex: 1;
+  text-align: left;
+}
+
+.buscar-atajo {
+  padding: 1px 6px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 5px;
+  font-family: inherit;
+  font-size: 10px;
+  color: #8aa0a3;
+}
+
+.sidenav.colapsado .buscar-modulo {
+  justify-content: center;
+  margin: 0 18px 18px;
+  padding: 9px 0;
+}
+
+.sidenav.colapsado .buscar-texto,
+.sidenav.colapsado .buscar-atajo {
+  display: none;
+}
+
+/* ---------------------------------------------------------
    Nav — es un <mat-nav-list> directamente (no un div wrapper)
    --------------------------------------------------------- */
 .nav {
