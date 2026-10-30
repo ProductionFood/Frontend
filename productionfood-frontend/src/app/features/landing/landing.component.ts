@@ -4,12 +4,14 @@ import { RouterLink } from '@angular/router';
 import { RevealDirective } from './reveal.directive';
 import { LandingFaqComponent } from './components/faq/faq.component';
 import { LandingPricingComponent } from './components/pricing/pricing.component';
+import { LandingHeroComponent } from './components/hero/hero.component';
+import { LandingModulesComponent } from './components/modules/modules.component';
 
 const SECCIONES = ['inicio', 'caracteristicas', 'beneficios', 'precios', 'contacto'];
 
 @Component({
   selector: 'app-landing',
-  imports: [RouterLink, RevealDirective, LandingFaqComponent, LandingPricingComponent],
+  imports: [RouterLink, RevealDirective, LandingFaqComponent, LandingPricingComponent, LandingHeroComponent, LandingModulesComponent],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.scss',
   encapsulation: ViewEncapsulation.None,
