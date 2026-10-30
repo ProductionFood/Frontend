@@ -25,6 +25,7 @@ import { filter, fromEvent, merge } from 'rxjs';
 
 import { AuthService } from '../core/auth/auth.service';
 import { TemaService } from '../core/ui/tema.service';
+import { ConexionService } from '../core/http/conexion.service';
 import { ContadoresNav, ContadoresNavService } from './contadores-nav.service';
 import { MODULOS_REALES, NavGrupo, NavItem, NAV_GRUPOS } from './nav-items';
 
@@ -54,6 +55,18 @@ const REFRESCO_CONTADORES_MS = 30_000;
 export class LayoutComponent {
   readonly authService = inject(AuthService);
   readonly tema = inject(TemaService);
+  readonly conexion = inject(ConexionService);
+
+  readonly textoConexion = computed(() => {
+    switch (this.conexion.estado()) {
+      case 'sin-internet':
+        return 'Sin internet';
+      case 'sin-servidor':
+        return 'Sin conexión con el servidor';
+      default:
+        return 'Sincronizado';
+    }
+  });
   private readonly breakpoint = inject(BreakpointObserver);
   private readonly router = inject(Router);
   private readonly contadoresService = inject(ContadoresNavService);

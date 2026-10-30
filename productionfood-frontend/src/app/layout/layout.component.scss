@@ -573,10 +573,46 @@
     color: #e3f2ea;
   }
 
-  span {
+  > span:not(.conexion) {
     font-size: 11px;
     color: #8fa6a8;
     letter-spacing: 0.01em;
+  }
+}
+
+/* Estado de conexión: punto + texto (nunca solo color, guía §13). */
+.lema .conexion {
+  margin-top: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #8fd6b4;
+}
+
+.conexion-punto {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--verde-500);
+  box-shadow: 0 0 0 3px rgba(31, 170, 112, 0.18);
+}
+
+.lema .conexion.sin-servidor,
+.lema .conexion.sin-internet {
+  color: #ffd38a;
+
+  .conexion-punto {
+    background: #f5a623;
+    box-shadow: 0 0 0 3px rgba(245, 166, 35, 0.2);
+    animation: conexion-latido 1.6s ease-in-out infinite;
+  }
+}
+
+@keyframes conexion-latido {
+  50% {
+    opacity: 0.45;
   }
 }
 
@@ -608,6 +644,19 @@
 .sidenav.colapsado .lema,
 .sidenav.colapsado .lema-fondo {
   display: none;
+}
+
+/* Colapsado: si se pierde la conexión, un punto ámbar sobre la hoja. */
+.sidenav.colapsado .sidebar-bottom.desconectado .lema-icono::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 9px;
+  height: 9px;
+  border: 2px solid var(--navy-900);
+  border-radius: 50%;
+  background: #f5a623;
 }
 
 .sidenav.colapsado .sidebar-bottom {

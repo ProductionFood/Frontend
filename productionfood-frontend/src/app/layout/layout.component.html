@@ -92,12 +92,12 @@
 
     <div class="separator"></div>
 
-    <div class="sidebar-bottom" aria-hidden="true">
-      <svg class="lema-fondo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+    <div class="sidebar-bottom" [class.desconectado]="conexion.estado() !== 'sincronizado'" [attr.title]="colapsado() ? textoConexion() : null">
+      <svg class="lema-fondo" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
         <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
         <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
       </svg>
-      <span class="lema-icono">
+      <span class="lema-icono" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
           <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
           <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
@@ -106,6 +106,15 @@
       <p class="lema">
         <strong>Alimentos de calidad,</strong>
         <span>mejor organización</span>
+        <span
+          class="conexion"
+          [class]="'conexion ' + conexion.estado()"
+          role="status"
+          [attr.title]="textoConexion()"
+        >
+          <span class="conexion-punto" aria-hidden="true"></span>
+          <span class="conexion-texto">{{ textoConexion() }}</span>
+        </span>
       </p>
     </div>
   </mat-sidenav>
